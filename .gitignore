@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+*.key
+
+# Raw/private data: DO NOT COMMIT
+/data/raw/*
+!/data/raw/.gitkeep
+
+# Generated datasets/artifacts
+/data/poses/*
+!/data/poses/.gitkeep
+/data/features/*
+!/data/features/.gitkeep
+
+# Model checkpoints
+*.pt
+*.pth
+*.ckpt
+
+# Experiment outputs can be versioned selectively
+/reports/experiments/*/
+
+# Explicit checkpoint directory (keep directory marker/README only)
+/models/checkpoints/*
+!/models/checkpoints/.gitkeep
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Test caches
+.pytest_cache/

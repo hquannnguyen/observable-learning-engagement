@@ -1,0 +1,61 @@
+project:
+  id: CVF25PRJ10
+  task_code: CVFP26BCPPRJC012
+  seed: 42
+
+data:
+  dataset_version: v0.1
+  split_version: split-v0.1
+  label_schema_version: labels-v1
+  feature_schema_version: posefeat-v1
+
+video:
+  sample_fps: 10
+
+pose:
+  model: yolov8n-pose.pt
+  confidence_threshold: 0.30
+
+tracking:
+  tracker: bytetrack.yaml
+  min_track_seconds: 2.0
+
+quality_gate:
+  min_visible_ratio: 0.60
+  min_mean_keypoint_confidence: 0.30
+
+sequence:
+  window_seconds: 4
+  stride_seconds: 2
+
+model:
+  type: lstm
+  num_classes: 3
+  classes:
+    - HIGH_OBSERVED_PARTICIPATION
+    - MODERATE_OBSERVED_PARTICIPATION
+    - LOW_OBSERVED_PARTICIPATION
+  hidden_size: 128
+  num_layers: 2
+  dropout: 0.30
+
+training:
+  batch_size: 32
+  optimizer: adam
+  learning_rate: 0.001
+  early_stopping_patience: 10
+  primary_metric: macro_f1
+
+uncertainty:
+  min_probability: 0.60
+  output_label: UNCERTAIN
+
+reporting:
+  display_label_map:
+    HIGH_OBSERVED_PARTICIPATION: HIGH
+    MODERATE_OBSERVED_PARTICIPATION: MODERATE
+    LOW_OBSERVED_PARTICIPATION: LOW
+    UNCERTAIN: UNCERTAIN
+  aggregate_by_time: true
+  aggregate_by_zone: true
+  anonymize: true

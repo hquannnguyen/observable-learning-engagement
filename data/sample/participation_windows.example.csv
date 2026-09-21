@@ -1,0 +1,4 @@
+window_id,session_id,camera_id,track_id,t_start_ms,t_end_ms,class_phase,zone_id,feature_schema_version,dataset_version,split_version,label_schema_version,quality_state,mean_visible_ratio,mean_pose_confidence,participation_label,label_source,label_rule_version,annotation_guide_version,split
+W000001,S001,A,track_001,0,4000,lecture,F-C,posefeat-v1,v0.1,split-v0.1,labels-v1,VALID,0.92,0.81,HIGH_OBSERVED_PARTICIPATION,HUMAN,,v0.2,train
+W000002,S001,A,track_003,240000,244000,individual_work,M-C,posefeat-v1,v0.1,split-v0.1,labels-v1,VALID,0.88,0.77,MODERATE_OBSERVED_PARTICIPATION,WEAK_RULE,weak-v0.1,v0.2,train
+W000003,S001,A,track_002,0,4000,lecture,M-L,posefeat-v1,v0.1,split-v0.1,labels-v1,OCCLUDED,0.41,0.29,,,,v0.2,train

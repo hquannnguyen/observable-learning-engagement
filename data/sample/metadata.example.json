@@ -1,0 +1,17 @@
+{
+  "session_id": "S001",
+  "date": "2026-09-21",
+  "camera_id": "A",
+  "fps": 30,
+  "resolution": "1920x1080",
+  "camera_view": "front_oblique",
+  "participants": 8,
+  "class_phase": [
+    {"name": "lecture", "start_ms": 0, "end_ms": 240000},
+    {"name": "individual_work", "start_ms": 240000, "end_ms": 480000},
+    {"name": "discussion", "start_ms": 480000, "end_ms": 720000}
+  ],
+  "lighting_condition": "normal",
+  "consent_confirmed": true,
+  "notes": "Example metadata only; not a real recorded session."
+}

@@ -1,0 +1,13 @@
+# Full dependencies will be pinned when implementation starts.
+ultralytics
+opencv-python
+numpy
+pandas
+pyarrow
+scikit-learn
+torch
+streamlit
+plotly
+pyyaml
+matplotlib
+pytest
