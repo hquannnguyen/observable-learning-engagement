@@ -14,9 +14,12 @@ Thumbs.db
 .env
 *.key
 
-# Raw/private data: DO NOT COMMIT
-/data/raw/*
+# Raw/private data: DO NOT COMMIT video files
+/data/raw/**
+!/data/raw/
+!/data/raw/*/
 !/data/raw/.gitkeep
+!/data/raw/**/metadata.json
 
 # Generated datasets/artifacts
 /data/poses/*
