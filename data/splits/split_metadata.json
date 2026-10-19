@@ -1,0 +1,23 @@
+{
+  "dataset_version": "v0.1",
+  "split_version": "split-v0.1",
+  "seed": 42,
+  "created_at": "2026-10-18T21:36:47.724710",
+  "train_sessions": [
+    "class_1",
+    "class_2",
+    "class_3",
+    "class_4",
+    "class_5",
+    "session_001",
+    "session_002"
+  ],
+  "val_sessions": [
+    "session_003",
+    "session_004"
+  ],
+  "test_sessions": [
+    "session_005",
+    "session_006"
+  ]
+}

@@ -1,0 +1,102 @@
+session_id,camera_id,track_id,t_start_ms,t_end_ms,class_phase,atomic_behavior,participation_label,annotation_state,label_source,label_rule_version,annotation_guide_version,annotation_confidence,occlusion_level,zone_id,annotator_id,notes
+session_006,cam_A,track_001,0,4000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.82,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_001,2000,6000,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_001,4000,8000,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_001,6000,10000,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_001,8000,12000,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_001,10000,14000,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.85,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_001,12000,14900,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_002,0,4000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.85,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_002,2000,6000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_002,4000,8000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_002,6000,10000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_002,8000,12000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_002,10000,14000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.85,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_002,12000,14900,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_003,0,4000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.82,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_003,2000,6000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_003,4000,8000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_003,6000,10000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_003,8000,12000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_003,10000,14000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.85,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_003,12000,14900,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_004,0,4000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.82,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_004,2000,6000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_004,4000,8000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_004,6000,10000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_004,8000,12000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_004,10000,14000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.82,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_004,12000,14900,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_005,0,4000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.85,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_005,2000,6000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_005,4000,8000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_005,6000,10000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_005,8000,12000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_005,10000,14000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.85,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_005,12000,14900,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_006,0,4000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.82,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_006,2000,6000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_006,4000,8000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_006,6000,10000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_006,8000,12000,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_006,10000,14000,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.85,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_006,12000,14900,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_007,0,4000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.85,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_007,2000,6000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_007,4000,8000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_007,6000,10000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_007,8000,12000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_007,10000,14000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.82,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_007,12000,14900,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_008,0,4000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.82,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_008,2000,6000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_008,4000,8000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_008,6000,10000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_008,8000,12000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_008,10000,13700,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.82,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_008,12000,13700,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_009,0,4000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.82,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_009,2000,6000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_009,4000,6100,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_010,0,4000,lecture,OCCLUDED,,OCCLUDED,,,v0.2,0.6,high,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_010,2000,6000,lecture,OCCLUDED,,OCCLUDED,,,v0.2,0.6,high,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_010,4000,8000,lecture,OCCLUDED,,OCCLUDED,,,v0.2,0.6,high,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_010,6000,10000,lecture,OCCLUDED,,OCCLUDED,,,v0.2,0.6,high,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_010,8000,12000,lecture,OCCLUDED,,OCCLUDED,,,v0.2,0.6,high,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_010,10000,14000,lecture,OCCLUDED,,OCCLUDED,,,v0.2,0.6,high,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_010,12000,14900,lecture,OCCLUDED,,OCCLUDED,,,v0.2,0.6,high,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_011,0,3200,lecture,OCCLUDED,,OCCLUDED,,,v0.2,0.6,high,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_012,0,4000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.85,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_012,2000,6000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_012,4000,8000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_012,6000,9900,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_012,8000,9900,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_013,0,4000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.85,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_013,2000,6000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_013,4000,8000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_013,6000,10000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_013,8000,12000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_013,10000,13800,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.82,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_013,12000,13800,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_017,1000,5000,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.85,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_017,3000,6600,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_017,5000,6600,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_018,1000,4700,lecture,OCCLUDED,,OCCLUDED,,,v0.2,0.6,high,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_018,3000,4700,lecture,OCCLUDED,,OCCLUDED,,,v0.2,0.6,high,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_019,1000,5000,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.82,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_019,3000,7000,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_019,5000,9000,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_019,7000,11000,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_019,9000,13000,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_019,11000,14900,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.85,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_019,13000,14900,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_022,1700,3400,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.82,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_024,4100,8100,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.85,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_026,6100,10100,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.82,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_026,8100,11100,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_026,10100,11100,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.85,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_028,6600,10600,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.82,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_028,8600,10900,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,WEAK_RULE,weak-v0.1,v0.2,0.82,low,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_032,10900,14900,lecture,OCCLUDED,,OCCLUDED,,,v0.2,0.6,high,M-C,ANN_PHONG,Human pilot annotation for protocol verification
+session_006,cam_A,track_032,12900,14900,lecture,OCCLUDED,,OCCLUDED,,,v0.2,0.6,high,M-C,SYSTEM,Heuristic weak rule from observable pose signals
+session_006,cam_A,track_034,12600,14900,individual_work,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.82,low,M-C,ANN_PHONG,Human pilot annotation for protocol verification

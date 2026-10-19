@@ -1,0 +1,200 @@
+[
+  {
+    "name": "HIGH_OBSERVED_PARTICIPATION",
+    "color": "#28a745",
+    "type": "rectangle",
+    "attributes": [
+      {
+        "name": "annotation_state",
+        "mutable": true,
+        "input_type": "select",
+        "default_value": "VALID",
+        "values": ["VALID", "OCCLUDED", "TRANSITION", "INVALID"]
+      },
+      {
+        "name": "atomic_behavior",
+        "mutable": true,
+        "input_type": "select",
+        "default_value": "BOARD_OR_INSTRUCTOR_FACING",
+        "values": [
+          "BOARD_OR_INSTRUCTOR_FACING",
+          "READING_WRITING",
+          "HAND_RAISED",
+          "PEER_ORIENTED",
+          "HEAD_DOWN",
+          "BODY_TURNED",
+          "OCCLUDED",
+          "OUT_OF_VIEW",
+          "UNKNOWN"
+        ]
+      },
+      {
+        "name": "class_phase",
+        "mutable": true,
+        "input_type": "select",
+        "default_value": "lecture",
+        "values": ["lecture", "individual_work", "discussion"]
+      },
+      {
+        "name": "zone_id",
+        "mutable": true,
+        "input_type": "select",
+        "default_value": "M-C",
+        "values": ["F-L", "F-C", "F-R", "M-L", "M-C", "M-R", "B-L", "B-C", "B-R"]
+      },
+      {
+        "name": "annotation_confidence",
+        "mutable": true,
+        "input_type": "number",
+        "default_value": "1.0",
+        "values": ["0.0", "1.0", "0.1"]
+      },
+      {
+        "name": "occlusion_level",
+        "mutable": true,
+        "input_type": "select",
+        "default_value": "NONE",
+        "values": ["NONE", "PARTIAL", "HEAVY"]
+      },
+      {
+        "name": "notes",
+        "mutable": true,
+        "input_type": "text",
+        "default_value": "",
+        "values": []
+      }
+    ]
+  },
+  {
+    "name": "MODERATE_OBSERVED_PARTICIPATION",
+    "color": "#ffc107",
+    "type": "rectangle",
+    "attributes": [
+      {
+        "name": "annotation_state",
+        "mutable": true,
+        "input_type": "select",
+        "default_value": "VALID",
+        "values": ["VALID", "OCCLUDED", "TRANSITION", "INVALID"]
+      },
+      {
+        "name": "atomic_behavior",
+        "mutable": true,
+        "input_type": "select",
+        "default_value": "BOARD_OR_INSTRUCTOR_FACING",
+        "values": [
+          "BOARD_OR_INSTRUCTOR_FACING",
+          "READING_WRITING",
+          "HAND_RAISED",
+          "PEER_ORIENTED",
+          "HEAD_DOWN",
+          "BODY_TURNED",
+          "OCCLUDED",
+          "OUT_OF_VIEW",
+          "UNKNOWN"
+        ]
+      },
+      {
+        "name": "class_phase",
+        "mutable": true,
+        "input_type": "select",
+        "default_value": "lecture",
+        "values": ["lecture", "individual_work", "discussion"]
+      },
+      {
+        "name": "zone_id",
+        "mutable": true,
+        "input_type": "select",
+        "default_value": "M-C",
+        "values": ["F-L", "F-C", "F-R", "M-L", "M-C", "M-R", "B-L", "B-C", "B-R"]
+      },
+      {
+        "name": "annotation_confidence",
+        "mutable": true,
+        "input_type": "number",
+        "default_value": "1.0",
+        "values": ["0.0", "1.0", "0.1"]
+      },
+      {
+        "name": "occlusion_level",
+        "mutable": true,
+        "input_type": "select",
+        "default_value": "NONE",
+        "values": ["NONE", "PARTIAL", "HEAVY"]
+      },
+      {
+        "name": "notes",
+        "mutable": true,
+        "input_type": "text",
+        "default_value": "",
+        "values": []
+      }
+    ]
+  },
+  {
+    "name": "LOW_OBSERVED_PARTICIPATION",
+    "color": "#dc3545",
+    "type": "rectangle",
+    "attributes": [
+      {
+        "name": "annotation_state",
+        "mutable": true,
+        "input_type": "select",
+        "default_value": "VALID",
+        "values": ["VALID", "OCCLUDED", "TRANSITION", "INVALID"]
+      },
+      {
+        "name": "atomic_behavior",
+        "mutable": true,
+        "input_type": "select",
+        "default_value": "BODY_TURNED",
+        "values": [
+          "BOARD_OR_INSTRUCTOR_FACING",
+          "READING_WRITING",
+          "HAND_RAISED",
+          "PEER_ORIENTED",
+          "HEAD_DOWN",
+          "BODY_TURNED",
+          "OCCLUDED",
+          "OUT_OF_VIEW",
+          "UNKNOWN"
+        ]
+      },
+      {
+        "name": "class_phase",
+        "mutable": true,
+        "input_type": "select",
+        "default_value": "lecture",
+        "values": ["lecture", "individual_work", "discussion"]
+      },
+      {
+        "name": "zone_id",
+        "mutable": true,
+        "input_type": "select",
+        "default_value": "M-C",
+        "values": ["F-L", "F-C", "F-R", "M-L", "M-C", "M-R", "B-L", "B-C", "B-R"]
+      },
+      {
+        "name": "annotation_confidence",
+        "mutable": true,
+        "input_type": "number",
+        "default_value": "1.0",
+        "values": ["0.0", "1.0", "0.1"]
+      },
+      {
+        "name": "occlusion_level",
+        "mutable": true,
+        "input_type": "select",
+        "default_value": "NONE",
+        "values": ["NONE", "PARTIAL", "HEAVY"]
+      },
+      {
+        "name": "notes",
+        "mutable": true,
+        "input_type": "text",
+        "default_value": "",
+        "values": []
+      }
+    ]
+  }
+]
