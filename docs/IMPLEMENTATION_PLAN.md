@@ -307,6 +307,17 @@ docs(T04): refine annotation guide examples
 ### Hoàn thành
 - **T01 — Scope & Terminology** ✅
 - **T02 — Repo & Experiment Logging** ✅
+- **T06 — YOLOv8-Pose extractor** ✅
+- **T07 — ByteTrack integration & tracking QA** ✅
+- **T13 — Pose Quality Gate** ✅
+- **T14 — Keypoint cleaning & normalization** ✅
+- **T15 — Pose/motion feature engineering** ✅
+- **T16 — Weak supervision labeling functions** ✅
+- **T17 — Sliding-window builder** ✅
+- **T18 — Group train/val/test split** ✅
+- **T22 — Customized LSTM M2** ✅
+- **T23 — Training & evaluation pipeline** ✅
+- **T30 — Uncertainty gate integration** ✅
 
 ### Task tiếp theo được ưu tiên
 1. **T03 — Data collection/privacy protocol** — draft v0.1 đã có trong repo, cần owner/reviewer duyệt checklist trước khi Done.
