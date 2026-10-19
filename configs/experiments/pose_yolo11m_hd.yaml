@@ -1,0 +1,18 @@
+# Experiment Config: High-Accuracy Pose Extraction with YOLO11-Medium and HD Resolution (1280px)
+# Target: Increased detection recall for distant students and sharper keypoint localization.
+
+experiment_id: exp_pose_yolo11m_hd
+parent_config: configs/baseline.yaml
+description: High-accuracy pose extraction using YOLO11m-pose with 1280px resolution and ByteTrack.
+
+pose:
+  model: yolo11m-pose.pt
+  confidence_threshold: 0.35
+  imgsz: 1280
+
+tracking:
+  tracker: bytetrack.yaml
+  min_track_seconds: 2.0
+
+video:
+  sample_fps: 10
