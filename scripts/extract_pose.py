@@ -29,6 +29,7 @@ def main() -> None:
     parser.add_argument("--start-seconds", type=float, default=0.0, help="Start offset in seconds")
     parser.add_argument("--model", type=str, default="yolov8n-pose.pt", help="YOLOv8 pose model name")
     parser.add_argument("--conf", type=float, default=0.30, help="Confidence threshold")
+    parser.add_argument("--camera-id", type=str, default="cam_A", help="Camera identifier (default: cam_A)")
 
     args = parser.parse_args()
 
@@ -44,7 +45,7 @@ def main() -> None:
     extractor = PoseExtractor(model_name=args.model, confidence_threshold=args.conf)
 
     print(f"Processing video: {video_path}")
-    print(f"Sampling: {args.sample_fps} FPS | Max duration: {args.max_seconds}s")
+    print(f"Sampling: {args.sample_fps} FPS | Max duration: {args.max_seconds}s | Camera: {args.camera_id}")
 
     all_rows = []
     start_time = time.time()
@@ -58,7 +59,7 @@ def main() -> None:
     ):
         frame_count += 1
         for p in poses:
-            all_rows.append(p.to_dict(session_id=video_path.parent.name, camera_id="A"))
+            all_rows.append(p.to_dict(session_id=video_path.parent.name, camera_id=args.camera_id))
 
         if frame_count % 50 == 0:
             elapsed = time.time() - start_time

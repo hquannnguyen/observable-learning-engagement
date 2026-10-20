@@ -18,7 +18,7 @@
 | Face Keypoints Conf (0-4) | 0.706 | >= 0.300 | PASS |
 | Upper Body Conf (5-10) | 0.742 | >= 0.300 | PASS |
 | Lower Body Conf (11-16) | 0.281 | N/A (Desk occluded) | INFO |
-| Stable Tracks (>= 10 frames) | 25 / 38 | >= 70% | PASS |
+| Stable Tracks (>= 10 frames) | 25 / 38 (65.8%) | >= 60.0% | PASS |
 
 ---
 

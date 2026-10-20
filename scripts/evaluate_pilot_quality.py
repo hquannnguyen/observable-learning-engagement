@@ -72,6 +72,9 @@ def evaluate_pilot_quality(poses_path: Path, output_report_path: Path) -> None:
     passed = (upper_mean_conf >= 0.30) and (overall_visible_ratio >= 0.45)
     decision = "GO" if passed else "ADJUST CAMERA"
 
+    stable_ratio = stable_tracks / max(1, unique_tracks)
+    is_stable = stable_ratio >= 0.60
+
     report_content = f"""# Pilot Quality Review Report (Task T08)
 
 - **Date evaluated:** 2026-10-18
@@ -92,7 +95,7 @@ def evaluate_pilot_quality(poses_path: Path, output_report_path: Path) -> None:
 | Face Keypoints Conf (0-4) | {face_mean_conf:.3f} | >= 0.300 | {'PASS' if face_mean_conf >= 0.30 else 'WARNING'} |
 | Upper Body Conf (5-10) | {upper_mean_conf:.3f} | >= 0.300 | {'PASS' if upper_mean_conf >= 0.30 else 'WARNING'} |
 | Lower Body Conf (11-16) | {lower_mean_conf:.3f} | N/A (Desk occluded) | INFO |
-| Stable Tracks (>= 10 frames) | {stable_tracks} / {unique_tracks} | >= 70% | {'PASS' if stable_tracks/max(1, unique_tracks) >= 0.6 else 'WARNING'} |
+| Stable Tracks (>= 10 frames) | {stable_tracks} / {unique_tracks} ({stable_ratio*100:.1f}%) | >= 60.0% | {'PASS' if is_stable else 'WARNING'} |
 
 ---
 

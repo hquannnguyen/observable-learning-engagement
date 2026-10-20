@@ -96,7 +96,7 @@ class TrackedPose:
     mean_keypoint_conf: float
     zone_id: str
 
-    def to_dict(self, session_id: str = "session_001", camera_id: str = "A") -> Dict[str, Any]:
+    def to_dict(self, session_id: str = "session_001", camera_id: str = "cam_A") -> Dict[str, Any]:
         """Convert to dict matching docs/dataset_schema.md Section 5."""
         row: Dict[str, Any] = {
             "session_id": session_id,

@@ -82,14 +82,20 @@ def apply_labeling_rules(
     participation_label: str
     confidence: float
 
-    # LF1: Hand raised (Strong high participation)
+    # LF1: Hand raised (Strong observable high participation)
     if hand_raised_ratio >= 0.15:
         behaviors.append("HAND_RAISED")
         participation_label = HIGH
         confidence = 0.90
 
-    # LF2: Reading/Writing / Laptop interaction
-    elif (head_down_ratio >= 0.35) and (wrist_motion > 2.0):
+    # LF2: Prolonged Head Down / Phone Usage in lap without typing (Observable low participation)
+    elif (head_down_ratio >= 0.50 and wrist_motion < 2.2) or (head_down_ratio >= 0.65):
+        behaviors.append("HEAD_DOWN")
+        participation_label = LOW
+        confidence = 0.80
+
+    # LF3: Active Reading/Writing / Laptop interaction with wrist movement
+    elif (head_down_ratio >= 0.25) and (wrist_motion >= 2.2):
         behaviors.append("READING_WRITING")
         if class_phase in {"individual_work", "discussion"}:
             participation_label = HIGH
@@ -98,21 +104,15 @@ def apply_labeling_rules(
             participation_label = MODERATE
             confidence = 0.75
 
-    # LF3: Board or Instructor Facing in Lecture
-    elif class_phase == "lecture" and head_down_ratio < 0.40 and mean_vis >= 0.65:
+    # LF4: Upright Board / Instructor Facing in Lecture
+    elif class_phase == "lecture" and head_down_ratio < 0.30 and mean_vis >= 0.65:
         behaviors.append("BOARD_OR_INSTRUCTOR_FACING")
         participation_label = HIGH
         confidence = 0.80
 
-    # LF4: Prolonged Head Down with no desk/typing movement
-    elif head_down_ratio > 0.75 and wrist_motion < 1.0:
-        behaviors.append("HEAD_DOWN")
-        participation_label = LOW
-        confidence = 0.75
-
-    # LF5: Moderate steady baseline
+    # LF5: Moderate steady baseline (neutral passive listening)
     else:
-        behaviors.append("BOARD_OR_INSTRUCTOR_FACING" if head_down_ratio < 0.5 else "HEAD_DOWN")
+        behaviors.append("BOARD_OR_INSTRUCTOR_FACING" if head_down_ratio < 0.4 else "HEAD_DOWN")
         participation_label = MODERATE
         confidence = 0.70
 

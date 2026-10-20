@@ -1,0 +1,45 @@
+{
+  "split_version": "split-v0.1",
+  "seed": 42,
+  "total_windows": 427,
+  "total_tracks": 24,
+  "train": {
+    "tracks": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      10,
+      11,
+      15,
+      16,
+      20,
+      32,
+      34,
+      54,
+      63,
+      80,
+      86
+    ],
+    "window_count": 321
+  },
+  "val": {
+    "tracks": [
+      9,
+      12,
+      76,
+      90
+    ],
+    "window_count": 68
+  },
+  "test": {
+    "tracks": [
+      7,
+      29,
+      75
+    ],
+    "window_count": 38
+  }
+}
