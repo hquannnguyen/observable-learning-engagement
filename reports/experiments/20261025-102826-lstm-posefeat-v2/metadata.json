@@ -1,0 +1,35 @@
+{
+  "experiment_id": "20261025-102826-lstm-posefeat-v2",
+  "created_at": "2026-10-25T10:28:26.927322+07:00",
+  "name": "lstm_posefeat_v2",
+  "seed": 42,
+  "git_commit": "155c4bfb61e4ccf3ca676737235c7eff4e157ee3",
+  "dataset_version": "v0.1",
+  "split_version": "split-v0.1",
+  "source_config": "configs\\experiments\\lstm_posefeat_v2.yaml",
+  "config_sha256": "159fac2db4322dfeecae6b766679308ac4fcc77ddcb5abcba8ede98ebc307fd9",
+  "notes": "LSTM training run.",
+  "checkpoint_path": "models\\checkpoints\\20261025-102826-lstm-posefeat-v2.pt",
+  "checkpoint_sha256": "78105a80c91b722e87d086fda593c0afe31878ddc1f626d2a3e5031c4f32ec1e",
+  "feature_schema_version": "posefeat-v2",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 4025,
+    "MODERATE_OBSERVED_PARTICIPATION": 1778,
+    "LOW_OBSERVED_PARTICIPATION": 172
+  },
+  "metrics_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261025-102826-lstm-posefeat-v2\\metrics.json",
+  "overrides": {
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "epochs": 30,
+    "patience": 10,
+    "device": "cpu"
+  },
+  "evaluation_report": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261025-102826-lstm-posefeat-v2\\evaluation_report.json",
+  "predictions_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261025-102826-lstm-posefeat-v2\\predictions.csv",
+  "metric_scope": "weak_rule_labels",
+  "evaluated_windows": 122,
+  "coverage": 0.9836,
+  "accepted_macro_f1": 0.9226,
+  "raw_macro_f1": 0.9096
+}

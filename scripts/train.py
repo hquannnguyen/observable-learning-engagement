@@ -11,6 +11,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import logging
 import random
@@ -28,9 +29,12 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from src.models.lstm import ParticipationLSTM
+from src.contracts.labels import CANONICAL_TRAINING_LABELS
+from src.models.factory import build_model
+from src.preprocessing.features import FEATURE_SCHEMA_VERSION
 from src.training.dataset import WindowFeatureDataset
 from src.training.trainer import compute_multiclass_metrics, evaluate_model, train_epoch
+from scripts.new_experiment import create_experiment
 
 logging.basicConfig(
     level=logging.INFO,
@@ -57,6 +61,8 @@ def main() -> None:
     parser.add_argument("--lr", type=float, default=None, help="Learning rate override.")
     parser.add_argument("--patience", type=int, default=10, help="Early stopping patience.")
     parser.add_argument("--device", type=str, default=None, help="Device ('cpu', 'cuda').")
+    parser.add_argument("--notes", type=str, default="", help="Free-form notes stored in experiment metadata.")
+    parser.add_argument("--model", choices=("lstm", "tcn"), default=None, help="Override model.type from config.")
     args = parser.parse_args()
 
     feat_path = Path(args.features)
@@ -90,6 +96,11 @@ def main() -> None:
     X_train, y_train = data["X_train"], data["y_train"]
     X_val, y_val = data["X_val"], data["y_val"]
     X_test, y_test = data["X_test"], data["y_test"]
+    feature_schema_version = (
+        str(data["feature_schema_version"])
+        if "feature_schema_version" in data.files
+        else FEATURE_SCHEMA_VERSION
+    )
 
     logger.info("Loaded datasets: Train=%d, Val=%d, Test=%d windows", len(X_train), len(X_val), len(X_test))
 
@@ -102,13 +113,9 @@ def main() -> None:
     test_loader = DataLoader(test_ds, batch_size=batch_size, shuffle=False)
 
     input_size = X_train.shape[-1] if len(X_train) > 0 else 77
-    model = ParticipationLSTM(
-        input_size=input_size,
-        hidden_size=hidden_size,
-        num_layers=num_layers,
-        num_classes=num_classes,
-        dropout=dropout,
-    ).to(device)
+    model_type = (args.model or model_cfg.get("type", "lstm")).lower()
+    model = build_model(model_cfg, input_size=input_size, model_type=model_type).to(device)
+    logger.info("Model architecture: %s (input_size=%d)", model_type, input_size)
 
     # Class-weighted CrossEntropyLoss for imbalance
     class_weights = train_ds.compute_class_weights(num_classes=num_classes).to(device)
@@ -119,12 +126,19 @@ def main() -> None:
     patience_counter = 0
     best_epoch = 0
 
+    # Create an immutable experiment folder with config snapshot + metadata.
+    exp_dir = create_experiment(
+        name=args.name,
+        config_path=Path(args.config),
+        notes=args.notes or "LSTM training run.",
+    )
+    metadata = json.loads((exp_dir / "metadata.json").read_text(encoding="utf-8"))
+    experiment_id = metadata["experiment_id"]
+    logger.info("Experiment: %s", experiment_id)
+
     ckpt_dir = Path("models/checkpoints")
     ckpt_dir.mkdir(parents=True, exist_ok=True)
-    best_ckpt_path = ckpt_dir / f"{args.name}.pt"
-
-    exp_dir = Path("reports/experiments") / args.name
-    exp_dir.mkdir(parents=True, exist_ok=True)
+    best_ckpt_path = ckpt_dir / f"{experiment_id}.pt"
 
     history = []
     logger.info("Starting LSTM training for %d epochs...", args.epochs)
@@ -157,10 +171,13 @@ def main() -> None:
                 "model_state_dict": model.state_dict(),
                 "optimizer_state_dict": optimizer.state_dict(),
                 "best_val_f1": best_val_f1,
+                "model_type": model_type,
                 "input_size": input_size,
                 "hidden_size": hidden_size,
                 "num_layers": num_layers,
                 "num_classes": num_classes,
+                "dropout": dropout,
+                "tcn": model_cfg.get("tcn", {}),
             }, best_ckpt_path)
             logger.info("  --> Saved new best model checkpoint (Val Macro-F1: %.4f)", best_val_f1)
         else:
@@ -183,20 +200,63 @@ def main() -> None:
     logger.info("  Per-class metrics:     %s", json.dumps(test_metrics["per_class"], indent=2))
     logger.info("=======================================================")
 
+    checkpoint_sha256 = hashlib.sha256(best_ckpt_path.read_bytes()).hexdigest()
+    class_counts = {
+        label: int((train_ds.labels == idx).sum())
+        for idx, label in enumerate(CANONICAL_TRAINING_LABELS)
+    }
+
     results = {
+        "experiment_id": experiment_id,
         "experiment_name": args.name,
-        "model_type": "LSTM",
-        "created_at": datetime.now().isoformat(),
+        "model_type": model_type.upper(),
+        "created_at": metadata["created_at"],
         "seed": seed,
+        "dataset_version": metadata["dataset_version"],
+        "split_version": metadata["split_version"],
+        "feature_schema_version": feature_schema_version,
+        "config_sha256": metadata["config_sha256"],
+        "git_commit": metadata["git_commit"],
         "best_epoch": best_epoch,
         "best_val_macro_f1": best_val_f1,
         "test_metrics": test_metrics,
         "history": history,
         "checkpoint_path": str(best_ckpt_path),
+        "checkpoint_sha256": checkpoint_sha256,
+        "class_counts_train": class_counts,
+        "overrides": {
+            "batch_size": batch_size,
+            "learning_rate": lr,
+            "epochs": args.epochs,
+            "patience": args.patience,
+            "device": str(device),
+        },
     }
 
     metrics_out = exp_dir / "metrics.json"
     metrics_out.write_text(json.dumps(results, indent=2), encoding="utf-8")
+
+    history_out = exp_dir / "training_history.csv"
+    import csv
+
+    with history_out.open("w", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(fh, fieldnames=list(history[0].keys()))
+        writer.writeheader()
+        writer.writerows(history)
+
+    metadata.update(
+        {
+            "checkpoint_path": str(best_ckpt_path),
+            "checkpoint_sha256": checkpoint_sha256,
+            "feature_schema_version": feature_schema_version,
+            "class_counts_train": class_counts,
+            "metrics_file": str(metrics_out),
+            "overrides": results["overrides"],
+        }
+    )
+    (exp_dir / "metadata.json").write_text(
+        json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
     logger.info("Saved experiment artifacts to: %s", exp_dir)
 
 

@@ -1,13 +1,15 @@
-# Full dependencies will be pinned when implementation starts.
-ultralytics
-opencv-python
-numpy
-pandas
-pyarrow
-scikit-learn
-torch
-streamlit
-plotly
-pyyaml
-matplotlib
-pytest
+# Tested on Python 3.14.7 (Windows, CPU-only PyTorch).
+# CI uses Python 3.12; see docs/ENVIRONMENT.md.
+ultralytics==8.4.173
+torch==2.14.1
+torchvision==0.29.1
+opencv-python==5.0.0.93
+numpy==2.5.3
+pandas==3.0.6
+pyarrow==26.0.0
+PyYAML==6.0.3
+matplotlib==3.11.2
+pytest==8.4.2
+streamlit==1.66.1
+plotly==7.1.0
+scikit-learn>=1.5,<2

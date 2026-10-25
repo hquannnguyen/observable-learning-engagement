@@ -304,36 +304,37 @@ docs(T04): refine annotation guide examples
 
 ## 11. Trạng thái hiện tại
 
-### Hoàn thành
-- **T01 — Scope & Terminology** ✅
-- **T02 — Repo & Experiment Logging** ✅
-- **T06 — YOLOv8-Pose extractor** ✅
-- **T07 — ByteTrack integration & tracking QA** ✅
-- **T13 — Pose Quality Gate** ✅
-- **T14 — Keypoint cleaning & normalization** ✅
-- **T15 — Pose/motion feature engineering** ✅
-- **T16 — Weak supervision labeling functions** ✅
-- **T17 — Sliding-window builder** ✅
-- **T18 — Group train/val/test split** ✅
-- **T22 — Customized LSTM M2** ✅
-- **T23 — Training & evaluation pipeline** ✅
-- **T30 — Uncertainty gate integration** ✅
+> **Nguồn sự thật:** [`docs/PROJECT_STATUS.md`](PROJECT_STATUS.md) — cập nhật 2026-10-25.  
+> Bảng dưới đây tóm tắt; nếu khác PROJECT_STATUS thì PROJECT_STATUS thắng.
+
+### DONE (17)
+T01, T02, T06, T07, T13, T14, T15, T17, T18, T22, T23, T25, T30, T35, T36, T37, T38.
+
+### PARTIAL (chưa đủ DoD)
+- **T04/T05/T08–T11:** tài liệu/pilot/metadata/annotation tooling mới ở mức draft hoặc thiếu verify.
+- **T12:** BLOCKED — chưa có nhãn người thật; file “double annotator” cũ là synthetic, đã archive.
+- **T16/T19:** weak-label rule + QA tool có; chưa có acceptance report/Kappa thật.
+- **T24:** có LSTM vs TCN; chưa có M0/M1.
+- **T29:** class-weighted loss có, chưa có experiment no-weight vs weighted.
+- **T32/T33:** zone aggregation có; chưa có F1/bias theo zone; blur chưa bật mặc định.
+- **T34:** benchmark FPS/track stats; ID switch/fragmentation N/A (không có GT).
+- **T34/T39:** benchmark tracker chỉ FPS/track stats; end-to-end mới smoke video ngắn.
+
+### DRAFT
+- **T03:** protocol/privacy draft, chờ owner duyệt.
+
+### NOT STARTED
+T20, T21, T26–T28, T31, T40, T41.
 
 ### Task tiếp theo được ưu tiên
-1. **T03 — Data collection/privacy protocol** — draft v0.1 đã có trong repo, cần owner/reviewer duyệt checklist trước khi Done.
-2. **T04 — Annotation guide v0.1** — draft v0.1 + sample schema đã có, cần double-review trên pilot trước khi Done.
-3. Sau khi T03/T04 ổn định mới thực hiện T05 pilot.
+1. **A6/A7 — gán nhãn người thật cho test set.** Trong lúc chờ, mọi metric phải ghi `metric_scope=weak_rule_labels`.
+2. **T35/T39 — upload → full pipeline trên dashboard + benchmark end-to-end.**
+3. **T20/T21 + ablation + calibration** (M0/M1, representation/window/motion, ECE).
 
-### Repository readiness đã bổ sung
-- Dataset schema + sample metadata/annotation/window.
-- Privacy/consent guide.
-- Google Colab notebook templates (orchestration only).
-- Model checkpoint storage rule.
-- Contract tests + GitHub CI.
-
-Các bổ sung này chuẩn bị hạ tầng, **không thay đổi trạng thái các task thuật toán chưa triển khai**.
-
-Không bắt đầu train LSTM/TCN trước khi pilot camera, annotation guide, data schema và split strategy đủ tin cậy.
+### Quy tắc
+- Không gọi metric weak-label là accuracy trên hành vi người thật.
+- Không chọn model/window/threshold bằng test set.
+- Mọi train/eval phải có experiment ID + config snapshot + seed + git commit + split version.
 
 ---
 

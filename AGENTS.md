@@ -133,26 +133,41 @@ Do not silently change this contract.
 
 ## 5. Current repository status
 
-### Completed
-- **T01:** scope, input/output, terminology and inference limits.
-- **T02:** repository skeleton, baseline config, experiment metadata/logging utilities.
+> **Source of truth:** [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md) — cập nhật 2026-10-25.
+> Khi tài liệu này khác bảng trạng thái, bảng trạng thái thắng.
 
-### Current implementation level
-This repository is still a **baseline skeleton**. Placeholder directories do not imply their algorithms are implemented.
+### Implemented (DONE)
+- **T01/T02:** scope, labels, repo skeleton, baseline config, experiment creation.
+- **T06/T07:** YOLOv8-Pose extraction + ByteTrack tracking.
+- **T13/T14/T15:** quality gate, cleaning, `posefeat-v1` (77) + `posefeat-v2` (94, explicit masks).
+- **T17/T18:** sliding windows + frozen `split-v0.1` (builder validates leakage).
+- **T22/T23:** LSTM + train/evaluate pipeline with metadata, config snapshot, predictions.
+- **T25:** TCN (`src/models/tcn.py`) + comparison report.
+- **T30:** uncertainty gate with explicit gate reasons.
+- **T36–T38:** dashboard preview/timeline/zone/export.
+- **T35:** upload video → full inference flow (`scripts/predict_video.py`).
 
-As of the current context:
-- YOLOv8-Pose extraction: not yet considered complete.
-- Tracking implementation: not yet considered complete.
-- Feature extraction: not yet considered complete.
-- LSTM/TCN training: not yet considered complete.
-- Full Streamlit flow: not yet considered complete.
+### PARTIAL / chưa đủ DoD
+- **T16:** weak labels có contract, nhưng không phải ground truth.
+- **T19:** chưa có acceptance report/Kappa thật.
+- **T24:** có LSTM vs TCN, chưa có M0/M1.
+- **T32/T33:** zone aggregation có nhưng chưa có F1/bias theo zone; blur chưa bật mặc định.
+- **T34/T39:** benchmark tracker chỉ FPS/track stats; end-to-end benchmark mới chạy smoke trên video ngắn.
+- **T12:** BLOCKED — chưa có nhãn người thật.
 
-Never claim later tasks are complete just because a folder/file placeholder exists.
+### NOT STARTED
+- M0/M1 (T20/T21), ablation T26–T28, calibration T31, demo/package T40–T41.
+
+### Chưa có nhãn người thật
+`scripts/generate_annotations.py` chỉ sinh `WEAK_RULE` (không còn gắn HUMAN giả).
+Human labels phải lấy qua `scripts/sample_annotation_subset.py` và
+`scripts/dataset_qa.py --strict-human`. Cho đến khi có nhãn người, mọi metric
+phải gọi là **weak-label agreement**, không phải accuracy trên hành vi người thật.
 
 ### Immediate next work
-- T03 Data collection/privacy protocol.
-- T04 Annotation guide v0.1.
-- Then T05 pilot recording setup.
+1. Gán nhãn người cho test set (A6/A7 trong `docs/REMEDIATION_PLAN.md`).
+2. Upload → full pipeline trên Streamlit (T35/T39).
+3. M0/M1 + ablation + calibration (T20/T21/T26–T31).
 
 Full task order and DoD: [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md).
 
@@ -626,7 +641,7 @@ Google Colab is an execution environment, not a separate codebase.
 - Large datasets/checkpoints stay in approved private storage (for example Google Drive); do not commit raw private video or large model files.
 - Official train/evaluation runs still require experiment ID, config snapshot, seed, git commit and dataset version.
 
-Current notebook files are templates. Their existence does not mean T06/T22/etc. are implemented.
+Notebook files are orchestration templates; they call `src/`/`scripts/`. Their existence does not mean a task is Done. Check `docs/PROJECT_STATUS.md` for the real state.
 
 ## 25. Data-contract documents
 

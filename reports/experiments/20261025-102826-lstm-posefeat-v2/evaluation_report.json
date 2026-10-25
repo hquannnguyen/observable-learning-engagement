@@ -1,0 +1,123 @@
+{
+  "checkpoint": "models\\checkpoints\\20261025-102826-lstm-posefeat-v2.pt",
+  "experiment_id": "20261025-102826-lstm-posefeat-v2",
+  "total_test_windows": 141,
+  "evaluated_windows": 122,
+  "excluded_unlabeled_windows": 19,
+  "coverage": 0.9836,
+  "uncertain_rate": 0.0164,
+  "thresholds": {
+    "min_probability": 0.6,
+    "min_visible_ratio": 0.6,
+    "min_mean_keypoint_confidence": 0.3
+  },
+  "label_source_counts": {
+    "WEAK_RULE": 122
+  },
+  "gate_reason_counts": {
+    "ACCEPTED": 120,
+    "LOW_MODEL_CONF": 2
+  },
+  "raw_metrics": {
+    "macro_f1": 0.9096,
+    "balanced_accuracy": 0.931,
+    "accuracy": 0.9098,
+    "confusion_matrix": [
+      [
+        61,
+        8,
+        0
+      ],
+      [
+        1,
+        30,
+        2
+      ],
+      [
+        0,
+        0,
+        20
+      ]
+    ],
+    "per_class": {
+      "HIGH_OBSERVED_PARTICIPATION": {
+        "precision": 0.9839,
+        "recall": 0.8841,
+        "f1": 0.9313,
+        "support": 69
+      },
+      "MODERATE_OBSERVED_PARTICIPATION": {
+        "precision": 0.7895,
+        "recall": 0.9091,
+        "f1": 0.8451,
+        "support": 33
+      },
+      "LOW_OBSERVED_PARTICIPATION": {
+        "precision": 0.9091,
+        "recall": 1.0,
+        "f1": 0.9524,
+        "support": 20
+      }
+    }
+  },
+  "accepted_metrics": {
+    "macro_f1": 0.9226,
+    "balanced_accuracy": 0.9398,
+    "accuracy": 0.925,
+    "confusion_matrix": [
+      [
+        61,
+        6,
+        0
+      ],
+      [
+        1,
+        30,
+        2
+      ],
+      [
+        0,
+        0,
+        20
+      ]
+    ],
+    "per_class": {
+      "HIGH_OBSERVED_PARTICIPATION": {
+        "precision": 0.9839,
+        "recall": 0.9104,
+        "f1": 0.9457,
+        "support": 67
+      },
+      "MODERATE_OBSERVED_PARTICIPATION": {
+        "precision": 0.8333,
+        "recall": 0.9091,
+        "f1": 0.8696,
+        "support": 33
+      },
+      "LOW_OBSERVED_PARTICIPATION": {
+        "precision": 0.9091,
+        "recall": 1.0,
+        "f1": 0.9524,
+        "support": 20
+      }
+    }
+  },
+  "by_session": {
+    "session_005": {
+      "windows": 63,
+      "accepted": 62,
+      "uncertain": 1,
+      "coverage": 0.9841,
+      "macro_f1": 0.8859
+    },
+    "session_006": {
+      "windows": 59,
+      "accepted": 58,
+      "uncertain": 1,
+      "coverage": 0.9831,
+      "macro_f1": 0.9666
+    }
+  },
+  "predictions_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261025-102826-lstm-posefeat-v2\\predictions.csv",
+  "metric_scope": "weak_rule_labels"
+}

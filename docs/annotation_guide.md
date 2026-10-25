@@ -98,16 +98,32 @@ Ghi label_source (+ rule version nếu WEAK_RULE)
 
 ## 9. Double annotation QA
 
-- Hai annotator gán độc lập ít nhất 15–20% subset.
-- Báo Cohen’s kappa cho categorical label.
+- Hai annotator gán độc lập ít nhất 15–20% subset, **blind** (không thấy weak label của nhau).
+- Template được sinh bởi `scripts/sample_annotation_subset.py`; file gốc nằm ở `data/annotations/human/`.
+- Báo Cohen’s kappa cho categorical label; chỉ tính trên cặp `HUMAN`/`ADJUDICATED`.
+- Chạy QA với chế độ nghiêm:
+
+```bash
+python scripts/dataset_qa.py \
+  --annotator-a data/annotations/human/ann_a.csv \
+  --annotator-b data/annotations/human/ann_b.csv \
+  --strict-human --min-kappa 0.60 \
+  --report-json data/annotations/human/qa_report.json
+```
+
 - Review disagreement và cập nhật guide trước annotation toàn bộ.
 - Đóng băng guide version trước khi tạo test set chính thức.
 - Không sửa test label vì model dự đoán khác; chỉ sửa khi có lỗi annotation có bằng chứng và phải log.
+
+> **Cảnh báo:** `scripts/generate_annotations.py` chỉ sinh `WEAK_RULE`. Script này
+> **không được** gắn `HUMAN`, không được tạo “double annotator” giả. Mọi nhãn HUMAN
+> phải do người thật gán và đi qua `--strict-human`.
 
 ## 10. File format / source of truth
 
 - Schema: `docs/dataset_schema.md`.
 - Template: `data/sample/annotation.example.csv`.
+- Human template: `data/annotations/human/annotation_template.csv` (sinh bằng script).
 - Enum/mapping code: `src/contracts/labels.py`.
 
 ## 11. Owner / Review

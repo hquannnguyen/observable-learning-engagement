@@ -32,23 +32,32 @@ LEFT_HIP = 11
 RIGHT_HIP = 12
 
 FEATURE_SCHEMA_VERSION = "posefeat-v1"
+FEATURE_SCHEMA_VERSION_V2 = "posefeat-v2"
+FEATURE_DIM_V1 = 77
+FEATURE_DIM_V2 = 94  # 77 + 17 keypoint visibility masks
 
 
 def compute_track_features(
     track_df: pd.DataFrame,
     sample_fps: float = 10.0,
+    include_mask: bool = False,
 ) -> Tuple[np.ndarray, List[str]]:
     """Compute per-frame feature vectors for a single continuous track.
 
     Args:
         track_df: DataFrame of pose detections for a single track, sorted by frame_idx.
         sample_fps: Frame rate for computing velocity (default 10.0 FPS).
+        include_mask: If True, append 17 keypoint-validity mask channels
+            (``posefeat-v2``, 94 dims). Missing keypoints still get 0.0
+            coordinates for model compatibility, but the mask makes the
+            imputation explicit.
 
     Returns:
         (feature_matrix [T, F], feature_names [F])
     """
+    expected_dim = FEATURE_DIM_V2 if include_mask else FEATURE_DIM_V1
     if track_df.empty:
-        return np.empty((0, 76), dtype=np.float32), []
+        return np.empty((0, expected_dim), dtype=np.float32), []
 
     track_df = track_df.sort_values("frame_idx").copy()
     T = len(track_df)
@@ -64,9 +73,13 @@ def compute_track_features(
 
         track_df = normalize_keypoints(track_df, method="torso")
 
-    kpt_coords = track_df[norm_kpt_cols].to_numpy(dtype=np.float32)
-    # Fill any remaining NaNs with 0.0
-    kpt_coords = np.nan_to_num(kpt_coords, nan=0.0)
+    raw_kpt_coords = track_df[norm_kpt_cols].to_numpy(dtype=np.float32)
+    # Mask is computed BEFORE imputation, so a missing joint is never presented
+    # as a real (0, 0) observation without a flag.
+    kpt_mask = (
+        np.isfinite(raw_kpt_coords).reshape(T, 17, 2).all(axis=2).astype(np.float32)
+    )
+    kpt_coords = np.nan_to_num(raw_kpt_coords, nan=0.0)
 
     # 2. Keypoint velocities (34 features: delta / dt)
     dt = 1.0 / sample_fps
@@ -126,16 +139,18 @@ def compute_track_features(
         ]
     )
 
-    feature_matrix = np.hstack(
-        [
-            kpt_coords,      # 34
-            velocities,      # 34
-            geom_features,   # 6
-            motion_energy,   # 1
-            vis_ratio,       # 1
-            mean_conf,       # 1
-        ]
-    ).astype(np.float32)  # Total: 77 features
+    blocks = [
+        kpt_coords,      # 34
+        velocities,      # 34
+        geom_features,   # 6
+        motion_energy,   # 1
+        vis_ratio,       # 1
+        mean_conf,       # 1
+    ]
+    if include_mask:
+        blocks.append(kpt_mask)  # 17
+
+    feature_matrix = np.hstack(blocks).astype(np.float32)
 
     # Feature names list
     feature_names = (
@@ -153,6 +168,8 @@ def compute_track_features(
             "mean_keypoint_conf",
         ]
     )
+    if include_mask:
+        feature_names += [f"kpt_mask_{i:02d}" for i in range(17)]
 
     # Enforce strictly finite (no NaN or Inf)
     feature_matrix = np.nan_to_num(feature_matrix, nan=0.0, posinf=1.0, neginf=-1.0)

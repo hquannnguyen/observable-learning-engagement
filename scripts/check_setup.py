@@ -68,4 +68,4 @@ if missing:
     sys.exit(1)
 
 print(f"OK - {len(REQUIRED)} required paths found.")
-print("Repository is ready for T03/T04 review and implementation work.")
+print("Skeleton OK. See docs/PROJECT_STATUS.md for task state; human labels are still pending.")

@@ -14,7 +14,13 @@ import numpy as np
 import pandas as pd
 
 from src.preprocessing.feature_contract import validate_temporal_features
-from src.preprocessing.features import FEATURE_SCHEMA_VERSION, compute_track_features
+from src.preprocessing.features import (
+    FEATURE_DIM_V1,
+    FEATURE_DIM_V2,
+    FEATURE_SCHEMA_VERSION,
+    FEATURE_SCHEMA_VERSION_V2,
+    compute_track_features,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +35,8 @@ def build_track_windows(
     label_schema_version: str = "labels-v1",
     annotation_guide_version: str = "v0.2",
     split: str = "train",
+    include_mask: bool = False,
+    quality_thresholds: Optional[Dict[str, float]] = None,
 ) -> Tuple[List[Dict[str, Any]], np.ndarray]:
     """Slice a continuous pose track into sliding temporal feature windows.
 
@@ -42,15 +50,29 @@ def build_track_windows(
         label_schema_version: Label schema tag.
         annotation_guide_version: Guide version tag.
         split: Split partition ('train', 'val', or 'test').
+        include_mask: Append 17 keypoint visibility masks (posefeat-v2, 94 dims).
+        quality_thresholds: Optional dict with ``min_visible_ratio`` and
+            ``min_mean_keypoint_confidence``; defaults come from baseline.yaml.
 
     Returns:
         (list of window metadata dicts, 3D tensor of shape [N_windows, 40, F])
     """
+    expected_dim = FEATURE_DIM_V2 if include_mask else FEATURE_DIM_V1
+    schema_version = (
+        FEATURE_SCHEMA_VERSION_V2 if include_mask else FEATURE_SCHEMA_VERSION
+    )
+    min_vis = float((quality_thresholds or {}).get("min_visible_ratio", 0.60))
+    min_conf = float(
+        (quality_thresholds or {}).get("min_mean_keypoint_confidence", 0.30)
+    )
+
     if track_df.empty:
-        return [], np.empty((0, 40, 77), dtype=np.float32)
+        return [], np.empty((0, 40, expected_dim), dtype=np.float32)
 
     track_df = track_df.sort_values("frame_idx").copy()
-    features, _ = compute_track_features(track_df, sample_fps=sample_fps)
+    features, _ = compute_track_features(
+        track_df, sample_fps=sample_fps, include_mask=include_mask
+    )
 
     W = int(round(window_seconds * sample_fps))  # 40 steps
     S = int(round(stride_seconds * sample_fps))  # 20 steps
@@ -97,7 +119,15 @@ def build_track_windows(
             else 1.0
         )
 
-        quality_state = "VALID" if mean_vis >= 0.60 and mean_conf >= 0.30 else "INVALID"
+        if mean_vis < min_vis:
+            quality_state = "INVALID"
+            quality_reason = "LOW_VISIBILITY"
+        elif mean_conf < min_conf:
+            quality_state = "INVALID"
+            quality_reason = "LOW_KEYPOINT_CONF"
+        else:
+            quality_state = "VALID"
+            quality_reason = None
 
         win_id = f"{session_id}_{camera_id}_trk{track_id:03d}_w{window_idx:04d}"
 
@@ -110,7 +140,12 @@ def build_track_windows(
             "t_end_ms": t_end_ms,
             "class_phase": class_phase,
             "zone_id": zone_id,
-            "feature_schema_version": FEATURE_SCHEMA_VERSION,
+            "feature_schema_version": schema_version,
+            "dataset_version": dataset_version,
+            "split_version": split_version,
+            "label_schema_version": label_schema_version,
+            "quality_state": quality_state,
+            "quality_reason": quality_reason,
             "dataset_version": dataset_version,
             "split_version": split_version,
             "label_schema_version": label_schema_version,

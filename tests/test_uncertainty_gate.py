@@ -1,7 +1,11 @@
 import pytest
 
 from src.contracts.labels import HIGH, UNCERTAIN_LABEL
-from src.uncertainty.gate import UncertaintyThresholds, apply_uncertainty_gate
+from src.uncertainty.gate import (
+    UncertaintyThresholds,
+    apply_uncertainty_gate,
+    explain_uncertainty_gate,
+)
 
 THRESHOLDS = UncertaintyThresholds(
     min_visible_ratio=0.60,
@@ -63,3 +67,26 @@ def test_noncanonical_class_order_rejected(labels):
             [0.8, 0.1, 0.1], visible_ratio=0.9,
             mean_keypoint_confidence=0.9, class_labels=labels,
         )
+
+
+@pytest.mark.parametrize(
+    ("visible_ratio", "keypoint_conf", "probs", "expected"),
+    [
+        (0.40, 0.90, [0.90, 0.05, 0.05], "LOW_VISIBILITY"),
+        (0.90, 0.20, [0.90, 0.05, 0.05], "LOW_KEYPOINT_CONF"),
+        (0.90, 0.80, [0.40, 0.35, 0.25], "LOW_MODEL_CONF"),
+        (0.90, 0.80, [0.80, 0.10, 0.10], "ACCEPTED"),
+    ],
+)
+def test_gate_reason_is_explicit(visible_ratio, keypoint_conf, probs, expected):
+    label, reason = explain_uncertainty_gate(
+        probs,
+        visible_ratio=visible_ratio,
+        mean_keypoint_confidence=keypoint_conf,
+        thresholds=THRESHOLDS,
+    )
+    assert reason == expected
+    if expected == "ACCEPTED":
+        assert label == HIGH
+    else:
+        assert label == UNCERTAIN_LABEL

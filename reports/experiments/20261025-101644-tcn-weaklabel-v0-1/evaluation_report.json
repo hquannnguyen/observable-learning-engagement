@@ -1,0 +1,123 @@
+{
+  "checkpoint": "models\\checkpoints\\20261025-101644-tcn-weaklabel-v0-1.pt",
+  "experiment_id": "20261025-101644-tcn-weaklabel-v0-1",
+  "total_test_windows": 141,
+  "evaluated_windows": 122,
+  "excluded_unlabeled_windows": 19,
+  "coverage": 0.9426,
+  "uncertain_rate": 0.0574,
+  "thresholds": {
+    "min_probability": 0.6,
+    "min_visible_ratio": 0.6,
+    "min_mean_keypoint_confidence": 0.3
+  },
+  "label_source_counts": {
+    "WEAK_RULE": 122
+  },
+  "gate_reason_counts": {
+    "ACCEPTED": 115,
+    "LOW_MODEL_CONF": 7
+  },
+  "raw_metrics": {
+    "macro_f1": 0.8726,
+    "balanced_accuracy": 0.8898,
+    "accuracy": 0.8934,
+    "confusion_matrix": [
+      [
+        65,
+        4,
+        0
+      ],
+      [
+        4,
+        24,
+        5
+      ],
+      [
+        0,
+        0,
+        20
+      ]
+    ],
+    "per_class": {
+      "HIGH_OBSERVED_PARTICIPATION": {
+        "precision": 0.942,
+        "recall": 0.942,
+        "f1": 0.942,
+        "support": 69
+      },
+      "MODERATE_OBSERVED_PARTICIPATION": {
+        "precision": 0.8571,
+        "recall": 0.7273,
+        "f1": 0.7869,
+        "support": 33
+      },
+      "LOW_OBSERVED_PARTICIPATION": {
+        "precision": 0.8,
+        "recall": 1.0,
+        "f1": 0.8889,
+        "support": 20
+      }
+    }
+  },
+  "accepted_metrics": {
+    "macro_f1": 0.8863,
+    "balanced_accuracy": 0.8979,
+    "accuracy": 0.913,
+    "confusion_matrix": [
+      [
+        64,
+        2,
+        0
+      ],
+      [
+        3,
+        21,
+        5
+      ],
+      [
+        0,
+        0,
+        20
+      ]
+    ],
+    "per_class": {
+      "HIGH_OBSERVED_PARTICIPATION": {
+        "precision": 0.9552,
+        "recall": 0.9697,
+        "f1": 0.9624,
+        "support": 66
+      },
+      "MODERATE_OBSERVED_PARTICIPATION": {
+        "precision": 0.913,
+        "recall": 0.7241,
+        "f1": 0.8077,
+        "support": 29
+      },
+      "LOW_OBSERVED_PARTICIPATION": {
+        "precision": 0.8,
+        "recall": 1.0,
+        "f1": 0.8889,
+        "support": 20
+      }
+    }
+  },
+  "by_session": {
+    "session_005": {
+      "windows": 63,
+      "accepted": 59,
+      "uncertain": 4,
+      "coverage": 0.9365,
+      "macro_f1": 0.8937
+    },
+    "session_006": {
+      "windows": 59,
+      "accepted": 56,
+      "uncertain": 3,
+      "coverage": 0.9492,
+      "macro_f1": 0.8646
+    }
+  },
+  "predictions_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261025-101644-tcn-weaklabel-v0-1\\predictions.csv",
+  "metric_scope": "weak_rule_labels"
+}

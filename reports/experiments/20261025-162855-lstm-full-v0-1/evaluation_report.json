@@ -1,0 +1,123 @@
+{
+  "checkpoint": "models\\checkpoints\\20261025-162855-lstm-full-v0-1.pt",
+  "experiment_id": "20261025-162855-lstm-full-v0-1",
+  "total_test_windows": 7467,
+  "evaluated_windows": 6518,
+  "excluded_unlabeled_windows": 949,
+  "coverage": 0.9854,
+  "uncertain_rate": 0.0146,
+  "thresholds": {
+    "min_probability": 0.6,
+    "min_visible_ratio": 0.6,
+    "min_mean_keypoint_confidence": 0.3
+  },
+  "label_source_counts": {
+    "WEAK_RULE": 6518
+  },
+  "gate_reason_counts": {
+    "ACCEPTED": 6423,
+    "LOW_MODEL_CONF": 95
+  },
+  "raw_metrics": {
+    "macro_f1": 0.9098,
+    "balanced_accuracy": 0.9107,
+    "accuracy": 0.9228,
+    "confusion_matrix": [
+      [
+        3302,
+        130,
+        6
+      ],
+      [
+        172,
+        1907,
+        103
+      ],
+      [
+        0,
+        92,
+        806
+      ]
+    ],
+    "per_class": {
+      "HIGH_OBSERVED_PARTICIPATION": {
+        "precision": 0.9505,
+        "recall": 0.9604,
+        "f1": 0.9554,
+        "support": 3438
+      },
+      "MODERATE_OBSERVED_PARTICIPATION": {
+        "precision": 0.8957,
+        "recall": 0.874,
+        "f1": 0.8847,
+        "support": 2182
+      },
+      "LOW_OBSERVED_PARTICIPATION": {
+        "precision": 0.8809,
+        "recall": 0.8976,
+        "f1": 0.8891,
+        "support": 898
+      }
+    }
+  },
+  "accepted_metrics": {
+    "macro_f1": 0.9151,
+    "balanced_accuracy": 0.9162,
+    "accuracy": 0.9281,
+    "confusion_matrix": [
+      [
+        3283,
+        121,
+        6
+      ],
+      [
+        152,
+        1878,
+        97
+      ],
+      [
+        0,
+        86,
+        800
+      ]
+    ],
+    "per_class": {
+      "HIGH_OBSERVED_PARTICIPATION": {
+        "precision": 0.9557,
+        "recall": 0.9628,
+        "f1": 0.9592,
+        "support": 3410
+      },
+      "MODERATE_OBSERVED_PARTICIPATION": {
+        "precision": 0.9007,
+        "recall": 0.8829,
+        "f1": 0.8917,
+        "support": 2127
+      },
+      "LOW_OBSERVED_PARTICIPATION": {
+        "precision": 0.8859,
+        "recall": 0.9029,
+        "f1": 0.8944,
+        "support": 886
+      }
+    }
+  },
+  "by_session": {
+    "session_005": {
+      "windows": 5241,
+      "accepted": 5178,
+      "uncertain": 63,
+      "coverage": 0.988,
+      "macro_f1": 0.9143
+    },
+    "session_006": {
+      "windows": 1277,
+      "accepted": 1245,
+      "uncertain": 32,
+      "coverage": 0.9749,
+      "macro_f1": 0.9183
+    }
+  },
+  "predictions_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261025-162855-lstm-full-v0-1\\predictions.csv",
+  "metric_scope": "weak_rule_labels"
+}

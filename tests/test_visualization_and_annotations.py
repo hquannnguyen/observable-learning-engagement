@@ -12,7 +12,10 @@ from src.pose.visualization import (
     get_limb_color,
 )
 from scripts.dataset_qa import validate_annotation_dataframe
-from scripts.generate_annotations import analyze_track_interval
+from scripts.generate_annotations import (
+    analyze_track_interval,
+    generate_session_annotations,
+)
 
 
 def test_draw_skeleton_on_frame():
@@ -86,3 +89,37 @@ def test_saved_annotations_qa():
     df = pd.read_csv(ann_file)
     is_valid, errors = validate_annotation_dataframe(df)
     assert is_valid, f"Annotations QA failed with errors: {errors}"
+
+
+def test_generate_annotations_never_emits_human(tmp_path):
+    """The heuristic labeler must never claim HUMAN provenance."""
+    rows = []
+    for f in range(24):
+        rows.append(
+            {
+                "session_id": "s_test",
+                "camera_id": "cam_A",
+                "track_id": 1,
+                "timestamp_ms": f * 100,
+                "visible_ratio": 0.9,
+                "mean_keypoint_conf": 0.8,
+                "kpt_00_x": 320.0,
+                "kpt_00_y": 100.0,
+                "kpt_01_x": 315.0,
+                "kpt_02_x": 325.0,
+                "kpt_05_y": 160.0,
+                "kpt_06_y": 160.0,
+                "kpt_09_y": 180.0,
+                "kpt_10_y": 180.0,
+                "zone_id": "M-C",
+            }
+        )
+    pose_csv = tmp_path / "s_test_cam_A_poses.csv"
+    pd.DataFrame(rows).to_csv(pose_csv, index=False)
+
+    ann = generate_session_annotations(pose_csv)
+    assert not ann.empty
+    sources = set(ann["label_source"].dropna().unique())
+    assert sources <= {"WEAK_RULE"}, f"unexpected provenance: {sources}"
+    assert set(ann["annotator_id"].unique()) == {"SYSTEM"}
+    assert set(ann["label_rule_version"].dropna().unique()) == {"weak-v0.1"}

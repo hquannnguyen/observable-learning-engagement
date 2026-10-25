@@ -174,24 +174,32 @@ Repo đã có thêm các contract/template để bắt đầu T03+ mà không th
 
 > Các file T03/T04 hiện là **draft v0.1 cần team review**. Có file không đồng nghĩa task đã Done.
 
-## 10. Definition of Done — T01/T02
+## 10. Trạng thái triển khai (cập nhật 2026-10-25)
 
-### T01 — Scope & Terminology
-- [x] Chốt input/output.
-- [x] Chốt 4 output state của hệ thống.
-- [x] Nêu rõ giới hạn suy luận.
-- [x] Thống nhất thuật ngữ chính thức.
+> Nguồn sự thật duy nhất: [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md).  
+> Hạn chế khoa học: [`docs/LIMITATIONS.md`](docs/LIMITATIONS.md).
 
-### T02 — Repo & Experiment Log
-- [x] Có source skeleton chuẩn hóa.
-- [x] Có `configs/baseline.yaml`.
-- [x] Có quy tắc experiment ID / seed / git commit / dataset version.
-- [x] Có script tạo experiment folder.
-- [x] Có script kiểm tra skeleton chạy được bằng Python chuẩn.
+**Đã có code + artifact:**
+- Pose extraction (YOLOv8-Pose), ByteTrack, quality gate, cleaning/normalization.
+- 77-dim features (`posefeat-v1`) + 94-dim mask (`posefeat-v2`), sliding window 4s/2s.
+- Weak-label rule engine + contract validation; human annotation template + strict QA.
+- LSTM + TCN, training/evaluation pipeline, uncertainty gate, per-window predictions.
+- Frozen session split `split-v0.1`, experiment metadata + config snapshot + hash.
+- Reporting/export (`results.csv`, `timeline.csv`, `zone_summary.csv`, `summary.json`).
+- Geometric 3×3 zone assignment (`scripts/assign_zones.py`).
+- Streamlit dashboard: overview, timeline, zone heatmap, anonymized preview, export, upload → full inference.
+- Benchmark script + `reports/benchmark.md`, `reports/tcn_vs_lstm.md`.
+
+**Chưa có / còn thiếu:**
+- **Nhãn người thật cho test set** — mọi metric hiện là *weak-label agreement*, không phải accuracy trên hành vi người thật.
+- End-to-end benchmark trên video dài/GPU (mới smoke trên video ngắn CPU).
+- Ablation representation/window/motion, calibration/reliability.
+- ID switch/fragmentation tracker có ground truth.
 
 ## 11. Tài liệu triển khai & AI Agent context
 
 - **Kế hoạch triển khai chi tiết:** [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) — 10 tuần, 41 task, owner, dependency, artifact và Definition of Done.
+- **Kế hoạch chỉnh sửa & cập nhật:** [`docs/REMEDIATION_PLAN.md`](docs/REMEDIATION_PLAN.md).
 - **AI Agent / onboarding guide:** [`AGENTS.md`](AGENTS.md) — context dự án, kiến trúc, quy tắc dữ liệu/model, cách AI Agent và thành viên mới thực hiện task mà không sửa code base lan man.
 
-**Trạng thái hiện tại:** T01 và T02 hoàn thành. Task ưu tiên tiếp theo là T03 (data/privacy protocol) và T04 (annotation guide).
+**Trạng thái hiện tại:** xem bảng 41 task trong [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md). Ưu tiên tiếp theo: gán nhãn người thật cho test set, sau đó hoàn thiện upload → full pipeline trên dashboard.

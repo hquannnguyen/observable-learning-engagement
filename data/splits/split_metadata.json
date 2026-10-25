@@ -2,7 +2,14 @@
   "dataset_version": "v0.1",
   "split_version": "split-v0.1",
   "seed": 42,
-  "created_at": "2026-10-18T21:36:47.724710",
+  "created_at": "2026-10-25T12:52:19.168569",
+  "split_source": "frozen_files",
+  "split_files_sha256": {
+    "train": "265c7336ea77d07822d852b0c93edba4c38d2d3419b336f62d8901c148550ba8",
+    "val": "d561f49d6dba3a54b63d2ddc280cef8f3998399eddea0c1102c04b35bb18117b",
+    "test": "070836e0ba628290b28e9cc6ceee47e740ef9c6d760582c85f4924b662c12c7a"
+  },
+  "label_mode": "weak",
   "train_sessions": [
     "class_1",
     "class_2",
@@ -19,5 +26,6 @@
   "test_sessions": [
     "session_005",
     "session_006"
-  ]
+  ],
+  "human_label_stats": null
 }

@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """Generate contract-compliant annotations for extracted pose tracks.
 
-Implements data annotation for Phong's workflow (Tasks T04, T08, T12):
+Implements data annotation for Phong's workflow (Tasks T04, T08, T11):
 1. Analyzes temporal pose tracks from data/poses/.
 2. Identifies observable behavioral segments (hand raised, board facing, reading/writing, head down, peer oriented).
 3. Assigns canonical participation labels following docs/dataset_schema.md.
-4. Generates both WEAK_RULE baseline annotations and HUMAN pilot annotations.
-5. Generates double-annotator subsets for inter-annotator agreement QA (Cohen's Kappa).
+
+Provenance rule: this script only produces heuristic labels (``WEAK_RULE``).
+It never emits ``HUMAN`` labels. Human ground truth must be produced by real
+annotators through ``scripts/sample_annotation_subset.py`` and validated with
+``scripts/dataset_qa.py --strict-human``.
 
 Usage:
     python scripts/generate_annotations.py --poses-dir data/poses --output-dir data/annotations
@@ -155,18 +158,12 @@ def generate_session_annotations(
                 if behavior == "READING_WRITING":
                     class_phase = "individual_work"
 
-                # Assign annotator: alternating human pilot for 20% and weak rule for 80%
-                is_human_pilot = (seg_idx % 5 == 0)
-                if is_human_pilot:
-                    source = "HUMAN"
-                    rule_ver = None
-                    annotator = "ANN_PHONG"
-                    notes = "Human pilot annotation for protocol verification"
-                else:
-                    source = "WEAK_RULE"
-                    rule_ver = WEAK_RULE_VER
-                    annotator = "SYSTEM"
-                    notes = "Heuristic weak rule from observable pose signals"
+                # This script is a heuristic labeler only. Human ground truth is
+                # produced separately by real annotators (see docs/annotation_guide.md).
+                source = "WEAK_RULE"
+                rule_ver = WEAK_RULE_VER
+                annotator = "SYSTEM"
+                notes = "Heuristic weak rule from observable pose signals"
 
                 if state != "VALID":
                     label = None
@@ -235,29 +232,10 @@ def main() -> None:
         master_file = out_dir / "annotations_all_v0.1.csv"
         combined.to_csv(master_file, index=False)
         logger.info("Master annotations file saved: %s (%d total rows)", master_file, total_rows)
-
-        # Generate double annotation pair for Phong and Tai on a 20% sample for Cohen's Kappa QA
-        pilot_subset = combined[combined["label_source"] == "HUMAN"].copy()
-        if not pilot_subset.empty:
-            phong_file = out_dir / "pilot_double_annotator_phong.csv"
-            tai_file = out_dir / "pilot_double_annotator_tai.csv"
-
-            # Phong's annotations
-            phong_df = pilot_subset.copy()
-            phong_df["annotator_id"] = "ANN_PHONG"
-            phong_df.to_csv(phong_file, index=False)
-
-            # Tai's double-annotations (with small natural 5% variation)
-            tai_df = pilot_subset.copy()
-            tai_df["annotator_id"] = "ANN_TAI"
-            # Introduce slight natural adjudication difference on 1-2 samples
-            valid_indices = tai_df[tai_df["annotation_state"] == "VALID"].index.tolist()
-            if len(valid_indices) > 5:
-                # 1 sample rated moderate instead of high
-                tai_df.loc[valid_indices[2], "participation_label"] = MODERATE
-            tai_df.to_csv(tai_file, index=False)
-
-            logger.info("Generated double-annotation pilot pair for QA: %s and %s", phong_file.name, tai_file.name)
+        logger.info(
+            "All generated annotations are WEAK_RULE. Human labels must be created "
+            "separately by real annotators; this script never emits HUMAN provenance."
+        )
 
 
 if __name__ == "__main__":

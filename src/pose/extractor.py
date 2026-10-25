@@ -213,6 +213,7 @@ def extract_poses_from_video(
     sample_fps: Optional[float] = None,
     conf_threshold: Optional[float] = None,
     track: bool = False,
+    tracker: Optional[str] = None,
     model: Optional[Any] = None,
     model_name: Optional[str] = None,
     imgsz: Optional[int] = None,
@@ -231,6 +232,7 @@ def extract_poses_from_video(
         sample_fps: Sampling FPS override. If None, loaded from config.
         conf_threshold: Confidence threshold override. If None, loaded from config.
         track: Whether to enable tracking (ByteTrack).
+        tracker: Optional tracker config override (e.g. 'botsort.yaml').
         model: Optional preloaded YOLO model. If None, loaded using config.
         model_name: Optional model file or name override (e.g. 'yolo11m-pose.pt').
         imgsz: Optional inference image size override (e.g. 1280).
@@ -253,7 +255,7 @@ def extract_poses_from_video(
     )
     eff_model_name = model_name or cfg["model"]
     eff_imgsz = imgsz if imgsz is not None else cfg.get("imgsz", None)
-    tracker_cfg = cfg["tracker"]
+    tracker_cfg = tracker or cfg["tracker"]
 
     # Resolve session_id
     if session_id is None:

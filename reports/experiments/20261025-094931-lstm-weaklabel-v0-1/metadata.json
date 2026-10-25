@@ -1,0 +1,35 @@
+{
+  "experiment_id": "20261025-094931-lstm-weaklabel-v0-1",
+  "created_at": "2026-10-25T09:49:31.755981+07:00",
+  "name": "lstm_weaklabel_v0.1",
+  "seed": 42,
+  "git_commit": "155c4bfb61e4ccf3ca676737235c7eff4e157ee3",
+  "dataset_version": "v0.1",
+  "split_version": "split-v0.1",
+  "source_config": "configs\\baseline.yaml",
+  "config_sha256": "5ffd2d13c25d0fa4058f97c987a1bb56f17aa5802a8bb671e4e6cb37f32d0763",
+  "notes": "Weak-rule labels only; metrics measure agreement with heuristic rules, not human ground truth.",
+  "checkpoint_path": "models\\checkpoints\\20261025-094931-lstm-weaklabel-v0-1.pt",
+  "checkpoint_sha256": "b708f071e057c24cbcf5e4e1f889d286ac3a85948b1a8e763b2a5b210b75a89e",
+  "feature_schema_version": "posefeat-v1",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 4025,
+    "MODERATE_OBSERVED_PARTICIPATION": 1778,
+    "LOW_OBSERVED_PARTICIPATION": 172
+  },
+  "metrics_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261025-094931-lstm-weaklabel-v0-1\\metrics.json",
+  "overrides": {
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "epochs": 30,
+    "patience": 10,
+    "device": "cpu"
+  },
+  "evaluation_report": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261025-094931-lstm-weaklabel-v0-1\\evaluation_report.json",
+  "predictions_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261025-094931-lstm-weaklabel-v0-1\\predictions.csv",
+  "metric_scope": "weak_rule_labels",
+  "evaluated_windows": 122,
+  "coverage": 0.9836,
+  "accepted_macro_f1": 0.9528,
+  "raw_macro_f1": 0.9408
+}

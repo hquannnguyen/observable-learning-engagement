@@ -17,6 +17,7 @@ Usage examples:
 from __future__ import annotations
 
 import argparse
+import json
 import logging
 import sys
 from pathlib import Path
@@ -156,10 +157,35 @@ def compute_double_annotation_agreement(
     df_b: pd.DataFrame,
     annotator_a_name: str = "annotator_1",
     annotator_b_name: str = "annotator_2",
+    strict_human: bool = False,
 ) -> Dict[str, Any]:
-    """Compute Cohen's Kappa agreement and identify disagreement windows between two annotators."""
+    """Compute Cohen's Kappa agreement and identify disagreement windows between two annotators.
+
+    With ``strict_human=True`` both files must contain only HUMAN/ADJUDICATED
+    labels; WEAK_RULE rows are rejected instead of silently inflating agreement.
+    """
     # Match by key (session_id, camera_id, track_id, t_start_ms, t_end_ms)
     merge_keys = ["session_id", "camera_id", "track_id", "t_start_ms", "t_end_ms"]
+
+    identical = False
+    try:
+        left = df_a.sort_values(merge_keys)[merge_keys + ["participation_label"]].reset_index(drop=True)
+        right = df_b.sort_values(merge_keys)[merge_keys + ["participation_label"]].reset_index(drop=True)
+        identical = len(left) == len(right) and left.equals(right)
+    except KeyError:
+        identical = False
+
+    if strict_human:
+        for name, frame in ((annotator_a_name, df_a), (annotator_b_name, df_b)):
+            if "label_source" not in frame.columns:
+                raise ValueError(f"{name}: missing label_source column")
+            labelled = frame[frame["participation_label"].notna()]
+            bad = labelled[~labelled["label_source"].isin(["HUMAN", "ADJUDICATED"])]
+            if not bad.empty:
+                raise ValueError(
+                    f"{name}: strict-human QA rejects {len(bad)} non-human labels "
+                    f"(sources: {sorted(bad['label_source'].dropna().unique())})"
+                )
 
     merged = pd.merge(
         df_a,
@@ -171,7 +197,13 @@ def compute_double_annotation_agreement(
 
     if merged.empty:
         logger.warning("No overlapping windows matched by exact start/end time. Attempting track-time overlap matching.")
-        return {"matched_count": 0, "kappa": None, "agreement_rate": None, "disagreements": pd.DataFrame()}
+        return {
+            "matched_count": 0,
+            "kappa": None,
+            "agreement_rate": None,
+            "identical_files": identical,
+            "disagreements": pd.DataFrame(),
+        }
 
     col_a = f"participation_label_{annotator_a_name}"
     col_b = f"participation_label_{annotator_b_name}"
@@ -184,7 +216,14 @@ def compute_double_annotation_agreement(
 
     total_valid = len(valid_pairs)
     if total_valid == 0:
-        return {"matched_count": len(merged), "valid_pairs": 0, "kappa": None, "agreement_rate": None, "disagreements": merged}
+        return {
+            "matched_count": len(merged),
+            "valid_pairs": 0,
+            "kappa": None,
+            "agreement_rate": None,
+            "identical_files": identical,
+            "disagreements": merged,
+        }
 
     agree_count = int((valid_pairs[col_a] == valid_pairs[col_b]).sum())
     agreement_rate = round(float(agree_count / total_valid), 4)
@@ -205,6 +244,8 @@ def compute_double_annotation_agreement(
         "cohen_kappa": kappa,
         "confusion_matrix": cm,
         "labels": labels,
+        "identical_files": identical,
+        "strict_human": strict_human,
         "disagreements": disagreements,
     }
 
@@ -215,6 +256,18 @@ def main() -> None:
     parser.add_argument("--annotator-a", type=str, help="First annotator CSV for double annotation check.")
     parser.add_argument("--annotator-b", type=str, help="Second annotator CSV for double annotation check.")
     parser.add_argument("--adjudication-out", type=str, help="Path to save disagreements CSV for adjudication review.")
+    parser.add_argument(
+        "--strict-human",
+        action="store_true",
+        help="Reject WEAK_RULE labels and identical files; only HUMAN/ADJUDICATED may be compared.",
+    )
+    parser.add_argument(
+        "--require-human",
+        action="store_true",
+        help="With --validate, fail if any labelled row is not HUMAN/ADJUDICATED.",
+    )
+    parser.add_argument("--min-kappa", type=float, default=None, help="Exit non-zero if Cohen's Kappa is below this value.")
+    parser.add_argument("--report-json", type=str, default=None, help="Write agreement summary as JSON.")
     args = parser.parse_args()
 
     if args.validate:
@@ -224,6 +277,15 @@ def main() -> None:
             sys.exit(1)
         df = pd.read_csv(p)
         is_valid, errors = validate_annotation_dataframe(df)
+        if is_valid and args.require_human:
+            labelled = df[df["participation_label"].notna()]
+            bad = labelled[~labelled["label_source"].isin(["HUMAN", "ADJUDICATED"])]
+            if not bad.empty:
+                errors.append(
+                    f"require-human: {len(bad)} labelled rows are not HUMAN/ADJUDICATED "
+                    f"(sources: {sorted(bad['label_source'].dropna().unique())})"
+                )
+                is_valid = False
         if is_valid:
             logger.info("PASS: '%s' strictly satisfies dataset schema! (Total rows: %d)", p.name, len(df))
         else:
@@ -238,10 +300,20 @@ def main() -> None:
         df_a = pd.read_csv(args.annotator_a)
         df_b = pd.read_csv(args.annotator_b)
 
-        res = compute_double_annotation_agreement(df_a, df_b)
+        res = compute_double_annotation_agreement(
+            df_a, df_b, strict_human=args.strict_human
+        )
         logger.info("Matched windows: %d | Valid labeled pairs: %d", res["matched_count"], res.get("valid_pairs_count", 0))
         logger.info("Agreement Rate: %.2f%% | Cohen's Kappa: %s",
                     (res["agreement_rate"] or 0) * 100.0, res["cohen_kappa"])
+
+        if res.get("identical_files"):
+            logger.error(
+                "The two files are row-for-row identical in key + label. "
+                "This is a copy, not independent annotation; Kappa is invalid."
+            )
+            if args.strict_human:
+                sys.exit(1)
 
         disagreements = res["disagreements"]
         if not disagreements.empty and args.adjudication_out:
@@ -249,6 +321,33 @@ def main() -> None:
             out_p.parent.mkdir(parents=True, exist_ok=True)
             disagreements.to_csv(out_p, index=False)
             logger.info("Saved %d disagreements for adjudication review to: %s", len(disagreements), out_p)
+
+        if args.report_json:
+            payload = {
+                "annotator_a": args.annotator_a,
+                "annotator_b": args.annotator_b,
+                "matched_count": res["matched_count"],
+                "valid_pairs_count": res.get("valid_pairs_count", 0),
+                "agree_count": res.get("agree_count", 0),
+                "agreement_rate": res.get("agreement_rate"),
+                "cohen_kappa": res.get("cohen_kappa"),
+                "confusion_matrix": res.get("confusion_matrix"),
+                "identical_files": res.get("identical_files"),
+                "strict_human": res.get("strict_human", args.strict_human),
+            }
+            out_p = Path(args.report_json)
+            out_p.parent.mkdir(parents=True, exist_ok=True)
+            out_p.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+            logger.info("Saved agreement report to: %s", out_p)
+
+        kappa = res.get("cohen_kappa")
+        if args.min_kappa is not None:
+            if kappa is None:
+                logger.error("Cannot evaluate --min-kappa: no valid pairs.")
+                sys.exit(2)
+            if kappa < args.min_kappa:
+                logger.error("Cohen's Kappa %.4f is below required %.4f.", kappa, args.min_kappa)
+                sys.exit(2)
     else:
         parser.print_help()
 

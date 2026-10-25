@@ -1,0 +1,95 @@
+{
+  "machine": "Windows 10 AMD64",
+  "python": "3.14.7",
+  "torch": "2.14.1+cpu",
+  "video": "data\\raw\\class_1.mp4",
+  "max_frames": 300,
+  "pose_frames": 60,
+  "pose": [
+    {
+      "tracker": "bytetrack.yaml",
+      "sampled_frames": 60,
+      "detections": 627,
+      "elapsed_s": 13.871,
+      "fps": 4.33,
+      "tracks": 14,
+      "mean_track_duration_s": 4.55,
+      "median_track_duration_s": 5.9,
+      "id_switches_per_min": "N/A (no ground-truth tracks)",
+      "fragmentation_per_person": "N/A (no ground-truth tracks)",
+      "peak_python_ram_mb": 22.0
+    },
+    {
+      "tracker": "botsort.yaml",
+      "sampled_frames": 60,
+      "detections": 627,
+      "elapsed_s": 14.777,
+      "fps": 4.06,
+      "tracks": 14,
+      "mean_track_duration_s": 4.55,
+      "median_track_duration_s": 5.9,
+      "id_switches_per_min": "N/A (no ground-truth tracks)",
+      "fragmentation_per_person": "N/A (no ground-truth tracks)",
+      "peak_python_ram_mb": 21.9
+    }
+  ],
+  "models": [
+    {
+      "experiment_id": "20261025-094931-lstm-weaklabel-v0-1",
+      "model_type": "LSTM",
+      "params": 246531,
+      "checkpoint_size_mb": 2.84,
+      "ms_per_122_windows_cpu": 26.19,
+      "ms_per_window_cpu": 0.215
+    },
+    {
+      "experiment_id": "20261025-101644-tcn-weaklabel-v0-1",
+      "model_type": "TCN",
+      "params": 63363,
+      "checkpoint_size_mb": 0.76,
+      "ms_per_122_windows_cpu": 15.57,
+      "ms_per_window_cpu": 0.128
+    },
+    {
+      "experiment_id": "20261025-102826-lstm-posefeat-v2",
+      "model_type": "LSTM",
+      "params": 255235,
+      "checkpoint_size_mb": 2.94,
+      "ms_per_122_windows_cpu": 39.76,
+      "ms_per_window_cpu": 0.326
+    },
+    {
+      "experiment_id": "20261025-162855-lstm-full-v0-1",
+      "model_type": "LSTM",
+      "params": 246531,
+      "checkpoint_size_mb": 2.84,
+      "ms_per_122_windows_cpu": 31.74,
+      "ms_per_window_cpu": 0.26
+    },
+    {
+      "experiment_id": "20261025-163801-tcn-full-v0-1",
+      "model_type": "TCN",
+      "params": 63363,
+      "checkpoint_size_mb": 0.76,
+      "ms_per_122_windows_cpu": 17.05,
+      "ms_per_window_cpu": 0.14
+    }
+  ],
+  "end_to_end": {
+    "video": "data\\raw\\class_1.mp4",
+    "session_id": "class_1",
+    "checkpoint": "models\\checkpoints\\20261025-162855-lstm-full-v0-1.pt",
+    "sampled_frames": 150,
+    "raw_frames": 450,
+    "sample_fps": 10.0,
+    "resolution": "1906x1080",
+    "detections": 1771,
+    "windows": 66,
+    "accepted": 63,
+    "uncertain": 3,
+    "elapsed_s": 23.955,
+    "end_to_end_fps": 6.26,
+    "seconds_per_video_minute": 95.82,
+    "subprocess_wall_s": 35.283
+  }
+}

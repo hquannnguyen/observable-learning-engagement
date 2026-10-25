@@ -21,16 +21,40 @@ Thumbs.db
 # Generated datasets/artifacts
 /data/poses/*
 !/data/poses/.gitkeep
+/data/poses_zones/*
 /data/features/*
 !/data/features/.gitkeep
+/data/features_zones/*
+/data/features_v2/*
+
+# Synthetic annotations kept only for local audit
+/data/annotations/deprecated/
 
 # Model checkpoints
 *.pt
 *.pth
 *.ckpt
 
-# Experiment outputs can be versioned selectively
+# Experiment outputs: keep reproducibility metadata and small result tables,
+# ignore large/derived artifacts.
 /reports/experiments/*/
+!/reports/experiments/*/
+/reports/experiments/*/*
+!/reports/experiments/*/metadata.json
+!/reports/experiments/*/config.yaml
+!/reports/experiments/*/metrics.json
+!/reports/experiments/*/evaluation_report.json
+!/reports/experiments/*/predictions.csv
+!/reports/experiments/*/zone_predictions.csv
+!/reports/experiments/*/zone_evaluation_report.json
+!/reports/experiments/*/training_history.csv
+!/reports/experiments/*/split_report.json
+!/reports/experiments/*/notes.md
+
+# Local legacy artifacts
+/reports/legacy/
+/reports/inference/
+.pytest_tmp/
 
 # Explicit checkpoint directory (keep directory marker/README only)
 /models/checkpoints/*

@@ -1,0 +1,200 @@
+{
+  "experiment_id": "20261025-101644-tcn-weaklabel-v0-1",
+  "experiment_name": "tcn_weaklabel_v0.1",
+  "model_type": "TCN",
+  "created_at": "2026-10-25T10:16:44.854093+07:00",
+  "seed": 42,
+  "dataset_version": "v0.1",
+  "split_version": "split-v0.1",
+  "feature_schema_version": "posefeat-v1",
+  "config_sha256": "09e495630ef8bf8e61d0bb91d5f117f627489382ac2d33333bb2983a709b7515",
+  "git_commit": "155c4bfb61e4ccf3ca676737235c7eff4e157ee3",
+  "best_epoch": 6,
+  "best_val_macro_f1": 0.9123,
+  "test_metrics": {
+    "macro_f1": 0.8726,
+    "balanced_accuracy": 0.8898,
+    "accuracy": 0.8934,
+    "confusion_matrix": [
+      [
+        65,
+        4,
+        0
+      ],
+      [
+        4,
+        24,
+        5
+      ],
+      [
+        0,
+        0,
+        20
+      ]
+    ],
+    "per_class": {
+      "HIGH_OBSERVED_PARTICIPATION": {
+        "precision": 0.942,
+        "recall": 0.942,
+        "f1": 0.942,
+        "support": 69
+      },
+      "MODERATE_OBSERVED_PARTICIPATION": {
+        "precision": 0.8571,
+        "recall": 0.7273,
+        "f1": 0.7869,
+        "support": 33
+      },
+      "LOW_OBSERVED_PARTICIPATION": {
+        "precision": 0.8,
+        "recall": 1.0,
+        "f1": 0.8889,
+        "support": 20
+      }
+    }
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.5893,
+      "train_acc": 0.7826,
+      "val_loss": 0.4951,
+      "val_macro_f1": 0.7734,
+      "val_acc": 0.8054
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.3586,
+      "train_acc": 0.8638,
+      "val_loss": 0.678,
+      "val_macro_f1": 0.7889,
+      "val_acc": 0.8121
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.3221,
+      "train_acc": 0.8772,
+      "val_loss": 0.2149,
+      "val_macro_f1": 0.7811,
+      "val_acc": 0.7852
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.2976,
+      "train_acc": 0.884,
+      "val_loss": 0.3841,
+      "val_macro_f1": 0.8532,
+      "val_acc": 0.8456
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.2715,
+      "train_acc": 0.8852,
+      "val_loss": 0.199,
+      "val_macro_f1": 0.8778,
+      "val_acc": 0.8993
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.2338,
+      "train_acc": 0.9036,
+      "val_loss": 0.254,
+      "val_macro_f1": 0.9123,
+      "val_acc": 0.9262
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.2347,
+      "train_acc": 0.9028,
+      "val_loss": 0.4274,
+      "val_macro_f1": 0.9038,
+      "val_acc": 0.9396
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.2579,
+      "train_acc": 0.8977,
+      "val_loss": 0.3353,
+      "val_macro_f1": 0.8679,
+      "val_acc": 0.8993
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.2123,
+      "train_acc": 0.91,
+      "val_loss": 0.3464,
+      "val_macro_f1": 0.8996,
+      "val_acc": 0.9128
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.243,
+      "train_acc": 0.9018,
+      "val_loss": 0.3142,
+      "val_macro_f1": 0.9024,
+      "val_acc": 0.9128
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.2263,
+      "train_acc": 0.9113,
+      "val_loss": 0.2731,
+      "val_macro_f1": 0.7812,
+      "val_acc": 0.8725
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.215,
+      "train_acc": 0.9165,
+      "val_loss": 0.5848,
+      "val_macro_f1": 0.9099,
+      "val_acc": 0.9262
+    },
+    {
+      "epoch": 13,
+      "train_loss": 0.1835,
+      "train_acc": 0.9195,
+      "val_loss": 0.4659,
+      "val_macro_f1": 0.8661,
+      "val_acc": 0.8993
+    },
+    {
+      "epoch": 14,
+      "train_loss": 0.1779,
+      "train_acc": 0.9213,
+      "val_loss": 0.7574,
+      "val_macro_f1": 0.8826,
+      "val_acc": 0.9195
+    },
+    {
+      "epoch": 15,
+      "train_loss": 0.2007,
+      "train_acc": 0.9156,
+      "val_loss": 0.7763,
+      "val_macro_f1": 0.8708,
+      "val_acc": 0.8993
+    },
+    {
+      "epoch": 16,
+      "train_loss": 0.1753,
+      "train_acc": 0.9233,
+      "val_loss": 0.3214,
+      "val_macro_f1": 0.8802,
+      "val_acc": 0.906
+    }
+  ],
+  "checkpoint_path": "models\\checkpoints\\20261025-101644-tcn-weaklabel-v0-1.pt",
+  "checkpoint_sha256": "7e791a5bc6351bc565fb1d651ab1b7ca321487a94bcef7db846712fb4c419974",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 4025,
+    "MODERATE_OBSERVED_PARTICIPATION": 1778,
+    "LOW_OBSERVED_PARTICIPATION": 172
+  },
+  "overrides": {
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "epochs": 30,
+    "patience": 10,
+    "device": "cpu"
+  }
+}

@@ -46,6 +46,27 @@ def test_feature_extraction_shape_and_finiteness():
     assert not np.isnan(features).any()
 
 
+def test_feature_v2_mask_marks_missing_joint():
+    track_df = make_dummy_track(num_frames=50)
+    # Mark nose (keypoint 0) missing at frame 10.
+    track_df.loc[10, "norm_kpt_00_x"] = np.nan
+    track_df.loc[10, "norm_kpt_00_y"] = np.nan
+
+    features, names = compute_track_features(
+        track_df, sample_fps=10.0, include_mask=True
+    )
+
+    assert features.shape == (50, 94)
+    assert len(names) == 94
+    assert names[-17:] == [f"kpt_mask_{i:02d}" for i in range(17)]
+    mask = features[:, 77:]
+    assert mask.shape == (50, 17)
+    assert mask[10, 0] == 0.0
+    assert mask[10, 1] == 1.0
+    assert mask[11, 0] == 1.0
+    assert np.isfinite(features).all()
+
+
 def test_sliding_window_builder():
     track_df = make_dummy_track(num_frames=60)  # 6 seconds @ 10 FPS
     records, tensors = build_track_windows(
@@ -64,6 +85,19 @@ def test_sliding_window_builder():
         assert validated.shape == (40, 77)
 
 
+def test_sliding_window_v2_uses_configured_thresholds():
+    track_df = make_dummy_track(num_frames=60)
+    records, tensors = build_track_windows(
+        track_df,
+        include_mask=True,
+        quality_thresholds={"min_visible_ratio": 0.99, "min_mean_keypoint_confidence": 0.99},
+    )
+    assert tensors.shape == (2, 40, 94)
+    assert records[0]["feature_schema_version"] == "posefeat-v2"
+    assert records[0]["quality_state"] == "INVALID"
+    assert records[0]["quality_reason"] == "LOW_VISIBILITY"
+
+
 def test_lstm_forward_and_probabilities():
     model = ParticipationLSTM(input_size=77, hidden_size=64, num_layers=2, num_classes=3)
     dummy_input = torch.randn(8, 40, 77)  # Batch=8, T=40, F=77
@@ -74,6 +108,76 @@ def test_lstm_forward_and_probabilities():
     probs = model.predict_proba(dummy_input)
     assert probs.shape == (8, 3)
     assert torch.allclose(probs.sum(dim=-1), torch.ones(8), atol=1e-5)
+
+
+def test_tcn_is_causal_and_probabilities_sum_to_one():
+    from src.models.factory import build_model
+    from src.models.tcn import ParticipationTCN
+
+    model = ParticipationTCN(input_size=77, hidden_size=32, num_levels=3)
+    x = torch.randn(4, 40, 77)
+    logits = model(x)
+    assert logits.shape == (4, 3)
+
+    probs = model.predict_proba(x)
+    assert torch.allclose(probs.sum(dim=-1), torch.ones(4), atol=1e-5)
+
+    # The convolution stack itself must be causal: perturbing future steps
+    # cannot change earlier outputs.
+    from src.models.tcn import CausalConvBlock
+
+    block = CausalConvBlock(4, 4).eval()
+    base = torch.randn(1, 4, 10)
+    changed = base.clone()
+    changed[..., 5:] += 1.0
+    with torch.no_grad():
+        assert torch.allclose(block(base)[..., :5], block(changed)[..., :5], atol=1e-5)
+
+    tcn_cfg = {"type": "tcn", "num_classes": 3, "tcn": {"hidden_size": 32, "num_levels": 3}}
+    built = build_model(tcn_cfg, input_size=77)
+    assert isinstance(built, ParticipationTCN)
+
+
+def test_model_from_checkpoint_loads_weights():
+    from src.models.factory import model_from_checkpoint
+
+    model = ParticipationLSTM(input_size=77, hidden_size=16, num_layers=1, num_classes=3)
+    checkpoint = {
+        "model_type": "LSTM",
+        "input_size": 77,
+        "hidden_size": 16,
+        "num_layers": 1,
+        "num_classes": 3,
+        "model_state_dict": model.state_dict(),
+    }
+    loaded = model_from_checkpoint(checkpoint)
+    model.eval()
+    x = torch.randn(2, 40, 77)
+    with torch.no_grad():
+        assert torch.allclose(model(x), loaded(x), atol=1e-6)
+
+
+def test_predict_dataframe_end_to_end():
+    from scripts.predict_video import predict_dataframe
+    from src.uncertainty.gate import UncertaintyThresholds
+
+    track = make_dummy_track(num_frames=60)
+    model = ParticipationLSTM(input_size=77, hidden_size=16, num_layers=1, num_classes=3)
+    preds = predict_dataframe(
+        track,
+        model,
+        input_size=77,
+        thresholds=UncertaintyThresholds(min_probability=0.0),
+        quality_thresholds={"min_visible_ratio": 0.6, "min_mean_keypoint_confidence": 0.3},
+    )
+    assert len(preds) == 2
+    assert set(preds["gated_label"]) <= {
+        "HIGH_OBSERVED_PARTICIPATION",
+        "MODERATE_OBSERVED_PARTICIPATION",
+        "LOW_OBSERVED_PARTICIPATION",
+        "UNCERTAIN",
+    }
+    assert preds["true_label"].isna().all()
 
 
 def test_training_and_evaluation_step():

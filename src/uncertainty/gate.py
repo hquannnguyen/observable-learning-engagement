@@ -26,19 +26,19 @@ class UncertaintyThresholds:
                 raise ValueError(f"{field_name} must be in [0,1], got {value}")
 
 
-def apply_uncertainty_gate(
+def explain_uncertainty_gate(
     probabilities: Sequence[float],
     *,
     visible_ratio: float,
     mean_keypoint_confidence: float,
     thresholds: UncertaintyThresholds = UncertaintyThresholds(),
     class_labels: Sequence[str] = CANONICAL_TRAINING_LABELS,
-) -> str:
-    """Return a canonical class label or UNCERTAIN.
+) -> tuple[str, str]:
+    """Return ``(label, reason)`` for the quality + model-confidence gate.
 
-    The function is intentionally model-agnostic and is used by tests and the
-    future application layer. It never returns short display labels.
-    Probability indices must follow the canonical training-label order.
+    ``reason`` is one of ``LOW_VISIBILITY``, ``LOW_KEYPOINT_CONF``,
+    ``LOW_MODEL_CONF`` or ``ACCEPTED``. The label is always canonical (never a
+    short display label).
     """
     if tuple(class_labels) != CANONICAL_TRAINING_LABELS:
         raise ValueError("class_labels must match the canonical training-label order")
@@ -58,11 +58,35 @@ def apply_uncertainty_gate(
         raise ValueError(f"probabilities must sum to 1, got {probs.sum():.6f}")
 
     if visible_ratio < thresholds.min_visible_ratio:
-        return UNCERTAIN_LABEL
+        return UNCERTAIN_LABEL, "LOW_VISIBILITY"
     if mean_keypoint_confidence < thresholds.min_mean_keypoint_confidence:
-        return UNCERTAIN_LABEL
+        return UNCERTAIN_LABEL, "LOW_KEYPOINT_CONF"
 
     best_index = int(np.argmax(probs))
     if float(probs[best_index]) < thresholds.min_probability:
-        return UNCERTAIN_LABEL
-    return str(class_labels[best_index])
+        return UNCERTAIN_LABEL, "LOW_MODEL_CONF"
+    return str(class_labels[best_index]), "ACCEPTED"
+
+
+def apply_uncertainty_gate(
+    probabilities: Sequence[float],
+    *,
+    visible_ratio: float,
+    mean_keypoint_confidence: float,
+    thresholds: UncertaintyThresholds = UncertaintyThresholds(),
+    class_labels: Sequence[str] = CANONICAL_TRAINING_LABELS,
+) -> str:
+    """Return a canonical class label or UNCERTAIN.
+
+    The function is intentionally model-agnostic and is used by tests and the
+    future application layer. It never returns short display labels.
+    Probability indices must follow the canonical training-label order.
+    """
+    label, _reason = explain_uncertainty_gate(
+        probabilities,
+        visible_ratio=visible_ratio,
+        mean_keypoint_confidence=mean_keypoint_confidence,
+        thresholds=thresholds,
+        class_labels=class_labels,
+    )
+    return label
