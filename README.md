@@ -200,6 +200,7 @@ Repo đã có thêm các contract/template để bắt đầu T03+ mà không th
 
 - **Kế hoạch triển khai chi tiết:** [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md) — 10 tuần, 41 task, owner, dependency, artifact và Definition of Done.
 - **Kế hoạch chỉnh sửa & cập nhật:** [`docs/REMEDIATION_PLAN.md`](docs/REMEDIATION_PLAN.md).
+- **Hướng dẫn tiếp theo (nhãn người, benchmark dài/GPU, M0/M1, ablation, calibration):** [`docs/NEXT_STEPS_GUIDE.md`](docs/NEXT_STEPS_GUIDE.md).
 - **AI Agent / onboarding guide:** [`AGENTS.md`](AGENTS.md) — context dự án, kiến trúc, quy tắc dữ liệu/model, cách AI Agent và thành viên mới thực hiện task mà không sửa code base lan man.
 
-**Trạng thái hiện tại:** xem bảng 41 task trong [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md). Ưu tiên tiếp theo: gán nhãn người thật cho test set, sau đó hoàn thiện upload → full pipeline trên dashboard.
+**Trạng thái hiện tại:** xem bảng 41 task trong [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md). Ưu tiên tiếp theo: nhãn người thật cho test set, calibration, M0/M1 và ablation.
