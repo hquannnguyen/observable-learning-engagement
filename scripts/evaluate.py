@@ -32,7 +32,11 @@ from src.contracts.labels import (
     UNCERTAIN_LABEL,
 )
 from src.models.factory import model_from_checkpoint
-from src.training.trainer import compute_multiclass_metrics
+from src.training.trainer import (
+    compute_accuracy_coverage_curve,
+    compute_ece,
+    compute_multiclass_metrics,
+)
 from src.uncertainty.gate import UncertaintyThresholds, explain_uncertainty_gate
 
 logging.basicConfig(
@@ -303,6 +307,10 @@ def main() -> None:
     else:
         metric_scope = "mixed_labels"
 
+    ece = compute_ece(probs, y_valid)
+    acc_cov_df = compute_accuracy_coverage_curve(probs, y_valid)
+    logger.info("  Expected Calibration Error (ECE): %.4f", ece)
+
     report = {
         "checkpoint": str(ckpt_path),
         "experiment_id": exp_metadata.get("experiment_id"),
@@ -311,6 +319,10 @@ def main() -> None:
         "excluded_unlabeled_windows": excluded,
         "coverage": round(coverage, 4),
         "uncertain_rate": round(uncertain_rate, 4),
+        "calibration": {
+            "expected_calibration_error": ece,
+            "accuracy_vs_coverage": acc_cov_df.to_dict(orient="records"),
+        },
         "thresholds": {
             "min_probability": thresholds.min_probability,
             "min_visible_ratio": thresholds.min_visible_ratio,

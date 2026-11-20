@@ -160,6 +160,7 @@ def build_track_windows(
             "quality_reason": quality_reason,
             "mean_visible_ratio": round(mean_vis, 4),
             "mean_pose_confidence": round(mean_conf, 4),
+            "max_interpolated_gap_frames": int(w_rows["max_interpolated_gap_frames"].max()) if "max_interpolated_gap_frames" in w_rows else 0,
             "participation_label": None,
             "label_source": None,
             "label_rule_version": None,

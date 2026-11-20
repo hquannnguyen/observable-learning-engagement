@@ -17,13 +17,15 @@ def build_model(
     effective = (model_type or model_cfg.get("type", "lstm")).lower()
     num_classes = int(model_cfg.get("num_classes", 3))
 
-    if effective == "lstm":
+    if effective in ("lstm", "bilstm"):
+        bidirectional = (effective == "bilstm") or bool(model_cfg.get("bidirectional", False))
         return ParticipationLSTM(
             input_size=input_size,
             hidden_size=int(model_cfg.get("hidden_size", 128)),
             num_layers=int(model_cfg.get("num_layers", 2)),
             num_classes=num_classes,
             dropout=float(model_cfg.get("dropout", 0.30)),
+            bidirectional=bidirectional,
         )
     if effective == "tcn":
         tcn_cfg = model_cfg.get("tcn", {})
@@ -44,13 +46,15 @@ def model_from_checkpoint(checkpoint: Dict[str, Any]) -> Any:
     num_classes = int(checkpoint.get("num_classes", 3))
     input_size = int(checkpoint.get("input_size", 77))
 
-    if model_type == "lstm":
+    if model_type in ("lstm", "bilstm"):
+        bidirectional = (model_type == "bilstm") or bool(checkpoint.get("bidirectional", False))
         model = ParticipationLSTM(
             input_size=input_size,
             hidden_size=int(checkpoint.get("hidden_size", 128)),
             num_layers=int(checkpoint.get("num_layers", 2)),
             num_classes=num_classes,
             dropout=float(checkpoint.get("dropout", 0.30)),
+            bidirectional=bidirectional,
         )
     elif model_type == "tcn":
         tcn_cfg = checkpoint.get("tcn", {})

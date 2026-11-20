@@ -48,6 +48,16 @@ def _interpolate_bounded_series(series: pd.Series, max_gap: int) -> pd.Series:
     return interpolated
 
 
+def compute_max_interpolated_gap_frames(series: pd.Series) -> int:
+    """Compute the maximum length of contiguous NaN gaps in a series."""
+    is_na = series.isna()
+    if not is_na.any():
+        return 0
+    groups = (~is_na).cumsum()
+    counts = groups[is_na].map(groups[is_na].value_counts())
+    return int(counts.max()) if not counts.empty and pd.notna(counts.max()) else 0
+
+
 def interpolate_missing_keypoints(
     df: pd.DataFrame,
     max_gap_frames: int = 3,
@@ -76,10 +86,13 @@ def interpolate_missing_keypoints(
     for _, group in out.groupby("track_id", sort=False):
         group = group.sort_values("frame_idx").copy()
 
+        track_max_gap = 0
         for x_col, y_col in zip(kpt_x_cols, kpt_y_cols):
+            track_max_gap = max(track_max_gap, compute_max_interpolated_gap_frames(group[x_col]))
             group[x_col] = _interpolate_bounded_series(group[x_col], max_gap=max_gap_frames)
             group[y_col] = _interpolate_bounded_series(group[y_col], max_gap=max_gap_frames)
 
+        group["max_interpolated_gap_frames"] = min(track_max_gap, max_gap_frames)
         cleaned_groups.append(group)
 
     result = pd.concat(cleaned_groups, axis=0).sort_index()

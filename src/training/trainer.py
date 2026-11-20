@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
@@ -129,3 +130,98 @@ def evaluate_model(
         num_classes=num_classes,
     )
     return avg_loss, metrics
+
+
+class TemperatureScaler(nn.Module):
+    """Post-processing temperature scaling for probability calibration (Guo et al. 2017)."""
+
+    def __init__(self, init_temperature: float = 1.0) -> None:
+        super().__init__()
+        self.temperature = nn.Parameter(torch.tensor(float(init_temperature)))
+
+    def forward(self, logits: torch.Tensor) -> torch.Tensor:
+        temp = torch.clamp(self.temperature, min=0.01)
+        return logits / temp
+
+    def fit(
+        self,
+        val_logits: torch.Tensor,
+        val_targets: torch.Tensor,
+        lr: float = 0.01,
+        max_iter: int = 100,
+    ) -> float:
+        """Optimize temperature parameter T by minimizing NLL on validation set."""
+        self.train()
+        nll_criterion = nn.CrossEntropyLoss()
+        optimizer = torch.optim.LBFGS([self.temperature], lr=lr, max_iter=max_iter)
+
+        def eval_loss():
+            optimizer.zero_grad()
+            loss = nll_criterion(self.forward(val_logits), val_targets)
+            loss.backward()
+            return loss
+
+        optimizer.step(eval_loss)
+        self.eval()
+        return float(torch.clamp(self.temperature, min=0.01).item())
+
+
+def compute_ece(
+    probs: np.ndarray,
+    targets: np.ndarray,
+    n_bins: int = 10,
+) -> float:
+    """Compute Expected Calibration Error (ECE)."""
+    if len(probs) == 0:
+        return 0.0
+    confidences = np.max(probs, axis=1)
+    predictions = np.argmax(probs, axis=1)
+    accuracies = predictions == targets
+
+    bin_boundaries = np.linspace(0, 1, n_bins + 1)
+    ece = 0.0
+
+    for i in range(n_bins):
+        in_bin = (confidences > bin_boundaries[i]) & (confidences <= bin_boundaries[i + 1])
+        prop_in_bin = float(np.mean(in_bin))
+        if prop_in_bin > 0:
+            accuracy_in_bin = float(np.mean(accuracies[in_bin]))
+            avg_confidence_in_bin = float(np.mean(confidences[in_bin]))
+            ece += abs(avg_confidence_in_bin - accuracy_in_bin) * prop_in_bin
+
+    return round(float(ece), 4)
+
+
+def compute_accuracy_coverage_curve(
+    probs: np.ndarray,
+    targets: np.ndarray,
+    thresholds: Optional[List[float]] = None,
+) -> pd.DataFrame:
+    """Compute Accuracy vs Coverage curve across varying confidence thresholds."""
+    if thresholds is None:
+        thresholds = [0.40, 0.50, 0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85, 0.90]
+
+    confidences = np.max(probs, axis=1)
+    predictions = np.argmax(probs, axis=1)
+    total = len(targets)
+
+    curve_rows = []
+    for tau in thresholds:
+        accepted_mask = confidences >= tau
+        n_accepted = int(np.sum(accepted_mask))
+        coverage = round(n_accepted / max(total, 1), 4)
+
+        if n_accepted > 0:
+            acc = round(float(np.mean(predictions[accepted_mask] == targets[accepted_mask])), 4)
+        else:
+            acc = 1.0
+
+        curve_rows.append({
+            "threshold": tau,
+            "coverage": coverage,
+            "accuracy": acc,
+            "n_accepted": n_accepted,
+            "n_total": total,
+        })
+
+    return pd.DataFrame(curve_rows)

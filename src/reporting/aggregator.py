@@ -118,3 +118,36 @@ def build_zone_summary_dataframe(results_df: pd.DataFrame) -> pd.DataFrame:
         })
 
     return pd.DataFrame(summary_rows)
+
+
+def aggregate_by_time(
+    results_df: pd.DataFrame,
+    bucket_sec: int = 60,
+    anonymize: bool = True,
+) -> pd.DataFrame:
+    """Aggregate per-window predictions into time buckets (default 60s / 1 minute).
+
+    When anonymize=True, strips all track_id, coordinates, and personal identifiers.
+    """
+    df = build_timeline_dataframe(results_df, bucket_sec=bucket_sec)
+    if anonymize:
+        for col in ["track_id", "bbox_x1", "bbox_y1", "bbox_x2", "bbox_y2"]:
+            if col in df.columns:
+                df = df.drop(columns=[col])
+    return df
+
+
+def aggregate_by_zone(
+    results_df: pd.DataFrame,
+    anonymize: bool = True,
+) -> pd.DataFrame:
+    """Aggregate per-window predictions into 3x3 classroom zones.
+
+    When anonymize=True, strips all track_id, coordinates, and personal identifiers.
+    """
+    df = build_zone_summary_dataframe(results_df)
+    if anonymize:
+        for col in ["track_id", "bbox_x1", "bbox_y1", "bbox_x2", "bbox_y2"]:
+            if col in df.columns:
+                df = df.drop(columns=[col])
+    return df

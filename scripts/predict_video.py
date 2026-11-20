@@ -138,8 +138,9 @@ def predict_dataframe(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run the full inference flow on a video.")
-    parser.add_argument("--video", required=True)
+    parser = argparse.ArgumentParser(description="Run the full inference flow on a video or pose dataset.")
+    parser.add_argument("--video", default=None, help="Path to input video")
+    parser.add_argument("--poses", default=None, help="Path to existing extracted poses.csv")
     parser.add_argument("--checkpoint", required=True)
     parser.add_argument("--out-dir", default=None)
     parser.add_argument("--session-id", default=None)
@@ -149,17 +150,23 @@ def main() -> None:
     parser.add_argument("--no-zone", action="store_true")
     parser.add_argument("--zone-config", default="configs/zones/grid_3x3.yaml")
     parser.add_argument("--batch-size", type=int, default=128)
+    parser.add_argument("--min-probability", type=float, default=None, help="Override uncertainty gate min_probability")
     parser.add_argument("--skip-preview", action="store_true", help="Skip head-blurred preview; never export an unblurred preview implicitly.")
     args = parser.parse_args()
 
-    video = Path(args.video)
+    if not args.video and not args.poses:
+        parser.error("At least one of --video or --poses must be provided.")
+
+    video = Path(args.video) if args.video else None
     checkpoint_path = Path(args.checkpoint)
-    if not video.is_file():
+    if video and not video.is_file():
         raise FileNotFoundError(f"Video not found: {video}")
+    if args.poses and not Path(args.poses).is_file():
+        raise FileNotFoundError(f"Poses file not found: {args.poses}")
     if not checkpoint_path.is_file():
         raise FileNotFoundError(f"Checkpoint not found: {checkpoint_path}")
 
-    session_id = args.session_id or video.stem
+    session_id = args.session_id or (video.stem if video else Path(args.poses).stem)
     out_dir = Path(args.out_dir) if args.out_dir else Path("reports/inference") / session_id
     started = time.perf_counter()
 
@@ -167,21 +174,35 @@ def main() -> None:
         cfg = yaml.safe_load(fh) or {}
     qg = cfg.get("quality_gate", {})
     unc = cfg.get("uncertainty", {})
+    min_prob = float(args.min_probability if args.min_probability is not None else unc.get("min_probability", 0.60))
     thresholds = UncertaintyThresholds(
         min_visible_ratio=float(qg.get("min_visible_ratio", 0.60)),
         min_mean_keypoint_confidence=float(qg.get("min_mean_keypoint_confidence", 0.30)),
-        min_probability=float(unc.get("min_probability", 0.60)),
+        min_probability=min_prob,
     )
 
-    logger.info("Extracting pose for %s ...", video)
-    poses, meta = extract_poses_from_video(
-        video_path=video,
-        session_id=session_id,
-        track=True,
-        max_frames=args.max_frames,
-        device=args.device,
-        config_path=args.config,
-    )
+    if video is not None:
+        logger.info("Extracting pose for %s ...", video)
+        poses, meta = extract_poses_from_video(
+            video_path=video,
+            session_id=session_id,
+            track=True,
+            max_frames=args.max_frames,
+            device=args.device,
+            config_path=args.config,
+        )
+    else:
+        logger.info("Loading pre-extracted poses from %s ...", args.poses)
+        poses = pd.read_csv(args.poses)
+        args.skip_preview = True
+        meta = {
+            "sample_fps": float(cfg.get("pose_extractor", {}).get("sample_fps", 10.0)),
+            "sampled_frames": int(len(poses["frame_idx"].unique())) if "frame_idx" in poses.columns else int(len(poses)),
+            "raw_frames": int(len(poses)),
+            "pose_model": "pre_extracted_poses",
+            "confidence_threshold": float(qg.get("min_mean_keypoint_confidence", 0.30)),
+            "total_detections": int(len(poses)),
+        }
     if poses.empty:
         raise ValueError("No pose detections; cannot infer.")
 
@@ -219,7 +240,7 @@ def main() -> None:
     positions.to_csv(out_dir / "position_metrics.csv", index=False)
     (out_dir / "position_report.json").write_text(json.dumps(position_report, indent=2, allow_nan=False), encoding="utf-8")
     preview_path = None
-    if not args.skip_preview:
+    if not args.skip_preview and video is not None:
         preview_path = out_dir / "head_blurred_preview.mp4"
         render_pose_overlay_video(video_path=video, output_path=preview_path, poses_df=raw_poses,
                                   sample_fps=float(meta["sample_fps"]), blur_face=True,
@@ -235,7 +256,7 @@ def main() -> None:
     elapsed = time.perf_counter() - started
     video_seconds = float(meta["sampled_frames"]) / max(float(meta["sample_fps"]), 1e-9)
     inference_meta = {
-        "video": str(video),
+        "video": str(video) if video else None,
         "session_id": session_id,
         "checkpoint": str(checkpoint_path),
         "sampled_frames": int(meta["sampled_frames"]),

@@ -119,3 +119,103 @@ def filter_short_tracks(
         num_removed,
     )
     return filtered
+
+
+def merge_fragmented_tracks(
+    df: pd.DataFrame,
+    max_gap_seconds: float = 1.5,
+    max_center_distance: float = 80.0,
+) -> pd.DataFrame:
+    """Merge fragmented track IDs when a track momentarily disappears and reappears nearby.
+
+    Looks for pairs of tracks (A, B) where track A terminates at t_end, track B starts at t_start,
+    0 < (t_start - t_end) <= max_gap_seconds * 1000, and Euclidean distance between A's last
+    bbox center and B's first bbox center is within max_center_distance.
+
+    Args:
+        df: Input DataFrame with pose detections (must have 'track_id', 'timestamp_ms', 'bbox_x1'..'bbox_y2').
+        max_gap_seconds: Maximum time gap between track end and start (default: 1.5s).
+        max_center_distance: Maximum pixel distance between bbox centers (default: 80.0px).
+
+    Returns:
+        DataFrame with merged track_id values.
+    """
+    if df.empty or "track_id" not in df.columns or "timestamp_ms" not in df.columns:
+        return df.copy()
+
+    bbox_cols = ["bbox_x1", "bbox_y1", "bbox_x2", "bbox_y2"]
+    if not all(c in df.columns for c in bbox_cols):
+        return df.copy()
+
+    valid_df = df[df["track_id"].notna()].copy()
+    if valid_df.empty:
+        return df.copy()
+
+    track_bounds = {}
+    for tid, grp in valid_df.groupby("track_id"):
+        grp_sorted = grp.sort_values("timestamp_ms")
+        first_row = grp_sorted.iloc[0]
+        last_row = grp_sorted.iloc[-1]
+        c_start = (
+            (float(first_row["bbox_x1"]) + float(first_row["bbox_x2"])) / 2.0,
+            (float(first_row["bbox_y1"]) + float(first_row["bbox_y2"])) / 2.0,
+        )
+        c_end = (
+            (float(last_row["bbox_x1"]) + float(last_row["bbox_x2"])) / 2.0,
+            (float(last_row["bbox_y1"]) + float(last_row["bbox_y2"])) / 2.0,
+        )
+        track_bounds[tid] = {
+            "start_ms": float(first_row["timestamp_ms"]),
+            "end_ms": float(last_row["timestamp_ms"]),
+            "center_start": c_start,
+            "center_end": c_end,
+        }
+
+    id_map: Dict[Any, Any] = {}
+    max_gap_ms = max_gap_seconds * 1000.0
+    sorted_tracks = sorted(track_bounds.keys(), key=lambda t: track_bounds[t]["start_ms"])
+
+    for i in range(len(sorted_tracks)):
+        t_b = sorted_tracks[i]
+        b_info = track_bounds[t_b]
+
+        best_cand = None
+        best_dist = float("inf")
+
+        for j in range(i):
+            t_a = sorted_tracks[j]
+            root_a = t_a
+            while root_a in id_map:
+                root_a = id_map[root_a]
+
+            a_info = track_bounds[root_a]
+            gap = b_info["start_ms"] - a_info["end_ms"]
+
+            if 0 < gap <= max_gap_ms:
+                dist = (
+                    (b_info["center_start"][0] - a_info["center_end"][0]) ** 2
+                    + (b_info["center_start"][1] - a_info["center_end"][1]) ** 2
+                ) ** 0.5
+                if dist <= max_center_distance and dist < best_dist:
+                    best_cand = root_a
+                    best_dist = dist
+
+        if best_cand is not None:
+            id_map[t_b] = best_cand
+            track_bounds[best_cand]["end_ms"] = max(track_bounds[best_cand]["end_ms"], b_info["end_ms"])
+            track_bounds[best_cand]["center_end"] = b_info["center_end"]
+
+    if not id_map:
+        return df.copy()
+
+    out = df.copy()
+
+    def _resolve(tid: Any) -> Any:
+        curr = tid
+        while curr in id_map:
+            curr = id_map[curr]
+        return curr
+
+    out["track_id"] = out["track_id"].map(lambda x: _resolve(x) if pd.notna(x) else x)
+    logger.info("Merged %d fragmented track IDs", len(id_map))
+    return out

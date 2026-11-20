@@ -103,45 +103,140 @@ def main() -> None:
         st.warning("Metric trộn nhãn HUMAN và WEAK_RULE; không dùng để kết luận tuyệt đối.")
 
     tabs = st.tabs(
-        ["Tổng quan", "Timeline", "Vùng lớp", "Preview ẩn danh", "Export", "Video mới"]
+        [
+            "Chạy suy luận",
+            "Diễn biến theo thời gian",
+            "Bản đồ vùng lớp & Xuất báo cáo",
+            "Tổng quan experiment",
+            "Preview ẩn danh",
+        ]
     )
 
     with tabs[0]:
-        st.subheader("Tổng quan experiment")
-        st.code(selected)
-        col1, col2, col3, col4 = st.columns(4)
-        accepted = report.get("accepted_metrics", {})
-        with col1:
-            metric_row("Raw Macro-F1", report.get("raw_metrics", {}).get("macro_f1", "N/A"))
-        with col2:
-            metric_row("Accepted Macro-F1", accepted.get("macro_f1", "N/A"))
-        with col3:
-            metric_row("Coverage", report.get("coverage", "N/A"))
-        with col4:
-            metric_row("Evaluated windows", report.get("evaluated_windows", "N/A"))
+        st.subheader("Chạy suy luận mô hình (Video / File Pose)")
+        st.caption(
+            "Chạy toàn bộ pipeline từ đầu vào (video hoặc file poses.csv) qua mô hình chuỗi thời gian "
+            "và cổng bất định. Video upload được xử lý cục bộ và không commit."
+        )
+        checkpoint_options = {}
+        for exp_name in experiments:
+            meta = load_json(str(EXPERIMENTS / exp_name / "metadata.json"))
+            ckpt = meta.get("checkpoint_path")
+            if ckpt and Path(ckpt).is_file():
+                label = f"{meta.get('experiment_id', exp_name)} ({meta.get('model_type', '?')})"
+                checkpoint_options[label] = ckpt
 
-        st.write(
-            f"Test: **{report.get('total_test_windows', 'N/A')}** window, "
-            f"**{report.get('excluded_unlabeled_windows', 'N/A')}** không có nhãn."
-        )
-        st.json(
-            {
-                "seed": metadata.get("seed"),
-                "split_version": metadata.get("split_version"),
-                "feature_schema_version": metadata.get("feature_schema_version"),
-                "metric_scope": metric_scope,
-                "git_commit": metadata.get("git_commit"),
-            }
-        )
-        with st.expander("Hạn chế & cách đọc số liệu"):
-            st.markdown(
-                """
-                - Đây là **observable participation**, không phải cảm xúc/động cơ.
-                - `UNCERTAIN` là trạng thái thiếu căn cứ, không phải lớp hành vi.
-                - Không so sánh zone khi `N` quá nhỏ.
-                - `head_orientation_proxy` không phải gaze.
-                """
+        if not checkpoint_options:
+            default_ckpt = ROOT / "models" / "checkpoints" / "lstm_baseline.pt"
+            if default_ckpt.is_file():
+                checkpoint_options["LSTM Baseline (default)"] = str(default_ckpt)
+
+        col_in1, col_in2 = st.columns([1, 1])
+        with col_in1:
+            input_mode = st.radio("Loại dữ liệu đầu vào", ["Tải lên Video (.mp4, .mov, .avi, .mkv)", "Tải lên File Pose (.csv)"])
+            ckpt_label = st.selectbox("Mô hình kiểm định (Checkpoint)", sorted(checkpoint_options) if checkpoint_options else ["Không tìm thấy checkpoint"])
+        with col_in2:
+            min_prob = st.slider(
+                "Ngưỡng tin cậy cổng bất định (min_probability)",
+                min_value=0.50,
+                max_value=0.95,
+                value=0.60,
+                step=0.05,
+                help="Nếu xác suất lớp cao nhất thấp hơn ngưỡng này, mẫu được phân loại là UNCERTAIN.",
             )
+            pose_configs = {
+                "YOLOv8n Pose": "configs/baseline.yaml",
+                "YOLO11m Pose HD (1280px)": "configs/experiments/pose_yolo11m_hd.yaml",
+            }
+            pose_choice = st.selectbox("Cấu hình trích xuất tư thế", list(pose_configs))
+
+        max_frames = st.number_input(
+            "Giới hạn số frame sampled (để demo nhanh, 0 = toàn bộ video)",
+            min_value=0,
+            max_value=90000,
+            value=150,
+            step=50,
+        )
+
+        uploaded = st.file_uploader(
+            "Chọn tệp đầu vào",
+            type=["mp4", "mov", "avi", "mkv"] if "Video" in input_mode else ["csv"],
+        )
+
+        if uploaded is not None and st.button("🚀 Bắt đầu chạy suy luận", type="primary"):
+            if not checkpoint_options or ckpt_label not in checkpoint_options:
+                st.error("Chưa có checkpoint mô hình hợp lệ.")
+            else:
+                upload_dir = ROOT / "data" / "raw" / "uploads"
+                upload_dir.mkdir(parents=True, exist_ok=True)
+                safe_name = Path(uploaded.name).name
+                saved_path = upload_dir / safe_name
+                saved_path.write_bytes(uploaded.getbuffer())
+                out_dir = ROOT / "reports" / "inference" / Path(uploaded.name).stem
+
+                cmd = [
+                    sys.executable,
+                    str(ROOT / "scripts" / "predict_video.py"),
+                    "--checkpoint", checkpoint_options[ckpt_label],
+                    "--out-dir", str(out_dir),
+                    "--config", pose_configs[pose_choice],
+                    "--min-probability", str(min_prob),
+                ]
+                if "Video" in input_mode:
+                    cmd.extend(["--video", str(saved_path)])
+                    if max_frames > 0:
+                        cmd.extend(["--max-frames", str(int(max_frames))])
+                else:
+                    cmd.extend(["--poses", str(saved_path)])
+
+                with st.spinner("Đang chạy pipeline suy luận..."):
+                    proc = subprocess.run(
+                        cmd, cwd=str(ROOT), capture_output=True, text=True
+                    )
+                if proc.returncode != 0:
+                    st.error("Pipeline thất bại. Chi tiết lỗi:")
+                    st.code(proc.stderr[-3000:] or proc.stdout[-3000:])
+                else:
+                    load_csv.clear()
+                    load_json.clear()
+                    st.success(f"Suy luận hoàn tất! Kết quả lưu tại: `{out_dir}`")
+                    new_preds = load_csv(str(out_dir / "predictions.csv"))
+                    if not new_preds.empty:
+                        c1, c2, c3, c4 = st.columns(4)
+                        total_w = len(new_preds)
+                        acc_w = int((new_preds["gated_label"] != "UNCERTAIN").sum())
+                        unc_w = int((new_preds["gated_label"] == "UNCERTAIN").sum())
+                        cov_pct = round(100.0 * acc_w / max(total_w, 1), 1)
+                        with c1:
+                            metric_row("Tổng số window", total_w)
+                        with c2:
+                            metric_row("Được chấp nhận (Accepted)", acc_w)
+                        with c3:
+                            metric_row("Bất định (Uncertain)", unc_w)
+                        with c4:
+                            metric_row("Độ phủ (Coverage)", f"{cov_pct}%")
+
+                        st.subheader("Bảng dự đoán chi tiết")
+                        st.dataframe(new_preds, width="stretch")
+
+                        pos_df, _ = analyze_positions(new_preds)
+                        st.subheader("Thống kê theo vị trí")
+                        st.dataframe(pos_df, width="stretch")
+
+                    preview_file = out_dir / "head_blurred_preview.mp4"
+                    if preview_file.is_file():
+                        st.subheader("Preview video ẩn danh (làm mờ mặt/đầu)")
+                        st.video(str(preview_file))
+                        st.caption("Làm mờ tự động theo detector; kiểm tra các trường hợp detector bỏ sót trước khi chia sẻ.")
+
+                    summary_file = out_dir / "export" / "summary.json"
+                    if summary_file.is_file():
+                        st.download_button(
+                            "📥 Tải summary.json",
+                            data=summary_file.read_bytes(),
+                            file_name=f"summary_{Path(uploaded.name).stem}.json",
+                            mime="application/json",
+                        )
 
     with tabs[1]:
         st.subheader("Phân phối theo thời gian")
@@ -187,7 +282,7 @@ def main() -> None:
                 st.dataframe(view, width="stretch")
 
     with tabs[2]:
-        st.subheader("Phân bố theo vùng lớp (3×3)")
+        st.subheader("Phân bố theo vùng lớp (3×3) & Xuất báo cáo ẩn danh")
         zone_df = zone_predictions if not zone_predictions.empty else predictions
         zones = aggregate_zones(zone_df)
         if zones.empty:
@@ -236,7 +331,70 @@ def main() -> None:
                 st.info("Chưa có nhãn người để đánh giá độ chính xác theo vùng. Điểm weak agreement chỉ phản ánh mức khớp với quy tắc.")
             st.dataframe(positional, width="stretch")
 
+        st.divider()
+        st.subheader("Xuất gói báo cáo ẩn danh (Standardized Export Bundle)")
+        if predictions.empty:
+            st.info("Chưa có predictions để export.")
+        else:
+            bucket = st.number_input("Khoảng thời gian tổng hợp (giây)", min_value=10, max_value=600, value=60, step=10)
+            if st.button("Tạo gói báo cáo ẩn danh (results, timeline, zone_summary, summary.json, report.md)"):
+                out_dir = exp_dir / "export_ui"
+                paths = export_bundle(
+                    predictions,
+                    out_dir,
+                    experiment_id=metadata.get("experiment_id"),
+                    metric_scope=metric_scope,
+                    bucket_seconds=int(bucket),
+                )
+                st.success(f"Đã xuất thành công {len(paths)} tệp vào `{out_dir}`.")
+                for name, path in paths.items():
+                    file = Path(path)
+                    st.download_button(
+                        label=f"📥 Tải {name} ({file.name})",
+                        data=file.read_bytes(),
+                        file_name=file.name,
+                        mime="text/csv" if file.suffix == ".csv" else ("text/markdown" if file.suffix == ".md" else "application/json"),
+                        key=f"dl-{name}",
+                    )
+
     with tabs[3]:
+        st.subheader("Tổng quan experiment")
+        st.code(selected)
+        col1, col2, col3, col4 = st.columns(4)
+        accepted = report.get("accepted_metrics", {})
+        with col1:
+            metric_row("Raw Macro-F1", report.get("raw_metrics", {}).get("macro_f1", "N/A"))
+        with col2:
+            metric_row("Accepted Macro-F1", accepted.get("macro_f1", "N/A"))
+        with col3:
+            metric_row("Coverage", report.get("coverage", "N/A"))
+        with col4:
+            metric_row("Evaluated windows", report.get("evaluated_windows", "N/A"))
+
+        st.write(
+            f"Test: **{report.get('total_test_windows', 'N/A')}** window, "
+            f"**{report.get('excluded_unlabeled_windows', 'N/A')}** không có nhãn."
+        )
+        st.json(
+            {
+                "seed": metadata.get("seed"),
+                "split_version": metadata.get("split_version"),
+                "feature_schema_version": metadata.get("feature_schema_version"),
+                "metric_scope": metric_scope,
+                "git_commit": metadata.get("git_commit"),
+            }
+        )
+        with st.expander("Hạn chế & cách đọc số liệu"):
+            st.markdown(
+                """
+                - Đây là **observable participation**, không phải cảm xúc/động cơ.
+                - `UNCERTAIN` là trạng thái thiếu căn cứ, không phải lớp hành vi.
+                - Không so sánh zone khi `N` quá nhỏ.
+                - `head_orientation_proxy` không phải gaze.
+                """
+            )
+
+    with tabs[4]:
         st.subheader("Preview overlay ẩn danh")
         overlays = list_overlays()
         if not overlays:
@@ -248,110 +406,6 @@ def main() -> None:
                 "Preview đã bật làm mờ vùng đầu của người được phát hiện. "
                 "Cần kiểm tra trực quan các trường hợp detector bỏ sót trước khi chia sẻ."
             )
-
-    with tabs[4]:
-        st.subheader("Xuất báo cáo")
-        if predictions.empty:
-            st.info("Chưa có predictions để export.")
-        else:
-            bucket = st.number_input("Bucket (giây)", min_value=10, max_value=600, value=60, step=10)
-            if st.button("Tạo bundle export"):
-                out_dir = exp_dir / "export_ui"
-                paths = export_bundle(
-                    predictions,
-                    out_dir,
-                    experiment_id=metadata.get("experiment_id"),
-                    metric_scope=metric_scope,
-                    bucket_seconds=int(bucket),
-                )
-                st.success(f"Đã ghi {len(paths)} file vào `{out_dir}`.")
-                for name, path in paths.items():
-                    file = Path(path)
-                    st.download_button(
-                        label=f"Tải {name}",
-                        data=file.read_bytes(),
-                        file_name=file.name,
-                        mime="text/csv" if file.suffix == ".csv" else "application/json",
-                        key=f"dl-{name}",
-                    )
-
-
-    with tabs[5]:
-        st.subheader("Phân tích video mới (upload → pose → model → export)")
-        st.caption(
-            "Chạy toàn bộ pipeline trên CPU có thể mất vài phút. "
-            "Video upload được lưu local dưới `data/raw/uploads/` và không commit."
-        )
-        checkpoint_options = {}
-        for exp_name in experiments:
-            meta = load_json(str(EXPERIMENTS / exp_name / "metadata.json"))
-            ckpt = meta.get("checkpoint_path")
-            if ckpt and Path(ckpt).is_file():
-                label = f"{meta.get('experiment_id', exp_name)} ({meta.get('model_type', '?')})"
-                checkpoint_options[label] = ckpt
-
-        if not checkpoint_options:
-            st.info("Không tìm thấy checkpoint nào có metadata.")
-        else:
-            ckpt_label = st.selectbox("Checkpoint", sorted(checkpoint_options))
-            pose_configs = {"YOLOv8n Pose": "configs/baseline.yaml", "YOLO11m Pose độ phân giải 1280": "configs/experiments/pose_yolo11m_hd.yaml"}
-            pose_choice = st.selectbox("Bộ trích tư thế", list(pose_configs))
-            max_frames = st.number_input(
-                "Giới hạn số frame sampled (để demo nhanh)",
-                min_value=20,
-                max_value=9000,
-                value=150,
-                step=10,
-            )
-            uploaded = st.file_uploader("Video", type=["mp4", "mov", "avi", "mkv"])
-            if uploaded is not None and st.button("Chạy phân tích"):
-                upload_dir = ROOT / "data" / "raw" / "uploads"
-                upload_dir.mkdir(parents=True, exist_ok=True)
-                safe_name = Path(uploaded.name).name
-                video_path = upload_dir / safe_name
-                video_path.write_bytes(uploaded.getbuffer())
-                out_dir = ROOT / "reports" / "inference" / Path(uploaded.name).stem
-                cmd = [
-                    sys.executable,
-                    str(ROOT / "scripts" / "predict_video.py"),
-                    "--video", str(video_path),
-                    "--checkpoint", checkpoint_options[ckpt_label],
-                    "--out-dir", str(out_dir),
-                    "--max-frames", str(int(max_frames)),
-                    "--config", pose_configs[pose_choice],
-                ]
-                with st.spinner("Đang chạy pipeline..."):
-                    proc = subprocess.run(
-                        cmd, cwd=str(ROOT), capture_output=True, text=True
-                    )
-                if proc.returncode != 0:
-                    st.error("Pipeline thất bại. Chi tiết cuối log:")
-                    st.code(proc.stderr[-3000:] or proc.stdout[-3000:])
-                else:
-                    load_csv.clear()
-                    load_json.clear()
-                    st.success(f"Hoàn tất. Kết quả: `{out_dir}`")
-                    new_preds = load_csv(str(out_dir / "predictions.csv"))
-                    if not new_preds.empty:
-                        st.write(
-                            f"{len(new_preds)} window | "
-                            f"{int((new_preds['gated_label'] != 'UNCERTAIN').sum())} accepted | "
-                            f"{int((new_preds['gated_label'] == 'UNCERTAIN').sum())} uncertain"
-                        )
-                        st.dataframe(new_preds, width="stretch")
-                        st.dataframe(analyze_positions(new_preds)[0], width="stretch")
-                    preview_file = out_dir / "head_blurred_preview.mp4"
-                    if preview_file.is_file():
-                        st.video(str(preview_file))
-                        st.caption("Làm mờ theo detection; kiểm tra người bị bỏ sót trước khi chia sẻ.")
-                    summary_file = out_dir / "export" / "summary.json"
-                    if summary_file.is_file():
-                        st.download_button(
-                            "Tải summary.json",
-                            data=summary_file.read_bytes(),
-                            file_name="summary.json",
-                            mime="application/json",
-                        )
 
 
 if __name__ == "__main__":

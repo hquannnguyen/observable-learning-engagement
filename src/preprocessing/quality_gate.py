@@ -43,6 +43,9 @@ def load_quality_gate_config(
 
     return {
         "min_visible_ratio": float(qg_cfg.get("min_visible_ratio", 0.60)),
+        "upper_body_min_visible_ratio": float(
+            qg_cfg.get("upper_body_min_visible_ratio", 0.72)
+        ),
         "min_mean_keypoint_confidence": float(
             qg_cfg.get("min_mean_keypoint_confidence", 0.30)
         ),
@@ -54,6 +57,7 @@ def evaluate_pose_quality(
     df: pd.DataFrame,
     config: Optional[Union[str, Path, Dict[str, Any]]] = None,
     min_visible_ratio: Optional[float] = None,
+    upper_body_min_visible_ratio: Optional[float] = None,
     min_mean_keypoint_confidence: Optional[float] = None,
     min_track_seconds: Optional[float] = None,
 ) -> pd.DataFrame:
@@ -67,6 +71,7 @@ def evaluate_pose_quality(
         df: DataFrame containing pose detections.
         config: Path to baseline config or config dict.
         min_visible_ratio: Optional override for visible ratio threshold.
+        upper_body_min_visible_ratio: Optional override for upper-body visible ratio threshold.
         min_mean_keypoint_confidence: Optional override for confidence threshold.
         min_track_seconds: Optional override for track duration threshold.
 
@@ -85,6 +90,11 @@ def evaluate_pose_quality(
         if min_visible_ratio is not None
         else cfg["min_visible_ratio"]
     )
+    upper_min_vis = (
+        upper_body_min_visible_ratio
+        if upper_body_min_visible_ratio is not None
+        else cfg.get("upper_body_min_visible_ratio", 0.72)
+    )
     min_conf = (
         min_mean_keypoint_confidence
         if min_mean_keypoint_confidence is not None
@@ -97,6 +107,9 @@ def evaluate_pose_quality(
     )
 
     out = df.copy()
+
+    # Upper body keypoint conf columns (indices 0..10: head + shoulders + arms)
+    upper_conf_cols = [f"kpt_{i:02d}_conf" for i in range(11) if f"kpt_{i:02d}_conf" in out.columns]
 
     # Determine track duration validity
     if "track_id" in out.columns and out["track_id"].notna().any():
@@ -115,13 +128,22 @@ def evaluate_pose_quality(
         vis = float(row.get("visible_ratio", 0.0))
         mean_c = float(row.get("mean_keypoint_conf", 0.0))
 
+        # Check upper body visibility if columns are present
+        if len(upper_conf_cols) == 11:
+            raw_upper_vis = sum(float(row[c]) >= 0.25 for c in upper_conf_cols) / 11.0
+            # Total upper visible keypoints cannot exceed total visible keypoints across the body
+            max_possible_upper_vis = (vis * 17.0) / 11.0
+            upper_vis = min(raw_upper_vis, max_possible_upper_vis)
+        else:
+            upper_vis = vis
+
         if pd.notna(t_id) and int(t_id) in short_track_ids:
             quality_states.append("INVALID")
             quality_reasons.append("track_too_short")
         elif mean_c < min_conf:
             quality_states.append("INVALID")
             quality_reasons.append("low_confidence")
-        elif vis < min_vis:
+        elif vis < min_vis and upper_vis < upper_min_vis:
             quality_states.append("OCCLUDED")
             quality_reasons.append("low_visible_ratio")
         else:
