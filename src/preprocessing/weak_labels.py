@@ -8,7 +8,7 @@ weak labels tagged strictly as WEAK_RULE with label_rule_version.
 from __future__ import annotations
 
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -45,7 +45,9 @@ def apply_weak_label_rules(
     if window_record.get("quality_state") != "VALID":
         return None, "invalid_quality"
 
-    class_phase = window_record.get("class_phase", "lecture")
+    class_phase = window_record.get("class_phase", "UNKNOWN")
+    if class_phase not in {"lecture", "individual_work", "discussion"}:
+        return None, "unknown_phase"
 
     # Feature column indices based on src/preprocessing/features.py:
     # 0..33: norm_kpt
@@ -122,6 +124,11 @@ def assign_weak_labels_to_windows(
         if rec_copy.get("quality_state") == "VALID":
             w_tensor = window_tensors[idx]
             label, rule_name = apply_weak_label_rules(rec_copy, w_tensor)
+            if label is None:
+                rec_copy.update(participation_label=None, label_source=None, label_rule_version=None,
+                                quality_state="INVALID", quality_reason="UNKNOWN_PHASE")
+                labeled_records.append(rec_copy)
+                continue
             rec_copy["participation_label"] = label
             rec_copy["label_source"] = "WEAK_RULE"
             rec_copy["label_rule_version"] = WEAK_RULE_VERSION

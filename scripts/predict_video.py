@@ -39,9 +39,11 @@ from src.contracts.labels import (
 )
 from src.models.factory import model_from_checkpoint
 from src.pose.extractor import extract_poses_from_video
+from src.pose.visualization import render_pose_overlay_video
 from src.preprocessing.cleaner import clean_and_normalize_poses
 from src.preprocessing.windows import build_track_windows
 from src.reporting.exporter import export_bundle
+from src.reporting.bias_analysis import analyze_positions
 from src.uncertainty.gate import UncertaintyThresholds, explain_uncertainty_gate
 
 logging.basicConfig(
@@ -61,13 +63,14 @@ def predict_dataframe(
     sample_fps: float = 10.0,
     window_seconds: float = 4.0,
     stride_seconds: float = 2.0,
+    batch_size: int = 128,
 ) -> pd.DataFrame:
     """Build windows per track, run the model, apply the uncertainty gate."""
     records: List[Dict[str, Any]] = []
     tensors: List[np.ndarray] = []
     include_mask = input_size == 94
 
-    for (session_id, track_id), group in poses.groupby(["session_id", "track_id"]):
+    for (session_id, camera_id, track_id), group in poses.groupby(["session_id", "camera_id", "track_id"]):
         win_records, win_tensors = build_track_windows(
             track_df=group,
             window_seconds=window_seconds,
@@ -94,8 +97,11 @@ def predict_dataframe(
         )
 
     model.eval()
+    if batch_size <= 0:
+        raise ValueError("batch_size must be positive")
+    device = next(model.parameters()).device
     with torch.no_grad():
-        probs = model.predict_proba(torch.from_numpy(X).float()).numpy()
+        probs = np.concatenate([model.predict_proba(torch.from_numpy(X[i:i + batch_size]).float().to(device)).cpu().numpy() for i in range(0, len(X), batch_size)])
 
     rows: List[Dict[str, Any]] = []
     for i, record in enumerate(records):
@@ -111,6 +117,7 @@ def predict_dataframe(
             {
                 "window_id": record["window_id"],
                 "session_id": record["session_id"],
+                "camera_id": record["camera_id"],
                 "track_id": record["track_id"],
                 "t_start_ms": record["t_start_ms"],
                 "t_end_ms": record["t_end_ms"],
@@ -124,6 +131,7 @@ def predict_dataframe(
                 "label_source": None,
                 "mean_visible_ratio": record["mean_visible_ratio"],
                 "mean_pose_confidence": record["mean_pose_confidence"],
+                "quality_state": record["quality_state"],
             }
         )
     return pd.DataFrame(rows)
@@ -140,6 +148,8 @@ def main() -> None:
     parser.add_argument("--device", default=None)
     parser.add_argument("--no-zone", action="store_true")
     parser.add_argument("--zone-config", default="configs/zones/grid_3x3.yaml")
+    parser.add_argument("--batch-size", type=int, default=128)
+    parser.add_argument("--skip-preview", action="store_true", help="Skip head-blurred preview; never export an unblurred preview implicitly.")
     args = parser.parse_args()
 
     video = Path(args.video)
@@ -170,6 +180,7 @@ def main() -> None:
         track=True,
         max_frames=args.max_frames,
         device=args.device,
+        config_path=args.config,
     )
     if poses.empty:
         raise ValueError("No pose detections; cannot infer.")
@@ -179,10 +190,14 @@ def main() -> None:
         if zone_cfg_path.is_file():
             poses = assign_zones_df(poses, load_grid(zone_cfg_path))
 
-    poses = clean_and_normalize_poses(poses, min_track_seconds=1.0)
+    raw_poses = poses.copy()
+    out_dir.mkdir(parents=True, exist_ok=True)
+    raw_poses.to_csv(out_dir / "poses.csv", index=False)
+    poses = clean_and_normalize_poses(poses, min_track_seconds=float(cfg.get("tracking", {}).get("min_track_seconds", 2.0)))
 
     checkpoint = torch.load(checkpoint_path, map_location="cpu")
     model = model_from_checkpoint(checkpoint)
+    model.to(torch.device(args.device or "cpu"))
     input_size = int(checkpoint.get("input_size", 77))
 
     predictions = predict_dataframe(
@@ -194,11 +209,22 @@ def main() -> None:
         sample_fps=float(meta["sample_fps"]),
         window_seconds=float(cfg.get("sequence", {}).get("window_seconds", 4.0)),
         stride_seconds=float(cfg.get("sequence", {}).get("stride_seconds", 2.0)),
+        batch_size=args.batch_size,
     )
 
     out_dir.mkdir(parents=True, exist_ok=True)
     pred_path = out_dir / "predictions.csv"
     predictions.to_csv(pred_path, index=False)
+    positions, position_report = analyze_positions(predictions)
+    positions.to_csv(out_dir / "position_metrics.csv", index=False)
+    (out_dir / "position_report.json").write_text(json.dumps(position_report, indent=2, allow_nan=False), encoding="utf-8")
+    preview_path = None
+    if not args.skip_preview:
+        preview_path = out_dir / "head_blurred_preview.mp4"
+        render_pose_overlay_video(video_path=video, output_path=preview_path, poses_df=raw_poses,
+                                  sample_fps=float(meta["sample_fps"]), blur_face=True,
+                                  conf_threshold=float(meta["confidence_threshold"]), max_frames=args.max_frames,
+                                  pipeline_label=f"{meta['pose_model']} + {meta.get('tracker', 'tracking')}", session_title=session_id)
 
     paths = export_bundle(
         predictions,
@@ -216,6 +242,15 @@ def main() -> None:
         "raw_frames": int(meta["raw_frames"]),
         "sample_fps": float(meta["sample_fps"]),
         "resolution": meta.get("resolution"),
+        "pose_model": meta.get("pose_model"),
+        "imgsz": meta.get("imgsz"),
+        "tracker": meta.get("tracker"),
+        "config": str(Path(args.config).resolve()),
+        "temporal_device": str(next(model.parameters()).device),
+        "preview": str(preview_path) if preview_path else None,
+        "poses": str(out_dir / "poses.csv"),
+        "privacy_mode": "head_blur_detected_people_requires_visual_review" if preview_path else "no_preview",
+        "ground_truth_metrics_available": False,
         "detections": int(meta["total_detections"]),
         "windows": int(len(predictions)),
         "accepted": int((predictions["gated_label"] != UNCERTAIN_LABEL).sum()),

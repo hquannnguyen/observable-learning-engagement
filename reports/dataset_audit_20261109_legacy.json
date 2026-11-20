@@ -1,0 +1,99 @@
+{
+  "windows": 32959,
+  "duplicate_window_ids": 0,
+  "label_source_counts": {
+    "WEAK_RULE": 28613,
+    "NONE": 4346
+  },
+  "human_windows": 0,
+  "phase_counts": {
+    "lecture": 32959
+  },
+  "split_counts": {
+    "train": 13481,
+    "val": 12011,
+    "test": 7467
+  },
+  "metadata": [
+    {
+      "session_id": "class_1",
+      "metadata_exists": false
+    },
+    {
+      "session_id": "class_2",
+      "metadata_exists": false
+    },
+    {
+      "session_id": "class_3",
+      "metadata_exists": false
+    },
+    {
+      "session_id": "class_4",
+      "metadata_exists": false
+    },
+    {
+      "session_id": "class_5",
+      "metadata_exists": false
+    },
+    {
+      "session_id": "session_001",
+      "metadata_exists": true,
+      "phase_verified": false,
+      "source_recording_id": null,
+      "participant_count_declared": 8,
+      "consent_declared": true,
+      "source_independence_verified": false
+    },
+    {
+      "session_id": "session_002",
+      "metadata_exists": true,
+      "phase_verified": false,
+      "source_recording_id": null,
+      "participant_count_declared": 8,
+      "consent_declared": true,
+      "source_independence_verified": false
+    },
+    {
+      "session_id": "session_003",
+      "metadata_exists": true,
+      "phase_verified": false,
+      "source_recording_id": null,
+      "participant_count_declared": 8,
+      "consent_declared": true,
+      "source_independence_verified": false
+    },
+    {
+      "session_id": "session_004",
+      "metadata_exists": true,
+      "phase_verified": false,
+      "source_recording_id": null,
+      "participant_count_declared": 8,
+      "consent_declared": true,
+      "source_independence_verified": false
+    },
+    {
+      "session_id": "session_005",
+      "metadata_exists": true,
+      "phase_verified": false,
+      "source_recording_id": null,
+      "participant_count_declared": 8,
+      "consent_declared": true,
+      "source_independence_verified": false
+    },
+    {
+      "session_id": "session_006",
+      "metadata_exists": true,
+      "phase_verified": false,
+      "source_recording_id": null,
+      "participant_count_declared": 8,
+      "consent_declared": true,
+      "source_independence_verified": false
+    }
+  ],
+  "official_evaluation_ready": false,
+  "pending": [
+    "Independent human annotation and adjudication",
+    "Verify actual classroom phase intervals; legacy generated phases are not evidence",
+    "Verify source recordings/participants across splits; session folder names alone do not establish independence"
+  ]
+}

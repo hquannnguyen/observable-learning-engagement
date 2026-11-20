@@ -1,5 +1,7 @@
 # Annotation Guide v0.2 — CVF25PRJ10
 
+> Tool hiện hỗ trợ [đề xuất v0.3-pilot](ANNOTATION_RUBRIC_PILOT.md): ghi bằng chứng theo thời gian và căn cứ nhiệm vụ. Đây là phiên bản chờ thử nghiệm/thống nhất, không thay thế ngầm nhãn v0.2 đã có. Không gộp nhãn hai phiên bản mà chưa rà soát định nghĩa và provenance.
+
 **Task:** T04  
 **Mục tiêu:** Để hai annotator độc lập có thể xem cùng một cửa sổ video và áp dụng cùng quy tắc mà không suy luận cảm xúc/ý định.
 

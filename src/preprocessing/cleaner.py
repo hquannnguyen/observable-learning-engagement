@@ -146,98 +146,41 @@ def normalize_keypoints(
     df: pd.DataFrame,
     method: str = "torso",
 ) -> pd.DataFrame:
-    """Normalize keypoints relative to body center and scale.
+    """Vectorized body-center/scale normalization, retaining missing pairs.
 
-    Produces columns `norm_kpt_{i:02d}_x` and `norm_kpt_{i:02d}_y` in addition
-    to original coordinates.
-
-    Args:
-        df: Input pose DataFrame.
-        method: Normalization reference:
-            - 'torso': Centered at mid-shoulder, scaled by torso length (or fallback).
-            - 'bbox': Normalized to bounding box [0, 1] range.
-
-    Returns:
-        DataFrame containing added normalized keypoint columns:
-            norm_kpt_00_x .. norm_kpt_16_y.
+    Uses the same torso/shoulder/bbox fallbacks as the original row-wise code.
+    Neither the raw coordinates nor confidence columns are changed.
     """
     if df.empty:
         return df.copy()
-
     out = df.copy()
-
-    norm_x_cols = [f"norm_kpt_{i:02d}_x" for i in range(17)]
-    norm_y_cols = [f"norm_kpt_{i:02d}_y" for i in range(17)]
-
-    # Pre-allocate normalized columns
-    for col in norm_x_cols + norm_y_cols:
-        out[col] = np.nan
-
-    for idx, row in out.iterrows():
-        # Get shoulder keypoints
-        ls_x = row.get("kpt_05_x")
-        ls_y = row.get("kpt_05_y")
-        rs_x = row.get("kpt_06_x")
-        rs_y = row.get("kpt_06_y")
-
-        # Get hip keypoints
-        lh_x = row.get("kpt_11_x")
-        lh_y = row.get("kpt_11_y")
-        rh_x = row.get("kpt_12_x")
-        rh_y = row.get("kpt_12_y")
-
-        b_x1 = row.get("bbox_x1", 0.0)
-        b_y1 = row.get("bbox_y1", 0.0)
-        b_x2 = row.get("bbox_x2", 1.0)
-        b_y2 = row.get("bbox_y2", 1.0)
-        bbox_w = max(b_x2 - b_x1, 1.0)
-        bbox_h = max(b_y2 - b_y1, 1.0)
-
-        if method == "bbox":
-            center_x = b_x1
-            center_y = b_y1
-            scale_x = bbox_w
-            scale_y = bbox_h
-        else:  # 'torso' method
-            # Center: mid-shoulder if available, else bbox center
-            if pd.notna(ls_x) and pd.notna(rs_x):
-                center_x = (ls_x + rs_x) / 2.0
-                center_y = (ls_y + rs_y) / 2.0
-                shoulder_dist = np.hypot(rs_x - ls_x, rs_y - ls_y)
-            else:
-                center_x = (b_x1 + b_x2) / 2.0
-                center_y = (b_y1 + b_y2) / 2.0
-                shoulder_dist = bbox_w * 0.5
-
-            # Scale: torso distance (mid-shoulder to mid-hip)
-            has_hips = (
-                pd.notna(lh_x) and pd.notna(rh_x) and pd.notna(lh_y) and pd.notna(rh_y)
-            )
-            if has_hips:
-                mid_hip_x = (lh_x + rh_x) / 2.0
-                mid_hip_y = (lh_y + rh_y) / 2.0
-                torso_len = np.hypot(mid_hip_x - center_x, mid_hip_y - center_y)
-                scale = max(torso_len, 20.0)
-            else:
-                # Classroom setting fallback: hips occluded by desk
-                scale = max(shoulder_dist * 1.5, bbox_h * 0.5, 20.0)
-
-            scale_x = scale
-            scale_y = scale
-
-        # Calculate normalized coordinates for all 17 keypoints
-        for i in range(17):
-            kx = row.get(f"kpt_{i:02d}_x")
-            ky = row.get(f"kpt_{i:02d}_y")
-
-            if pd.notna(kx) and pd.notna(ky):
-                out.at[idx, f"norm_kpt_{i:02d}_x"] = round(
-                    float((kx - center_x) / scale_x), 4
-                )
-                out.at[idx, f"norm_kpt_{i:02d}_y"] = round(
-                    float((ky - center_y) / scale_y), 4
-                )
-
+    n = len(out)
+    columns = [f"kpt_{i:02d}_{axis}" for i in range(17) for axis in ("x", "y")]
+    coords = out.reindex(columns=columns).to_numpy(dtype=float).reshape(n, 17, 2)
+    def field(name, default):
+        return out[name].to_numpy(dtype=float) if name in out else np.full(n, default, dtype=float)
+    x1, y1 = field("bbox_x1", 0), field("bbox_y1", 0)
+    x2, y2 = field("bbox_x2", 1), field("bbox_y2", 1)
+    width, height = np.maximum(x2 - x1, 1), np.maximum(y2 - y1, 1)
+    if method == "bbox":
+        center = np.column_stack([x1, y1])
+        scale = np.column_stack([width, height])
+    else:
+        ls, rs, lh, rh = coords[:, 5], coords[:, 6], coords[:, 11], coords[:, 12]
+        shoulders = ~np.isnan(ls[:, 0]) & ~np.isnan(rs[:, 0])
+        center = np.where(shoulders[:, None], (ls + rs) / 2,
+                          np.column_stack([(x1 + x2) / 2, (y1 + y2) / 2]))
+        shoulder_distance = np.where(shoulders, np.hypot(*(rs - ls).T), width * 0.5)
+        hips = ~np.isnan(lh).any(axis=1) & ~np.isnan(rh).any(axis=1)
+        torso = np.hypot(*((lh + rh) / 2 - center).T)
+        body_scale = np.where(hips, np.maximum(torso, 20),
+                              np.maximum(np.maximum(shoulder_distance * 1.5, height * 0.5), 20))
+        scale = np.column_stack([body_scale, body_scale])
+    normalized = (coords - center[:, None, :]) / scale[:, None, :]
+    normalized[np.isnan(coords).any(axis=2)] = np.nan
+    normalized = np.round(normalized, 4)
+    out[[f"norm_kpt_{i:02d}_x" for i in range(17)]] = normalized[:, :, 0]
+    out[[f"norm_kpt_{i:02d}_y" for i in range(17)]] = normalized[:, :, 1]
     return out
 
 

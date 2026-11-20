@@ -105,12 +105,15 @@ def create_experiment(
     notes: str = "",
     root: Path = ROOT,
     now: dt.datetime | None = None,
+    effective_config: dict[str, Any] | None = None,
 ) -> Path:
     """Create an experiment atomically after all config validation succeeds."""
     config_path = config_path if config_path.is_absolute() else root / config_path
 
     # Validate and resolve run metadata BEFORE creating any experiment directory.
     config = load_config(config_path)
+    if effective_config is not None:
+        config = copy.deepcopy(effective_config)
     snapshot, eff_seed, eff_dataset, eff_split = build_snapshot(
         config,
         seed=seed,

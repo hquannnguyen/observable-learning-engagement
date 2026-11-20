@@ -41,11 +41,18 @@ TEMPLATE_COLUMNS = [
     "t_start_ms",
     "t_end_ms",
     "class_phase",
+    "declared_class_phase",
+    "phase_source",
+    "phase_verified",
+    "split",
     "zone_id",
     "video_path",
     "pose_overlay_path",
     "participation_label",
     "annotation_state",
+    "atomic_behavior",
+    "annotation_guide_version",
+    "occlusion_level",
     "label_source",
     "label_rule_version",
     "annotator_id",
@@ -92,7 +99,7 @@ def stratified_sample(df: pd.DataFrame, n: int, seed: int) -> pd.DataFrame:
     rng = np.random.default_rng(seed)
     picks: List[pd.DataFrame] = []
     groups = [
-        g for _, g in df.groupby(["session_id", "participation_label"], sort=True)
+        g for _, g in df.groupby(["session_id", "participation_label"], sort=True, dropna=False)
     ]
     for group in groups:
         quota = max(1, int(round(n * len(group) / len(df))))
@@ -123,6 +130,8 @@ def main() -> None:
     parser.add_argument("--n-val", type=int, default=50)
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
+    if min(args.n_test, args.n_train, args.n_val) < 0:
+        parser.error("Sample sizes must be non-negative; --n-test 0 means all test windows")
 
     windows_path = Path(args.windows)
     if not windows_path.is_file():
@@ -134,11 +143,12 @@ def main() -> None:
     if missing:
         raise ValueError(f"Window metadata missing columns: {sorted(missing)}")
 
-    usable = df[
-        (df["quality_state"] == "VALID") & (df["participation_label"].notna())
-    ].copy()
+    if df["window_id"].duplicated().any():
+        raise ValueError("Duplicate window_id in source windows")
+    # Include unlabelled/occluded cases; humans must be able to assess coverage.
+    usable = df.copy()
 
-    test_n = 0 if args.n_test == 0 else args.n_test
+    test_n = int((usable["split"] == "test").sum()) if args.n_test == 0 else args.n_test
     parts = [
         stratified_sample(usable[usable["split"] == "test"], test_n, args.seed),
         stratified_sample(usable[usable["split"] == "train"], args.n_train, args.seed),
@@ -157,12 +167,19 @@ def main() -> None:
             "track_id": sampled["track_id"],
             "t_start_ms": sampled["t_start_ms"],
             "t_end_ms": sampled["t_end_ms"],
-            "class_phase": sampled.get("class_phase", "lecture"),
+            "class_phase": sampled.get("class_phase", "UNKNOWN"),
+            "declared_class_phase": sampled.get("declared_class_phase", "UNKNOWN"),
+            "phase_source": sampled.get("phase_source", "UNKNOWN"),
+            "phase_verified": sampled.get("phase_verified", False),
+            "split": sampled["split"],
             "zone_id": sampled.get("zone_id", ""),
             "video_path": sampled["session_id"].map(video_path_for),
             "pose_overlay_path": sampled["session_id"].map(pose_overlay_for),
             "participation_label": "",
             "annotation_state": "",
+            "atomic_behavior": "",
+            "annotation_guide_version": "v0.2",
+            "occlusion_level": "",
             "label_source": "",
             "label_rule_version": "",
             "annotator_id": "",

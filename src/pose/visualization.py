@@ -79,8 +79,11 @@ def apply_face_blur(
     if len(head_pts) >= 2:
         hx_coords = [p[0] for p in head_pts]
         hy_coords = [p[1] for p in head_pts]
-        margin_x = max(20.0, (max(hx_coords) - min(hx_coords)) * 0.5)
-        margin_y = max(20.0, (max(hy_coords) - min(hy_coords)) * 0.5)
+        face_width = max(hx_coords) - min(hx_coords)
+        margin_x = max(25.0, face_width * 0.75, (x2 - x1) * 0.12)
+        # Eye/nose keypoints alone form a narrow strip. Include the complete
+        # head/face rather than blurring only the eye line.
+        margin_y = max(40.0, face_width * 0.85, (y2 - y1) * 0.15)
         hx1 = int(max(0, min(hx_coords) - margin_x))
         hy1 = int(max(0, min(hy_coords) - margin_y))
         hx2 = int(min(w_img, max(hx_coords) + margin_x))
@@ -97,9 +100,8 @@ def apply_face_blur(
     if hx2 > hx1 + 4 and hy2 > hy1 + 4:
         head_roi = frame[hy1:hy2, hx1:hx2]
         # Kernel size must be positive odd integer
-        kw = max(15, (hx2 - hx1) // 3 * 2 + 1)
-        kh = max(15, (hy2 - hy1) // 3 * 2 + 1)
-        blurred = cv2.GaussianBlur(head_roi, (kw, kh), 0)
+        small = cv2.resize(head_roi, (max(1, (hx2 - hx1) // 16), max(1, (hy2 - hy1) // 16)), interpolation=cv2.INTER_AREA)
+        blurred = cv2.resize(cv2.GaussianBlur(small, (15, 15), 0), (hx2 - hx1, hy2 - hy1), interpolation=cv2.INTER_LINEAR)
         frame[hy1:hy2, hx1:hx2] = blurred
 
 
@@ -201,6 +203,7 @@ def draw_hud_header(
     frame_idx: int,
     timestamp_ms: int,
     active_tracks: int,
+    pipeline_label: str = "YOLO Pose + tracking",
 ) -> None:
     """Draw top HUD information bar for professional presentation."""
     h_img, w_img = frame.shape[:2]
@@ -218,7 +221,7 @@ def draw_hud_header(
     time_str = f"{int(time_sec // 60):02d}:{int(time_sec % 60):02d}.{int((time_sec % 1) * 10):01d}"
     hud_text = (
         f"Session: {session_title}  |  Time: {time_str}  |  "
-        f"Frame: #{frame_idx}  |  Active Tracks: {active_tracks}  |  YOLOv8-Pose + ByteTrack"
+        f"Frame: #{frame_idx}  |  Active Tracks: {active_tracks}  |  {pipeline_label}"
     )
 
     cv2.putText(
@@ -242,6 +245,8 @@ def render_pose_overlay_video(
     blur_face: bool = False,
     max_frames: Optional[int] = None,
     transcode_h264: bool = True,
+    pipeline_label: str = "YOLO Pose + tracking",
+    session_title: Optional[str] = None,
 ) -> Path:
     """Render a video with skeleton keypoints, limbs, and track IDs overlaid.
 
@@ -321,8 +326,9 @@ def render_pose_overlay_video(
 
     current_native_idx = 0
     sampled_frame_count = 0
-    session_title = video_path.stem
-    max_target = max_frames if max_frames is not None else (len(poses_by_frame_idx) if poses_by_frame_idx else None)
+    session_title = session_title or video_path.stem
+    max_target = max_frames
+    next_sample_time_ms = 0.0
 
     try:
         while True:
@@ -330,10 +336,10 @@ def render_pose_overlay_video(
             if not ret:
                 break
 
-            current_time_ms = int(round((current_native_idx / native_fps) * 1000.0))
+            current_time_ms = (current_native_idx / native_fps) * 1000.0
 
             # Match exact sampled frame
-            if current_native_idx % frame_step == 0:
+            if current_time_ms + 1e-4 >= next_sample_time_ms:
                 # Query by sampled_frame_count (matches pose dataframe frame_idx)
                 frame_poses = poses_by_frame_idx.get(sampled_frame_count, [])
 
@@ -379,12 +385,14 @@ def render_pose_overlay_video(
                     frame=frame,
                     session_title=session_title,
                     frame_idx=sampled_frame_count,
-                    timestamp_ms=current_time_ms,
+                    timestamp_ms=int(round(current_time_ms)),
                     active_tracks=len(frame_poses),
+                    pipeline_label=pipeline_label,
                 )
 
                 writer.write(frame)
                 sampled_frame_count += 1
+                next_sample_time_ms += 1000.0 / eff_sample_fps
 
                 if max_target is not None and sampled_frame_count >= max_target:
                     logger.info("Reached target frame limit (%d)", max_target)
@@ -399,8 +407,9 @@ def render_pose_overlay_video(
     # Transcode to standard H.264 using ffmpeg for wide playback compatibility
     if transcode_h264:
         try:
+            from src.pose.video_codec import ffmpeg_executable
             cmd = [
-                "ffmpeg", "-y",
+                ffmpeg_executable(), "-y",
                 "-i", str(temp_out),
                 "-c:v", "libx264",
                 "-pix_fmt", "yuv420p",

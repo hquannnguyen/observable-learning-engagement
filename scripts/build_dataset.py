@@ -33,6 +33,7 @@ if str(ROOT) not in sys.path:
 
 from src.contracts.labels import CANONICAL_TRAINING_LABELS
 from src.preprocessing.cleaner import clean_and_normalize_poses
+from src.preprocessing.context import attach_session_context
 from src.preprocessing.features import (
     FEATURE_SCHEMA_VERSION,
     FEATURE_SCHEMA_VERSION_V2,
@@ -256,8 +257,12 @@ def main() -> None:
     parser.add_argument("--output-dir", type=str, default="data/features", help="Output directory for features.")
     parser.add_argument("--splits-dir", type=str, default="data/splits", help="Directory to save train/val/test splits.")
     parser.add_argument("--seed", type=int, default=42, help="Random seed for splitting.")
-    parser.add_argument("--window-seconds", type=float, default=4.0, help="Window duration in seconds (default: 4.0s).")
-    parser.add_argument("--stride-seconds", type=float, default=2.0, help="Stride duration in seconds (default: 2.0s).")
+    parser.add_argument("--window-seconds", type=float, default=None)
+    parser.add_argument("--stride-seconds", type=float, default=None)
+    parser.add_argument("--sample-fps", type=float, default=None)
+    parser.add_argument("--raw-dir", default="data/raw")
+    parser.add_argument("--dataset-version", default=None)
+    parser.add_argument("--allow-unverified-phases", action="store_true", help="Exploratory weak labels only; legacy generated phase metadata is not verified.")
     parser.add_argument(
         "--labels",
         choices=("weak", "human", "hybrid"),
@@ -287,6 +292,11 @@ def main() -> None:
     with open(args.config, "r", encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh) or {}
     quality_thresholds = cfg.get("quality_gate", {})
+    sample_fps = args.sample_fps or float(cfg.get("video", {}).get("sample_fps", 10))
+    window_seconds = args.window_seconds or float(cfg.get("sequence", {}).get("window_seconds", 4))
+    stride_seconds = args.stride_seconds or float(cfg.get("sequence", {}).get("stride_seconds", 2))
+    dataset_version = args.dataset_version or cfg.get("data", {}).get("dataset_version", "v0.1")
+    split_version = cfg.get("data", {}).get("split_version", "split-v0.1")
 
     human_stats: Optional[Dict[str, int]] = None
     poses_dir = Path(args.poses_dir)
@@ -325,7 +335,7 @@ def main() -> None:
         if not df.empty and "track_id" in df.columns:
             # Clean and normalize if not already done
             if "norm_kpt_00_x" not in df.columns:
-                df = clean_and_normalize_poses(df, min_track_seconds=1.0)
+                df = pd.concat([clean_and_normalize_poses(g, min_track_seconds=float(cfg.get("tracking", {}).get("min_track_seconds", 2))) for _, g in df.groupby(["session_id", "camera_id"])], ignore_index=True)
             if not df.empty:
                 all_dfs.append(df)
 
@@ -334,6 +344,10 @@ def main() -> None:
         sys.exit(1)
 
     combined_df = pd.concat(all_dfs, ignore_index=True)
+    keys = ["session_id", "camera_id", "track_id", "frame_idx"]
+    if combined_df.duplicated(keys).any():
+        raise ValueError("Duplicate pose observations; keep one canonical pose file per recording/camera")
+    combined_df, context_audit = attach_session_context(combined_df, Path(args.raw_dir), allow_unverified=args.allow_unverified_phases)
     session_ids = combined_df["session_id"].unique().tolist()
 
     frozen = load_frozen_splits(splits_dir)
@@ -364,8 +378,8 @@ def main() -> None:
     logger.info("  Test  (%d): %s", len(test_sess), test_sess)
 
     split_meta = {
-        "dataset_version": "v0.1",
-        "split_version": "split-v0.1",
+        "dataset_version": dataset_version,
+        "split_version": split_version,
         "seed": args.seed,
         "created_at": datetime.now().isoformat(),
         "split_source": split_source,
@@ -375,19 +389,21 @@ def main() -> None:
         "val_sessions": val_sess,
         "test_sessions": test_sess,
     }
-    (splits_dir / "split_metadata.json").write_text(json.dumps(split_meta, indent=2), encoding="utf-8")
 
     # Build windows per track
     all_window_records: List[Dict[str, Any]] = []
     all_window_tensors: List[np.ndarray] = []
 
-    for (s_id, t_id), track_group in combined_df.groupby(["session_id", "track_id"]):
+    for (s_id, camera_id, t_id), track_group in combined_df.groupby(["session_id", "camera_id", "track_id"]):
         split_name = "train" if s_id in train_sess else ("val" if s_id in val_sess else "test")
 
         records, tensors = build_track_windows(
             track_df=track_group,
-            window_seconds=args.window_seconds,
-            stride_seconds=args.stride_seconds,
+            window_seconds=window_seconds,
+            stride_seconds=stride_seconds,
+            sample_fps=sample_fps,
+            dataset_version=dataset_version,
+            split_version=split_version,
             split=split_name,
             include_mask=(args.feature_version == "v2"),
             quality_thresholds=quality_thresholds,
@@ -398,7 +414,7 @@ def main() -> None:
             all_window_tensors.append(tensors)
 
     if not all_window_records:
-        logger.error("No windows could be built (tracks may be shorter than %.1fs).", args.window_seconds)
+        logger.error("No windows could be built (tracks may be shorter than %.1fs).", window_seconds)
         sys.exit(1)
 
     all_tensors = np.concatenate(all_window_tensors, axis=0)
@@ -473,13 +489,23 @@ def main() -> None:
         window_ids_val=window_ids[val_mask],
         window_ids_test=window_ids[test_mask],
         feature_schema_version=np.array(feature_schema_version),
+        dataset_version=np.array(dataset_version),
+        split_version=np.array(split_version),
+        sample_fps=np.array(sample_fps),
     )
     logger.info("Saved feature tensors to: %s", tensors_npz)
 
     # Split report: auditable counts, no reliance on stale prose reports.
     split_report: Dict[str, Any] = {
-        "dataset_version": "v0.1",
-        "split_version": "split-v0.1",
+        "dataset_version": dataset_version,
+        "split_version": split_version,
+        "sample_fps": sample_fps,
+        "window_seconds": window_seconds,
+        "stride_seconds": stride_seconds,
+        "allow_unverified_phases": args.allow_unverified_phases,
+        "context_audit": context_audit,
+        "phase_counts": windows_df["class_phase"].value_counts().to_dict(),
+        "declared_phase_counts": windows_df["declared_class_phase"].value_counts().to_dict(),
         "split_source": split_source,
         "split_files_sha256": split_hashes,
         "label_mode": args.labels,
@@ -513,7 +539,7 @@ def main() -> None:
 
     split_meta["label_mode"] = args.labels
     split_meta["human_label_stats"] = human_stats
-    (splits_dir / "split_metadata.json").write_text(
+    (out_dir / "build_metadata.json").write_text(
         json.dumps(split_meta, indent=2), encoding="utf-8"
     )
     logger.info(

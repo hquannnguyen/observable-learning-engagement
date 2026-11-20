@@ -225,7 +225,7 @@ End-to-end CPU (class_1, 150 frame sampled): 23,96 s, **6,26 FPS**,
 - Preview overlay skeleton + anonymous track ID; upload inference chạy CPU, chưa có progress chi tiết.
 - AppTest: 0 exception; HTTP smoke test 200.
 
-**Chưa có:** upload video → xử lý → báo cáo trong một flow (T35/T39).
+**Đã có:** upload video → xử lý → báo cáo; T39 còn kiểm chứng dài/GPU và ground truth.
 
 ---
 
@@ -272,3 +272,6 @@ python -m pytest -q --basetemp=D:\ThiGiacMayTinh\.pytest_tmp
 
 Ưu tiên: human annotation (A6/A7) → full-flow benchmark (T39) →
 M0/M1 + ablation + calibration (T20/T21/T26–T31).
+
+
+> Cập nhật 09/11/2026: xem docs/HUMAN_REVIEW_RUNBOOK.md và docs/PROJECT_STATUS.md. Nhãn phase cũ sinh tự động chưa được xác minh; dataset chờ review mới có 27.116 window. Không dùng số liệu baseline lịch sử như metric trên nhãn người.

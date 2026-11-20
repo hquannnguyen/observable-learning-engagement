@@ -204,3 +204,10 @@ Repo đã có thêm các contract/template để bắt đầu T03+ mà không th
 - **AI Agent / onboarding guide:** [`AGENTS.md`](AGENTS.md) — context dự án, kiến trúc, quy tắc dữ liệu/model, cách AI Agent và thành viên mới thực hiện task mà không sửa code base lan man.
 
 **Trạng thái hiện tại:** xem bảng 41 task trong [`docs/PROJECT_STATUS.md`](docs/PROJECT_STATUS.md). Ưu tiên tiếp theo: nhãn người thật cho test set, calibration, M0/M1 và ablation.
+
+
+## Cập nhật 09/11/2026
+
+Đã sửa context/timeline, cấu hình inference YOLO11, cửa sổ qua gap, checkpoint TCN, snapshot train và bộ nhãn người. Dataset mới chờ review có 27.116 window, không tạo nhãn từ metadata chưa xác minh. Hai video ngoài split đã chạy đầy đủ, tổng 130 window. Xem [hướng dẫn gán nhãn và đánh giá](docs/HUMAN_REVIEW_RUNBOOK.md). Chạy tool cho Quân và Phong bằng `python -m streamlit run app/annotation_app.py --server.port 8502`, chọn tên để mở phiếu riêng, lưu và chuyển cửa sổ chưa gán, tải CSV. Chưa có human test metrics; checkpoint cũ vẫn là weak-label model.
+
+Tool mặc định mở 600 cửa sổ theo từng người từ video dataset cũ; hai video mới được giữ làm bộ đánh giá bổ sung. Người cần gán được đánh dấu khung vàng và phóng to trong clip đúng thời gian. [Tiêu chí thí điểm v0.3](docs/ANNOTATION_RUBRIC_PILOT.md) yêu cầu ghi bằng chứng theo bốn khoảng, căn cứ nhiệm vụ và xác nhận. Tiêu chí cần được pilot/thống nhất; không coi các ngưỡng đề xuất là thang đo đã kiểm chứng.

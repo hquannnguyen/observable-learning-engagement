@@ -53,13 +53,14 @@ def model_from_checkpoint(checkpoint: Dict[str, Any]) -> Any:
             dropout=float(checkpoint.get("dropout", 0.30)),
         )
     elif model_type == "tcn":
+        tcn_cfg = checkpoint.get("tcn", {})
         model = ParticipationTCN(
             input_size=input_size,
-            hidden_size=int(checkpoint.get("hidden_size", 64)),
-            num_levels=int(checkpoint.get("num_levels", 4)),
-            kernel_size=int(checkpoint.get("kernel_size", 3)),
+            hidden_size=int(tcn_cfg.get("hidden_size", checkpoint.get("hidden_size", 64))),
+            num_levels=int(tcn_cfg.get("num_levels", checkpoint.get("num_levels", 4))),
+            kernel_size=int(tcn_cfg.get("kernel_size", checkpoint.get("kernel_size", 3))),
             num_classes=num_classes,
-            dropout=float(checkpoint.get("dropout", 0.20)),
+            dropout=float(tcn_cfg.get("dropout", checkpoint.get("dropout", 0.20))),
         )
     else:
         raise ValueError(f"Unknown checkpoint model_type: {model_type!r}")

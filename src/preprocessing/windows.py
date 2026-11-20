@@ -66,8 +66,15 @@ def build_track_windows(
         (quality_thresholds or {}).get("min_mean_keypoint_confidence", 0.30)
     )
 
+    W = int(round(window_seconds * sample_fps))
+    S = int(round(stride_seconds * sample_fps))
+    if W <= 0 or S <= 0 or sample_fps <= 0:
+        raise ValueError("Window, stride and sample_fps must be positive")
     if track_df.empty:
-        return [], np.empty((0, 40, expected_dim), dtype=np.float32)
+        return [], np.empty((0, W, expected_dim), dtype=np.float32)
+    for key in ("session_id", "camera_id", "track_id"):
+        if track_df[key].nunique(dropna=False) != 1:
+            raise ValueError(f"A window track must have exactly one {key}")
 
     track_df = track_df.sort_values("frame_idx").copy()
     features, _ = compute_track_features(
@@ -87,17 +94,7 @@ def build_track_windows(
     session_id = str(track_df["session_id"].iloc[0])
     camera_id = str(track_df["camera_id"].iloc[0])
     track_id = int(track_df["track_id"].iloc[0])
-    zone_id = track_df["zone_id"].iloc[0] if "zone_id" in track_df.columns else None
-
-    # Determine class_phase from track or metadata
-    class_phase = (
-        track_df["class_phase"].iloc[0]
-        if "class_phase" in track_df.columns and pd.notna(track_df["class_phase"].iloc[0])
-        else "lecture"
-    )
-
-    window_idx = 0
-    for start_idx in range(0, total_steps - W + 1, S):
+    for window_idx, start_idx in enumerate(range(0, total_steps - W + 1, S)):
         end_idx = start_idx + W
         w_tensor = features[start_idx:end_idx]
 
@@ -105,6 +102,16 @@ def build_track_windows(
         validated = validate_temporal_features(w_tensor, expected_timesteps=W)
 
         w_rows = track_df.iloc[start_idx:end_idx]
+        # Never compress a lost track interval into a nominal four-second window.
+        if (w_rows["frame_idx"].diff().dropna() != 1).any():
+            continue
+        gaps = w_rows["timestamp_ms"].diff().dropna()
+        if ((gaps <= 0) | (gaps > 1.5 * 1000.0 / sample_fps)).any():
+            continue
+        phases = w_rows.get("class_phase", pd.Series("UNKNOWN", index=w_rows.index)).fillna("UNKNOWN").unique()
+        class_phase = str(phases[0]) if len(phases) == 1 else "TRANSITION"
+        zone_values = w_rows["zone_id"].dropna().mode() if "zone_id" in w_rows else pd.Series(dtype=str)
+        zone_id = zone_values.iloc[0] if len(zone_values) else None
         t_start_ms = int(w_rows["timestamp_ms"].min())
         t_end_ms = int(w_rows["timestamp_ms"].max())
 
@@ -128,6 +135,8 @@ def build_track_windows(
         else:
             quality_state = "VALID"
             quality_reason = None
+        if quality_state == "VALID" and class_phase == "TRANSITION":
+            quality_state, quality_reason = "TRANSITION", "PHASE_TRANSITION"
 
         win_id = f"{session_id}_{camera_id}_trk{track_id:03d}_w{window_idx:04d}"
 
@@ -139,6 +148,9 @@ def build_track_windows(
             "t_start_ms": t_start_ms,
             "t_end_ms": t_end_ms,
             "class_phase": class_phase,
+            "declared_class_phase": ";".join(sorted(w_rows["declared_class_phase"].dropna().astype(str).unique())) if "declared_class_phase" in w_rows else class_phase,
+            "phase_source": ";".join(sorted(w_rows["phase_source"].unique())) if "phase_source" in w_rows else "POSE_COLUMN",
+            "phase_verified": bool(w_rows["phase_verified"].all()) if "phase_verified" in w_rows else False,
             "zone_id": zone_id,
             "feature_schema_version": schema_version,
             "dataset_version": dataset_version,
@@ -146,10 +158,6 @@ def build_track_windows(
             "label_schema_version": label_schema_version,
             "quality_state": quality_state,
             "quality_reason": quality_reason,
-            "dataset_version": dataset_version,
-            "split_version": split_version,
-            "label_schema_version": label_schema_version,
-            "quality_state": quality_state,
             "mean_visible_ratio": round(mean_vis, 4),
             "mean_pose_confidence": round(mean_conf, 4),
             "participation_label": None,
@@ -161,7 +169,6 @@ def build_track_windows(
 
         window_records.append(record)
         window_tensors.append(validated)
-        window_idx += 1
 
     tensor_stack = np.stack(window_tensors, axis=0) if window_tensors else np.empty((0, W, features.shape[1]), dtype=np.float32)
     return window_records, tensor_stack

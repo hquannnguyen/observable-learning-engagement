@@ -1,0 +1,17 @@
+{
+  "created_at": "2026-11-09T16:41:22.793457",
+  "source_windows": "data\\annotations\\external_review_20261109\\review_windows.csv",
+  "source_windows_sha256": "b2c17f94f89f10909d743c7c287ac65fe9f6a22ebd25e3a697a729540f262875",
+  "seed": 42,
+  "sampled_windows": 130,
+  "by_split": {
+    "test": 130
+  },
+  "by_session": {
+    "external_106705-673786412_medium": 107,
+    "external_215475_medium": 23
+  },
+  "weak_label_counts_in_sample": {},
+  "blind": true,
+  "note": "Row-level weak labels are intentionally omitted. Annotators must label from video only, then run scripts/dataset_qa.py --strict-human."
+}

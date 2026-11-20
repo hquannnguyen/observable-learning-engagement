@@ -166,6 +166,9 @@ def compute_double_annotation_agreement(
     """
     # Match by key (session_id, camera_id, track_id, t_start_ms, t_end_ms)
     merge_keys = ["session_id", "camera_id", "track_id", "t_start_ms", "t_end_ms"]
+    for name, frame in ((annotator_a_name, df_a), (annotator_b_name, df_b)):
+        if frame.duplicated(merge_keys).any():
+            raise ValueError(f"{name}: duplicate annotation keys would inflate agreement")
 
     identical = False
     try:
@@ -279,6 +282,9 @@ def main() -> None:
         is_valid, errors = validate_annotation_dataframe(df)
         if is_valid and args.require_human:
             labelled = df[df["participation_label"].notna()]
+            if labelled.empty:
+                errors.append("require-human: no completed human labels; template is not ground truth")
+                is_valid = False
             bad = labelled[~labelled["label_source"].isin(["HUMAN", "ADJUDICATED"])]
             if not bad.empty:
                 errors.append(
@@ -299,6 +305,11 @@ def main() -> None:
     elif args.annotator_a and args.annotator_b:
         df_a = pd.read_csv(args.annotator_a)
         df_b = pd.read_csv(args.annotator_b)
+        if args.strict_human:
+            for name, frame in ((args.annotator_a, df_a), (args.annotator_b, df_b)):
+                valid, errors = validate_annotation_dataframe(frame)
+                if not valid:
+                    raise ValueError(f"{name}: invalid annotation schema: {errors[:5]}")
 
         res = compute_double_annotation_agreement(
             df_a, df_b, strict_human=args.strict_human

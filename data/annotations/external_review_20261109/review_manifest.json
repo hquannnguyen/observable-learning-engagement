@@ -1,0 +1,17 @@
+{
+  "scope": "external_video_review",
+  "windows": 130,
+  "sources": [
+    {
+      "predictions": "reports\\inference\\external_106705_yolo11\\predictions.csv",
+      "sha256": "faaaad3c3d2e9fff3a4283e568f95571fc899bfc6ce12f0479585e4e5211ddfe"
+    },
+    {
+      "predictions": "reports\\inference\\external_215475_yolo11\\predictions.csv",
+      "sha256": "da3842c745035de78c250db83bd2e88e5535d45d8db85460fa2771dd96a795d9"
+    }
+  ],
+  "status": "AWAITING_INDEPENDENT_HUMAN_ANNOTATION",
+  "has_human_labels": false,
+  "note": "The review split does not alter frozen training splits. No prediction labels are shown in the forms."
+}

@@ -1,0 +1,1195 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phân tích mã nguồn Observable Learning Engagement</title>
+<style>
+:root{color-scheme:light;--ink:#202a36;--muted:#596675;--nav:#f5f7fa;--border:#d7dfe8;--accent:#17528a}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:35px}body{margin:0;color:var(--ink);font:16px/1.75 'Segoe UI',Arial,sans-serif;background:#fff}
+aside{position:fixed;inset:0 auto 0 0;width:278px;overflow:auto;background:var(--nav);border-right:1px solid var(--border);padding:30px 22px}
+.eyebrow{font-size:12px;letter-spacing:.12em;font-weight:700;color:var(--muted);margin:0 0 14px}.nav-title{font-weight:700;margin:0 0 16px;font-size:19px}
+nav a{display:block;text-decoration:none;color:#3d4b5c;padding:7px 8px;font-size:13px;line-height:1.55;border-radius:5px}nav a:hover,nav a:focus{background:#e1eaf4;color:#123e69}nav a.active{background:#dbe7f4;color:#123e69;font-weight:600}
+main{margin-left:278px;max-width:1140px;padding:50px 65px 90px}h1{font-size:34px;line-height:1.28;letter-spacing:-.025em;color:#000;margin:0 0 22px;max-width:920px}h2{font-size:25px;color:#000;line-height:1.4;margin:54px 0 18px}h3{font-size:19px;line-height:1.5;color:#000;margin:26px 0 12px}p{margin:0 0 17px}li{margin:5px 0}ul,ol{padding-left:26px;margin:12px 0 20px}strong{font-weight:650}a{color:var(--accent);text-underline-offset:3px}.source{font-size:13px;white-space:nowrap}
+code{font: .86em/1.6 Consolas,'Courier New',monospace;overflow-wrap:anywhere;background:#f1f4f7;padding:2px 4px;border-radius:3px}pre{font-size:13px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f6f9;padding:18px 20px;border:1px solid #e1e6ec;border-radius:6px;margin:18px 0 24px}pre code{background:none;padding:0;font:inherit}
+.table-wrap{overflow-x:auto;margin:19px 0 27px}table{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}th{background:#e6eef7;text-align:left;font-weight:650;color:#000}td,th{border:1px solid #d9d9d9;padding:10px 12px;vertical-align:middle}tbody tr:nth-child(even){background:#f8fafc}td code{font-size:.9em}td:first-child{min-width:72px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:25px;font-size:13px;color:var(--muted)}button{background:#fff;border:1px solid #b8c7d7;border-radius:5px;padding:8px 13px;font:inherit;color:#173f68;cursor:pointer}button:hover{background:#edf3fa}.endnote{color:var(--muted);font-size:12px;margin-top:45px}
+@media(max-width:1000px){aside{width:225px;padding:22px 13px}main{margin-left:225px;padding:35px 30px}h1{font-size:29px}}
+@media(max-width:700px){aside{position:relative;width:100%;max-height:310px;border-right:0;border-bottom:1px solid var(--border);padding:20px}nav{columns:2;column-gap:20px}nav a{break-inside:avoid}main{margin-left:0;padding:28px 20px 60px}h1{font-size:28px}h2{font-size:23px;margin-top:38px}table{min-width:600px}.toolbar{font-size:12px}}
+@media print{@page{size:A4;margin:18mm 17mm}html{scroll-behavior:auto}body{font-size:10.5pt;line-height:1.55;color:#000}aside,.toolbar{display:none}main{margin:0;max-width:none;padding:0}h1{font-size:24pt}h2{font-size:17pt;margin-top:24pt;break-after:avoid}h3{font-size:12.5pt;break-after:avoid}p{orphans:3;widows:3;margin-bottom:9pt}pre{font-size:8pt;padding:9pt;white-space:pre-wrap}table{font-size:8.5pt;min-width:0!important}td,th{padding:6pt}thead{display:table-header-group}tr{break-inside:avoid}.table-wrap{overflow:visible;margin:10pt 0 15pt}a{color:#000;text-decoration:none}pre,td,th{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style></head><body>
+<aside><p class="eyebrow">CVF25PRJ10 · TÀI LIỆU KỸ THUẬT</p><p class="nav-title">Mục lục</p><nav aria-label="Mục lục tài liệu"><a href="#section-1">1 Tổng quan bài toán và kiến trúc</a>
+<a href="#section-6">2 Công nghệ sử dụng và vai trò</a>
+<a href="#section-8">3 Giai đoạn 1 Chốt phạm vi và chuẩn bị môi trường</a>
+<a href="#section-12">4 Giai đoạn 2 Thu thập dữ liệu và xây dựng nhãn</a>
+<a href="#section-16">5 Giai đoạn 3 Lấy mẫu video trích pose và theo dõi người</a>
+<a href="#section-22">6 Giai đoạn 4 Kiểm tra chất lượng làm sạch và chuẩn hóa</a>
+<a href="#section-27">7 Giai đoạn 5 Xây dựng đặc trưng tư thế và chuyển động</a>
+<a href="#section-31">8 Giai đoạn 6 Tạo cửa sổ gán nhãn và chia dữ liệu</a>
+<a href="#section-36">9 Giai đoạn 7 Thiết kế và huấn luyện mô hình temporal</a>
+<a href="#section-42">10 Giai đoạn 8 Đánh giá và diễn giải kết quả</a>
+<a href="#section-47">11 Giai đoạn 9 Xử lý bất định trong dự đoán</a>
+<a href="#section-50">12 Giai đoạn 10 Tổng hợp theo thời gian và vùng lớp</a>
+<a href="#section-54">13 Giai đoạn 11 Suy luận video mới dashboard và xuất báo cáo</a>
+<a href="#section-59">14 Giai đoạn 12 Kiểm thử benchmark và đóng gói</a>
+<a href="#section-63">15 Hướng dẫn chạy dự án theo từng nhu cầu</a>
+<a href="#section-68">16 Trạng thái hiện tại và hướng phát triển</a>
+<a href="#section-72">17 Các điểm đã sửa và phần cần hoàn tất</a>
+<a href="#section-73">18 Danh mục mã nguồn và bằng chứng</a>
+<a href="#section-74">19 Thuật ngữ dùng khi trình bày</a></nav></aside>
+<main><div class="toolbar"><span>Phân tích mã nguồn · 09/11/2026</span><button onclick="window.print()">In hoặc lưu PDF</button></div><h1>Phân tích mã nguồn và quy trình triển khai hệ thống tham gia học tập quan sát được</h1>
+<p><strong>Dự án:</strong> Observable Learning Engagement · CVF25PRJ10 · CVFP26BCPPRJC012<br><strong>Ngày phân tích:</strong> 09/11/2026<br><strong>Thư mục dự án:</strong> <code>D:\ThiGiacMayTinh\observable-learning-engagement</code></p>
+<p>Hệ thống xử lý video lớp học để ước lượng mức độ tham gia học tập quan sát được qua tư thế cơ thể và chuyển động. Phần cốt lõi đã có mã nguồn: trích xuất pose bằng <strong>YOLOv8-Pose hoặc YOLO11-Pose</strong>, theo dõi bằng ByteTrack, tạo đặc trưng theo thời gian, phân loại bằng LSTM hoặc TCN, lọc dự đoán thiếu tin cậy và trình bày kết quả trên Streamlit. Baseline mặc định là YOLOv8n-Pose; nhánh YOLO11m-Pose độ phân giải 1280 đã được tích hợp vào code, có trọng số và artifact overlay riêng trong thư mục dự án.</p>
+<p>Tài liệu dành cho thành viên cần hiểu, thuyết trình, vận hành hoặc phát triển dự án. Mỗi giai đoạn trình bày mục đích, dữ liệu vào và ra, cách thực hiện, công nghệ và điểm cần kiểm tra. Các ký hiệu <code>[Sxx]</code> dẫn tới danh mục mã nguồn ở cuối tài liệu.</p>
+<p><strong>Kết luận về mức độ hoàn thiện:</strong> hệ thống đã có luồng suy luận trên video mới và các artifact thí nghiệm. Tuy nhiên, bộ đánh giá hiện hành dùng nhãn sinh bằng quy tắc. Các điểm Macro-F1 hiện tại phản ánh mức đồng thuận với nhãn quy tắc, chưa chứng minh độ chính xác trên nhãn người đánh giá độc lập. Bảng trạng thái dự án được cập nhật ngày 25/10/2026; các kết quả trích dẫn dưới đây là artifact đã lưu của lần đó.</p>
+<p><strong>Cập nhật triển khai ngày 09/11/2026:</strong> đã sửa context phase, cửa sổ qua gap, cấu hình suy luận, checkpoint TCN, snapshot train và công cụ nhãn người. Dataset chờ review mới có <strong>27.116 cửa sổ</strong>, được lưu riêng ở <code>data/features_context_v0_2/</code>; không sinh nhãn từ phase chưa xác minh. Tool gán nhãn mặc định dùng mẫu <strong>600 cửa sổ theo từng người từ video dataset cũ</strong>. Hai video mới do người dùng cung cấp là bộ bổ sung đã chạy YOLO11m-Pose + LSTM: tổng <strong>130 cửa sổ</strong>. Tool đánh dấu khung vàng/phóng to đúng người và yêu cầu ghi bằng chứng theo tiêu chí <strong>v0.3-pilot</strong> đang chờ thử nghiệm/thống nhất. Kiểm thử toàn bộ: <strong>133 passed</strong>. Chưa có nhãn HUMAN hoàn tất, nên chưa tính accuracy/F1 trên người thật hoặc train lại trên nhãn người. Hướng dẫn thực hiện tại <code>docs/HUMAN_REVIEW_RUNBOOK.md</code> và <code>docs/ANNOTATION_RUBRIC_PILOT.md</code>.</p>
+<h2 id="section-1">1 Tổng quan bài toán và kiến trúc</h2>
+<h3 id="section-2">1.1 Hệ thống giải quyết vấn đề gì</h3>
+<p>Một ảnh đơn chỉ ghi nhận tư thế tại một thời điểm. Dự án dùng chuỗi quan sát để mô tả diễn biến trong một khoảng thời gian: vị trí các khớp, chuyển động tay, độ nghiêng vai, vị trí đầu so với vai và chất lượng quan sát. Mô hình temporal tổng hợp những tín hiệu này thành một trong ba mức tham gia quan sát được.</p>
+<p>Đơn vị dự đoán là <strong>một cửa sổ thời gian của một track</strong>, không phải toàn bộ người học trong cả buổi. Track ID là mã theo dõi tạm thời trong video, không phải định danh cá nhân. Hệ thống không đo trực tiếp cảm xúc, động cơ, mức hiểu bài hoặc sự chú ý nội tại. Hình học đầu từ pose 2D chỉ là chỉ dấu gần đúng, không phải phép đo hướng nhìn chính xác.</p>
+<h3 id="section-3">1.2 Hợp đồng nhãn</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chỉ số mô hình</th>
+<th>Giá trị lưu trong dữ liệu và kết quả</th>
+<th>Hiển thị</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td><code>HIGH_OBSERVED_PARTICIPATION</code></td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td>1</td>
+<td><code>MODERATE_OBSERVED_PARTICIPATION</code></td>
+<td>MODERATE</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>LOW_OBSERVED_PARTICIPATION</code></td>
+<td>LOW</td>
+</tr>
+<tr>
+<td>Không có</td>
+<td><code>UNCERTAIN</code></td>
+<td>UNCERTAIN</td>
+</tr>
+</tbody></table></div>
+<p><code>UNCERTAIN</code> do tầng kiểm tra chất lượng và độ tin cậy tạo ra; mô hình chính chỉ học ba lớp. Nhãn LOW không đủ căn cứ để kết luận người học lười, chán hoặc không chú ý. Quy ước nhãn nằm tập trung trong <code>src/contracts/labels.py</code>, gồm mapping chỉ số, nhãn hiển thị và kiểm tra nguồn gốc nhãn. [<a class="source" href="#source-S01">S01</a>]</p>
+<p>Nguồn nhãn gồm <code>HUMAN</code> do người gán, <code>WEAK_RULE</code> do quy tắc sinh và <code>ADJUDICATED</code> sau phân xử. Nhãn quy tắc bắt buộc có <code>label_rule_version</code>. Trạng thái chất lượng gồm <code>VALID</code>, <code>OCCLUDED</code>, <code>TRANSITION</code>, <code>INVALID</code>; chỉ trạng thái VALID được mang nhãn huấn luyện.</p>
+<h3 id="section-4">1.3 Hai luồng hoạt động</h3>
+<pre><code class="language-text">LUỒNG XÂY DỰNG MÔ HÌNH
+Video được phép sử dụng + metadata
+  -&gt; Trích pose và tracking
+  -&gt; Làm sạch và chuẩn hóa
+  -&gt; Đặc trưng và cửa sổ thời gian
+  -&gt; Gán nhãn + chia theo session
+  -&gt; Huấn luyện LSTM hoặc TCN
+  -&gt; Checkpoint + đánh giá + nhật ký thí nghiệm
+
+LUỒNG SUY LUẬN
+Video mới + checkpoint
+  -&gt; Trích pose và tracking
+  -&gt; Gán zone + làm sạch
+  -&gt; Đặc trưng và cửa sổ tương thích checkpoint
+  -&gt; Xác suất ba lớp
+  -&gt; Uncertainty gate
+  -&gt; Kết quả từng cửa sổ
+  -&gt; Tổng hợp theo thời gian và vùng
+  -&gt; Dashboard + CSV + JSON + báo cáo Markdown
+</code></pre>
+<p>YOLOv8-Pose và YOLO11-Pose là các lựa chọn cho bộ trích xuất pose pretrained. Phần mô hình nhóm thiết kế và huấn luyện là bộ phân loại temporal LSTM/TCN. Không có bước fine-tune YOLO trong các script huấn luyện hiện tại. Tên module và một số docstring còn ghi YOLOv8 nhưng implementation nạp model theo đường dẫn trọng số, không cố định chỉ YOLOv8. [<a class="source" href="#source-S02">S02</a>, <a class="source" href="#source-S08">S08</a>, <a class="source" href="#source-S09">S09</a>, <a class="source" href="#source-S10">S10</a>, <a class="source" href="#source-S26">S26</a>]</p>
+<h3 id="section-5">1.4 Cấu trúc thư mục và trách nhiệm</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thư mục</th>
+<th>Trách nhiệm</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>configs/</code></td>
+<td>Cấu hình baseline, biến thể thí nghiệm, lưới zone</td>
+</tr>
+<tr>
+<td><code>data/raw/</code></td>
+<td>Video và metadata phiên quay</td>
+</tr>
+<tr>
+<td><code>data/poses/</code></td>
+<td>Pose, track, video overlay</td>
+</tr>
+<tr>
+<td><code>data/annotations/</code></td>
+<td>Nhãn quy tắc, template nhãn người, dữ liệu QA</td>
+</tr>
+<tr>
+<td><code>data/features/</code></td>
+<td>Metadata cửa sổ và tensor NPZ</td>
+</tr>
+<tr>
+<td><code>data/splits/</code></td>
+<td>Danh sách session cố định cho train, val, test</td>
+</tr>
+<tr>
+<td><code>src/contracts/</code></td>
+<td>Hợp đồng nhãn và nguồn nhãn</td>
+</tr>
+<tr>
+<td><code>src/pose/</code></td>
+<td>Trích pose, thống kê track, trực quan hóa</td>
+</tr>
+<tr>
+<td><code>src/preprocessing/</code></td>
+<td>Chất lượng, làm sạch, đặc trưng, cửa sổ, weak label</td>
+</tr>
+<tr>
+<td><code>src/models/</code></td>
+<td>LSTM, TCN, factory tạo và khôi phục mô hình</td>
+</tr>
+<tr>
+<td><code>src/training/</code></td>
+<td>Dataset, vòng huấn luyện và các metric</td>
+</tr>
+<tr>
+<td><code>src/uncertainty/</code></td>
+<td>Kiểm tra chất lượng và độ tin cậy</td>
+</tr>
+<tr>
+<td><code>src/reporting/</code></td>
+<td>Tổng hợp và xuất báo cáo</td>
+</tr>
+<tr>
+<td><code>scripts/</code></td>
+<td>CLI điều phối từng công đoạn</td>
+</tr>
+<tr>
+<td><code>app/</code></td>
+<td>Giao diện Streamlit</td>
+</tr>
+<tr>
+<td><code>models/checkpoints/</code></td>
+<td>Checkpoint temporal</td>
+</tr>
+<tr>
+<td><code>reports/experiments/</code></td>
+<td>Snapshot cấu hình, metadata, kết quả từng thí nghiệm</td>
+</tr>
+<tr>
+<td><code>tests/</code></td>
+<td>Kiểm thử hợp đồng và các thành phần</td>
+</tr>
+<tr>
+<td><code>notebooks/</code></td>
+<td>Điểm vào Colab dạng orchestration/template</td>
+</tr>
+</tbody></table></div>
+<h2 id="section-6">2 Công nghệ sử dụng và vai trò</h2>
+<p>Các phiên bản dưới đây lấy từ <code>requirements.txt</code> trong repository; đây là phiên bản được dự án khai báo, không phải kết quả cài mới trong lần viết tài liệu. [<a class="source" href="#source-S18">S18</a>]</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Công nghệ</th>
+<th>Phiên bản khai báo</th>
+<th>Vai trò thực tế</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Python</td>
+<td>Tài liệu môi trường ghi 3.14.7; CI cấu hình 3.12</td>
+<td>Ngôn ngữ triển khai</td>
+</tr>
+<tr>
+<td>Ultralytics</td>
+<td>8.4.173</td>
+<td>Nạp YOLO pose và tích hợp tracker</td>
+</tr>
+<tr>
+<td>YOLOv8n Pose</td>
+<td><code>yolov8n-pose.pt</code></td>
+<td>Baseline trích 17 keypoint</td>
+</tr>
+<tr>
+<td>YOLO11m Pose</td>
+<td><code>yolo11m-pose.pt</code></td>
+<td>Nhánh pose dùng cấu hình <code>imgsz=1280</code>, confidence 0,35; có artifact overlay</td>
+</tr>
+<tr>
+<td>YOLOv8m Pose</td>
+<td><code>yolov8m-pose.pt</code></td>
+<td>Trọng số có trong thư mục, có thể chọn qua <code>--model</code>; chưa có metric so sánh riêng được truy vết</td>
+</tr>
+<tr>
+<td>ByteTrack</td>
+<td><code>bytetrack.yaml</code></td>
+<td>Baseline duy trì ID giữa các frame</td>
+</tr>
+<tr>
+<td>BoT-SORT</td>
+<td><code>botsort.yaml</code></td>
+<td>Phương án tracker so sánh trong benchmark</td>
+</tr>
+<tr>
+<td>OpenCV</td>
+<td>5.0.0.93</td>
+<td>Đọc video, lấy FPS, vẽ skeleton, blur, ghi video</td>
+</tr>
+<tr>
+<td>PyTorch</td>
+<td>2.14.1</td>
+<td>LSTM, Conv1d, loss, optimizer, checkpoint</td>
+</tr>
+<tr>
+<td>torchvision</td>
+<td>0.29.1</td>
+<td>Dependency được khai báo; không phải lõi bộ phân loại temporal</td>
+</tr>
+<tr>
+<td>NumPy</td>
+<td>2.5.3</td>
+<td>Tensor đặc trưng, mask, phép tính số và NPZ</td>
+</tr>
+<tr>
+<td>pandas</td>
+<td>3.0.6</td>
+<td>Bảng pose, annotation, groupby, join và CSV</td>
+</tr>
+<tr>
+<td>PyArrow</td>
+<td>26.0.0</td>
+<td>Engine Parquet</td>
+</tr>
+<tr>
+<td>PyYAML</td>
+<td>6.0.3</td>
+<td>Đọc cấu hình YAML</td>
+</tr>
+<tr>
+<td>Streamlit</td>
+<td>1.66.1</td>
+<td>Dashboard và upload video</td>
+</tr>
+<tr>
+<td>Plotly</td>
+<td>7.1.0</td>
+<td>Biểu đồ timeline và heatmap</td>
+</tr>
+<tr>
+<td>Matplotlib</td>
+<td>3.11.2</td>
+<td>Dependency phục vụ trực quan hóa trong môi trường dự án</td>
+</tr>
+<tr>
+<td>pytest</td>
+<td>8.4.2</td>
+<td>Kiểm thử tự động</td>
+</tr>
+<tr>
+<td>scikit-learn</td>
+<td><code>&gt;=1.5,&lt;2</code></td>
+<td>Dependency khai báo cho ML; M1 chưa triển khai</td>
+</tr>
+<tr>
+<td>Git và GitHub Actions</td>
+<td>Workflow trong <code>.github/workflows/ci.yml</code></td>
+<td>Truy vết commit và cấu hình kiểm thử CI</td>
+</tr>
+</tbody></table></div>
+<p>Các metric phân loại và Cohen’s kappa được tính trực tiếp trong mã bằng NumPy/Python; không nên mô tả rằng toàn bộ phần đánh giá đang gọi scikit-learn. YOLO11m-Pose đã có đường thực thi trong extractor/visualization, file trọng số local và overlay mang tên nhánh YOLO11. Chưa có bảng metric pose đối chứng đủ căn cứ để kết luận nhánh này tốt hơn YOLOv8n-Pose. [<a class="source" href="#source-S26">S26</a>]</p>
+<h3 id="section-7">2.1 Vai trò của YOLOv8 và YOLO11 trong repository</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>YOLOv8n Pose mặc định</th>
+<th>YOLO11m Pose độ phân giải cao</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Cấu hình</td>
+<td><code>configs/baseline.yaml</code></td>
+<td><code>configs/experiments/pose_yolo11m_hd.yaml</code></td>
+</tr>
+<tr>
+<td>Trọng số</td>
+<td><code>yolov8n-pose.pt</code></td>
+<td><code>yolo11m-pose.pt</code></td>
+</tr>
+<tr>
+<td>Confidence trong YAML</td>
+<td>0,30</td>
+<td>0,35</td>
+</tr>
+<tr>
+<td>Kích thước suy luận</td>
+<td>Baseline không đặt <code>imgsz</code>; báo cáo kỹ thuật ghi 640</td>
+<td>YAML đặt <code>imgsz=1280</code></td>
+</tr>
+<tr>
+<td>Sampling</td>
+<td>10 FPS</td>
+<td>10 FPS</td>
+</tr>
+<tr>
+<td>Tracker</td>
+<td>ByteTrack</td>
+<td>ByteTrack</td>
+</tr>
+<tr>
+<td>Đầu ra dùng chung</td>
+<td>Bbox và 17 keypoint COCO</td>
+<td>Bbox và 17 keypoint COCO</td>
+</tr>
+<tr>
+<td>Dấu vết nhánh YOLO11</td>
+<td>Không áp dụng</td>
+<td>Có <code>data/poses/class_1_yolo11m_hd_overlay.mp4</code></td>
+</tr>
+</tbody></table></div>
+<p>Nhánh YOLO11m-HD hướng tới kiểm tra việc trích pose ở người nhỏ hoặc xa bằng model khác và kích thước ảnh suy luận lớn hơn. Đây là mục tiêu của cấu hình, chưa phải kết quả recall/F1 đã đo. <code>imgsz=1280</code> là tham số tiền xử lý/suy luận của Ultralytics, không có nghĩa video nguồn bị đổi thành video 1280×1280 lưu trên đĩa.</p>
+<p>Hai lựa chọn pose đi vào cùng hợp đồng bbox/keypoint, rồi dùng chung tracking, cleaning, feature và temporal classifier. Thay model pose không thay LSTM thành YOLO11 và cũng không làm YOLO tự dự đoán ba mức tham gia học tập. Nếu đổi bộ trích pose cho dữ liệu temporal, cần ghi lại nguồn model, kiểm tra chất lượng và đánh giá lại tác động tới phân phối feature.</p>
+<p><strong>Truy vết kết quả:</strong> overlay riêng là artifact của nhánh YOLO11 trong dự án; tên file không đủ để xác minh toàn bộ tham số lúc chạy. CSV pose và metadata do extractor trả về hiện chưa ghi <code>model_name</code>/<code>imgsz</code>; snapshot LSTM/TCN lưu tên pose trong config cũng chưa chứng minh model đã dùng để tạo từng CSV. Vì vậy chưa gán các điểm Macro-F1 hiện có thành kết quả của YOLO11 nếu không có nhật ký trích xuất tương ứng. [<a class="source" href="#source-S02">S02</a>, <a class="source" href="#source-S26">S26</a>]</p>
+<h2 id="section-8">3 Giai đoạn 1 Chốt phạm vi và chuẩn bị môi trường</h2>
+<h3 id="section-9">Mục tiêu và đầu ra</h3>
+<p>Giai đoạn này thống nhất ý nghĩa đầu ra, cấu trúc dữ liệu và cách tái lập thí nghiệm. Đầu vào là phạm vi đề tài; đầu ra là hợp đồng nhãn, cấu hình baseline, môi trường chạy và quy ước lưu artifact.</p>
+<h3 id="section-10">Cách thực hiện</h3>
+<ol>
+<li>Đọc <code>docs/scope.md</code> để thống nhất thuật ngữ và giới hạn suy luận.</li>
+<li>Dùng nhãn canonical từ <code>src/contracts/labels.py</code>, giữ thứ tự HIGH, MODERATE, LOW nhất quán ở dataset, logits, softmax và báo cáo.</li>
+<li>Tạo môi trường Python riêng và cài dependency từ <code>requirements.txt</code>.</li>
+<li>Kiểm tra skeleton repository bằng <code>scripts/check_setup.py</code>.</li>
+<li>Dùng <code>configs/baseline.yaml</code> làm mốc; tạo file trong <code>configs/experiments/</code> cho biến thể.</li>
+</ol>
+<p>Baseline hiện đặt sampling 10 FPS, pose confidence 0,30, visibility 0,60, track tối thiểu 2 giây, cửa sổ 4 giây, stride 2 giây, LSTM hidden 128, 2 layer, dropout 0,30, batch 32, learning rate 0,001 và ngưỡng xác suất 0,60. Đây là các giá trị ban đầu của mã, chưa phải bộ tham số tối ưu đã được chứng minh.</p>
+<h3 id="section-11">Công nghệ và kiểm tra</h3>
+<p>Python venv cô lập dependency; YAML tách tham số khỏi code; Git ghi nhận phiên bản mã; JSON/CSV lưu metadata và kết quả. Các file cấu hình thí nghiệm được đọc như YAML thông thường. Trường <code>parent_config</code> mang tính mô tả; không có cơ chế kế thừa và gộp cấu hình tự động trong các loader đã kiểm tra.</p>
+<p>Điều kiện chuyển bước: repository đủ thư mục, nhãn thống nhất và môi trường import được dependency cần thiết. Việc <code>check_setup.py</code> chạy thành công không chứng minh mô hình đã học tốt hoặc dữ liệu đã đạt yêu cầu khoa học. [<a class="source" href="#source-S01">S01</a>, <a class="source" href="#source-S17">S17</a>, <a class="source" href="#source-S18">S18</a>]</p>
+<h2 id="section-12">4 Giai đoạn 2 Thu thập dữ liệu và xây dựng nhãn</h2>
+<h3 id="section-13">4.1 Chuẩn bị video và metadata</h3>
+<p>Đầu vào là video lớp học được phép sử dụng. Protocol khuyến nghị camera cố định, độ phân giải 1920×1080, nguồn 25–30 FPS và ghi các pha <code>lecture</code>, <code>individual_work</code>, <code>discussion</code>. Đây là khuyến nghị thu thập, không phải bộ kiểm tra bắt buộc đã tự động hóa toàn bộ trong extractor.</p>
+<p>Mỗi session cần <code>session_id</code>, camera, thời điểm quay, FPS, resolution, góc máy, số người, timeline pha hoạt động, ánh sáng, xác nhận đồng thuận và ghi chú. Tổ chức dự kiến:</p>
+<pre><code class="language-text">data/raw/session_001/cam_A.mp4
+data/raw/session_001/metadata.json
+</code></pre>
+<p>Nên quay pilot ngắn để kiểm tra thân trên, bàn tay, che khuất và chất lượng tại các vùng gần/xa. Video gốc không được đưa công khai lên repository; các bước phát triển thường ngày ưu tiên pose và feature. Protocol thu thập hiện còn được ghi là DRAFT trong bảng trạng thái. [<a class="source" href="#source-S19">S19</a>, <a class="source" href="#source-S20">S20</a>]</p>
+<h3 id="section-14">4.2 Nhãn quy tắc</h3>
+<p><code>src/preprocessing/weak_labels.py</code> sinh nhãn từ feature cửa sổ và <code>class_phase</code>, đánh dấu <code>WEAK_RULE</code>, phiên bản <code>weak-v0.1</code>. Quy tắc được áp dụng theo thứ tự, nên quy tắc gặp trước có thể quyết định kết quả. [<a class="source" href="#source-S07">S07</a>]</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Trường hợp</th>
+<th>Điều kiện chính trong code</th>
+<th>Nhãn quy tắc</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Chất lượng cửa sổ không VALID</td>
+<td>Kiểm tra trước các quy tắc hành vi</td>
+<td>Không gán nhãn</td>
+</tr>
+<tr>
+<td>Tay cao hơn vai</td>
+<td>Feature tay trái hoặc phải &gt; 0,05 ở ít nhất 5 bước</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td>Làm việc cá nhân</td>
+<td><code>head_down &gt; 0,02</code> ở &gt;50% bước và motion trung bình &gt;0,01</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td>Làm việc cá nhân với vị trí đầu thấp kéo dài</td>
+<td><code>head_down &gt; 0,30</code> ở &gt;80% bước và motion &lt;0,005</td>
+<td>LOW</td>
+</tr>
+<tr>
+<td>Giảng bài với vị trí đầu thấp</td>
+<td><code>head_down &gt; 0,25</code> ở &gt;70% bước</td>
+<td>LOW</td>
+</tr>
+<tr>
+<td>Giảng bài với độ lệch ngang đầu lớn</td>
+<td><code>abs(head_proxy_x) &gt; 0,45</code> ở &gt;60% bước</td>
+<td>LOW</td>
+</tr>
+<tr>
+<td>Giảng bài với đầu ít lệch ngang và ít thấp</td>
+<td>Hai điều kiện hình học đạt &gt;70% bước</td>
+<td>HIGH nếu motion &gt;0,015, còn lại MODERATE</td>
+</tr>
+<tr>
+<td>Thảo luận</td>
+<td>Motion trung bình &gt;0,02</td>
+<td>HIGH</td>
+</tr>
+<tr>
+<td>Thảo luận có motion rất thấp và đầu thấp</td>
+<td>Motion &lt;0,005 và <code>head_down &gt;0,20</code> ở &gt;50% bước</td>
+<td>LOW</td>
+</tr>
+<tr>
+<td>Không khớp nhánh cụ thể</td>
+<td>Quy tắc mặc định</td>
+<td>MODERATE</td>
+</tr>
+</tbody></table></div>
+<p>Ở 10 FPS, 5 bước tương đương khoảng 0,5 giây. Các ngưỡng này thuộc không gian tọa độ đã chuẩn hóa, không phải số pixel hoặc góc nhìn thực. Nhánh tay giơ trong implementation chạy trước kiểm tra phase, dù chú thích chỉ nhắc lecture/discussion. Không được diễn giải các tên rule nội bộ thành chẩn đoán trạng thái tâm lý.</p>
+<p><code>scripts/generate_annotations.py</code> sinh annotation quy tắc từ pose. <code>build_dataset.py</code> có thể tự gọi weak rule trên tensor cửa sổ; không bắt buộc chạy script sinh annotation trước rồi mới build dataset. Nhãn người được builder ghép bằng <code>window_id</code>, không tự động biến mọi annotation theo khoảng thời gian thành nhãn cửa sổ.</p>
+<h3 id="section-15">4.3 Nhãn do người đánh giá</h3>
+<p>Quy trình dự kiến là lấy mẫu cửa sổ, tạo template trống, hai người xem video độc lập, kiểm tra schema, tính đồng thuận và phân xử bất đồng. Template bỏ nhãn quy tắc ở mức từng dòng để giảm ảnh hưởng tới người gán. Manifest vẫn lưu số lượng tổng hợp theo nguồn mẫu.</p>
+<pre><code class="language-powershell">python scripts/sample_annotation_subset.py --windows data/features/participation_windows.csv --out-dir data/annotations/human --n-test 200 --n-train 150 --n-val 50
+</code></pre>
+<p>Sau khi hai người hoàn thành <code>ann_a.csv</code> và <code>ann_b.csv</code>, kiểm tra bằng:</p>
+<pre><code class="language-powershell">python scripts/dataset_qa.py --annotator-a data/annotations/human/ann_a.csv --annotator-b data/annotations/human/ann_b.csv --strict-human --min-kappa 0.60 --report-json data/annotations/human/qa_report.json
+</code></pre>
+<p>Cohen’s kappa được tính theo <code>kappa = (p_o - p_e) / (1 - p_e)</code>, với <code>p_o</code> là tỷ lệ đồng thuận quan sát và <code>p_e</code> là đồng thuận kỳ vọng từ phân phối nhãn. Ngưỡng 0,60 trong lệnh là tiêu chí QA được chọn, không phải kết quả đã đo. Chế độ strict từ chối nguồn nhãn weak và file giống nhau theo khóa/nhãn, nhằm phát hiện những bản sao không phải gán độc lập. [<a class="source" href="#source-S15">S15</a>]</p>
+<p><strong>Công cụ đã sửa ngày 09/11:</strong> template có đủ cột schema, lấy mẫu được cả window chưa có nhãn/che khuất; <code>--n-test 0</code> lấy toàn bộ test. QA từ chối phiếu trống khi yêu cầu nhãn người và từ chối khóa trùng. App <code>app/annotation_app.py</code> chọn Quân (phiếu A) / Phong (phiếu B), có tiến độ, lưu tiếp, xuất CSV. Mặc định mở mẫu 600 cửa sổ từ video gốc dataset cũ (200 train/100 val/300 test); 130 cửa sổ hai video mới là bộ bổ sung. Một nhãn áp dụng cho một track trong một khoảng thời gian, không phải cả lớp. Clip cắt từ video gốc có khung vàng và phóng to đúng người; không dùng overlay cũ có thể chỉ dài 15 giây. Tiêu chí v0.3-pilot yêu cầu ghi bốn khoảng bằng chứng, căn cứ nhiệm vụ, hành vi và xác nhận; nhãn phải khớp bảng quy đổi đề xuất. Ngưỡng 3/4 chưa được kiểm chứng, cần pilot/thống nhất trên train/validation trước khi chốt hướng dẫn và gán test. Chỉ ghi tên khi người gán lưu; HUMAN dành cho nhãn VALID do họ xác nhận. Đã sửa lỗi pandas 3 với confidence 0.8 và giữ mức che khuất khi mở lại. [<a class="source" href="#source-S27">S27</a>]</p>
+<p>Đầu ra đạt yêu cầu của giai đoạn này phải có nhãn người thật và báo cáo QA độc lập. Repository hiện chưa có bằng chứng đáp ứng điều kiện đó; nhãn ví dụ/template không được tính là ground truth thực nghiệm.</p>
+<h2 id="section-16">5 Giai đoạn 3 Lấy mẫu video trích pose và theo dõi người</h2>
+<h3 id="section-17">5.1 Đầu vào và đầu ra</h3>
+<p>Đầu vào là đường dẫn video, session/camera, cấu hình pose và tùy chọn tracker. Đầu ra là bảng: một dòng cho một người hoặc track tại một frame được lấy mẫu; kèm metadata về FPS, resolution, số frame và tổng detection.</p>
+<p>Một dòng pose có thông tin session, camera, <code>frame_idx</code>, <code>timestamp_ms</code>, <code>track_id</code>, bbox, bbox confidence, 17 bộ <code>(x, y, confidence)</code>, tỷ lệ keypoint thấy được, confidence trung bình và zone. Danh sách cột thực tế của extractor có 64 cột. [<a class="source" href="#source-S02">S02</a>]</p>
+<h3 id="section-18">5.2 Lấy mẫu theo thời gian</h3>
+<p>OpenCV mở video bằng <code>VideoCapture</code>. Code đọc FPS nguồn, tổng frame, kích thước; nếu FPS không hợp lệ thì dùng fallback 30. Mỗi frame nguồn có thời gian ước tính <code>raw_frame_idx × 1000 / original_fps</code>. Khi tới mốc lấy mẫu tiếp theo, frame được đưa vào YOLO; mốc tăng <code>1000 / sample_fps</code> ms.</p>
+<p>Với nguồn 30 FPS và mục tiêu 10 FPS, thông thường khoảng 3 frame nguồn lấy một frame. Code vẫn giải mã lần lượt các frame, nên sampling giảm số lượt inference, không bỏ hoàn toàn chi phí đọc video. <code>frame_idx</code> là chỉ số frame đã lấy mẫu; <code>timestamp_ms</code> dựa trên vị trí frame nguồn. <code>--max-frames</code> giới hạn frame sampled, không phải frame nguồn.</p>
+<h3 id="section-19">5.3 Trích 17 keypoint bằng YOLOv8 hoặc YOLO11</h3>
+<p>YOLO trả bbox và keypoint theo thứ tự COCO: mũi; hai mắt; hai tai; hai vai; hai khuỷu; hai cổ tay; hai hông; hai gối; hai cổ chân. Khi một điểm có confidence dưới ngưỡng hoặc tọa độ gốc <code>(0,0)</code>, extractor lưu tọa độ NaN và giữ confidence, tránh coi điểm thiếu là một quan sát thật.</p>
+<p>Hàm <code>extract_poses_from_video</code> gọi <code>YOLO(eff_model_name)</code> của Ultralytics. <code>eff_model_name</code> lấy từ <code>model_name</code> nếu có, còn lại từ YAML. <code>eff_imgsz</code> cũng ưu tiên tham số trực tiếp rồi mới tới YAML. Hai giá trị này đi qua cùng hàm trích frame; <code>imgsz</code> được chuyển vào cả <code>model.predict</code> và <code>model.track</code>. Do đó, YOLO11-Pose đã được tích hợp qua cơ chế chọn trọng số và kích thước suy luận, dù docstring của extractor vẫn còn tên YOLOv8. [<a class="source" href="#source-S02">S02</a>, <a class="source" href="#source-S26">S26</a>]</p>
+<pre><code class="language-text">visible_ratio = số keypoint hợp lệ / 17
+mean_keypoint_conf = tổng confidence của 17 keypoint / 17
+</code></pre>
+<p>Ngưỡng <code>confidence_threshold</code> được truyền cho YOLO dưới tham số <code>conf</code>, đồng thời dùng để xét keypoint thấy được. Vì vậy cấu hình hiện đang dùng cùng một giá trị cho confidence detection và visibility keypoint; không có hai tham số độc lập trong hàm này.</p>
+<h3 id="section-20">5.4 Tracking</h3>
+<p>Khi bật <code>--track</code>, extractor gọi <code>model.track(frame, persist=True, tracker=...)</code>; nếu không bật thì gọi <code>model.predict</code>. ByteTrack được cung cấp qua Ultralytics, không được viết lại từ đầu trong repository. <code>persist=True</code> giữ trạng thái giữa các frame liên tiếp của lần xử lý.</p>
+<p><code>src/pose/tracker.py</code> tính tổng frame, thời điểm đầu/cuối, thời lượng và chất lượng trung bình của từng track, rồi hỗ trợ lọc track quá ngắn. Thời lượng hiện là <code>(end_ms - start_ms) / 1000</code>. ID có thể đổi khi người bị che hoặc mất detection; chưa có cơ chế xác minh danh tính xuyên session. [<a class="source" href="#source-S03">S03</a>]</p>
+<h3 id="section-21">5.5 Ví dụ thực hiện</h3>
+<pre><code class="language-powershell">python scripts/extract_pose.py --video data/raw/class_1.mp4 --session class_1 --camera cam_A --output data/poses/class_1_cam_A_poses.csv --track --sample-fps 10 --device cpu
+</code></pre>
+<p>Trích pose bằng YOLO11m-HD theo YAML có sẵn, lưu output riêng để không ghi đè baseline:</p>
+<pre><code class="language-powershell">python scripts/extract_pose.py --video data/raw/class_1.mp4 --session class_1 --camera cam_A --config configs/experiments/pose_yolo11m_hd.yaml --output data/poses_yolo11/class_1_cam_A_poses.csv --track --device cpu
+</code></pre>
+<p>Lệnh này lấy <code>yolo11m-pose.pt</code>, <code>imgsz=1280</code>, confidence 0,35 và sampling 10 FPS từ YAML. Có thể chọn trực tiếp bằng <code>--model yolo11m-pose.pt --imgsz 1280 --conf 0.35 --sample-fps 10</code>. Tham số trực tiếp được ưu tiên hơn YAML trong nhánh xử lý video đơn.</p>
+<p>Để trích lại bằng YOLO11 và tạo overlay qua entry point visualization:</p>
+<pre><code class="language-powershell">python scripts/visualize_poses.py --video data/raw/class_1.mp4 --model yolo11m-pose.pt --imgsz 1280 --conf 0.35 --sample-fps 10 --track --blur-face --output data/poses_yolo11/class_1_yolo11m_hd_overlay.mp4
+</code></pre>
+<p>Trong <code>process_single</code>, nếu có <code>--model</code>, script chạy trích xuất mới kể cả khi tìm thấy pose CSV; nếu không chỉ định model và có CSV thì có thể dùng lại pose đã lưu. Script visualization không nhận <code>--config</code>, nên các giá trị 0,35 và 1280 cần truyền trực tiếp khi muốn khớp nhánh HD. [<a class="source" href="#source-S26">S26</a>]</p>
+<p>Nhánh batch của <code>extract_pose.py</code> nhận model/imgsz từ YAML, nhưng chưa chuyển đầy đủ override CLI <code>--model</code> và <code>--imgsz</code> như nhánh video đơn. Luồng <code>predict_video.py</code> đã truyền YAML pose tới extractor; app có lựa chọn YOLOv8n/YOLO11m. Metadata suy luận ghi model, imgsz và tracker thực dùng. Nhánh batch CLI vẫn cần đối chiếu override trực tiếp với cấu hình.</p>
+<p>Điều kiện chuyển bước: có track ID sử dụng được, timestamp tăng hợp lý, bbox hợp lệ và thống kê chất lượng cho từng vùng. Chưa có ground truth tracker thì không kết luận ByteTrack/BoT-SORT tốt hơn về ID switch chỉ từ FPS.</p>
+<h2 id="section-22">6 Giai đoạn 4 Kiểm tra chất lượng làm sạch và chuẩn hóa</h2>
+<h3 id="section-23">6.1 Hai mức kiểm tra chất lượng</h3>
+<p><code>evaluate_pose_quality</code> phân loại từng dòng pose. Ưu tiên kiểm tra track ngắn, tiếp theo confidence thấp, rồi visibility thấp. Track ngắn hoặc confidence thấp dẫn tới INVALID; thiếu visibility dẫn tới OCCLUDED; còn lại VALID. Ngưỡng baseline tương ứng là 2 giây, 0,30 và 0,60. [<a class="source" href="#source-S04">S04</a>]</p>
+<p>Khi tạo cửa sổ, builder kiểm tra <strong>trung bình</strong> visibility và pose confidence trên cửa sổ. Cửa sổ dưới ngưỡng mang trạng thái INVALID và lý do <code>LOW_VISIBILITY</code> hoặc <code>LOW_KEYPOINT_CONF</code>. Đây là phép kiểm tra khác với trạng thái từng frame; không nên nói rằng mọi frame không VALID đều bị xóa trước khi tạo chuỗi.</p>
+<h3 id="section-24">6.2 Các bước làm sạch thực tế</h3>
+<p><code>clean_and_normalize_poses</code> thực hiện theo thứ tự: lọc track ngắn → nội suy tọa độ thiếu → làm mượt → chuẩn hóa → tùy chọn điền thiếu còn lại. [<a class="source" href="#source-S05">S05</a>]</p>
+<ol>
+<li><strong>Lọc track:</strong> chỉ giữ track đạt thời lượng tối thiểu.</li>
+<li><strong>Nội suy:</strong> xử lý từng track theo thứ tự frame, nội suy tuyến tính các đoạn NaN ngắn; mặc định tối đa 3 dòng liên tiếp. Đoạn thiếu dài hơn được giữ NaN ở bước nội suy.</li>
+<li><strong>Làm mượt:</strong> rolling mean có tâm, mặc định cửa sổ 3; có nhánh Gaussian tùy chọn. Mục đích là giảm rung keypoint giữa các quan sát.</li>
+<li><strong>Chuẩn hóa:</strong> thêm các cột <code>norm_kpt_XX_x/y</code>, giữ lại tọa độ và confidence gốc.</li>
+<li><strong>Điền tiếp nếu được yêu cầu:</strong> forward/backward fill theo track, mặc định tắt.</li>
+</ol>
+<p>Nội suy dùng <code>limit_direction=&quot;both&quot;</code>, nên các đoạn ngắn ở đầu/cuối cũng có thể được điền. Rolling mean có thể tiếp tục tạo giá trị tại một số vị trí trước đó còn NaN. Mask v2 được tính sau bước làm sạch từ tọa độ chuẩn hóa còn hữu hạn; đó không phải mask nguyên gốc của từng keypoint trước nội suy.</p>
+<h3 id="section-25">6.3 Chuẩn hóa torso</h3>
+<p>Khi thấy hai vai, tâm chuẩn hóa là trung điểm vai. Khi thiếu vai, dùng tâm bbox. Nếu thấy hai hông thì scale là độ dài từ tâm vai tới trung điểm hông, chặn dưới 20 pixel. Khi thiếu hông do bàn che, fallback là giá trị lớn nhất của <code>1,5 × khoảng cách vai</code>, <code>0,5 × chiều cao bbox</code> và 20.</p>
+<pre><code class="language-text">x_normalized = (x - center_x) / scale
+y_normalized = (y - center_y) / scale
+</code></pre>
+<p>Chuẩn hóa giảm ảnh hưởng vị trí ảnh và kích thước người trong khung. Nó không khôi phục pose 3D hoặc loại bỏ toàn bộ sai khác góc máy. Chế độ <code>bbox</code> thay thế dùng góc trên trái bbox làm gốc và chia theo chiều rộng/cao bbox.</p>
+<h3 id="section-26">6.4 Thực hiện và điểm cần kiểm tra</h3>
+<pre><code class="language-powershell">python scripts/clean_poses.py --input data/poses/class_1_cam_A_poses.csv --output data/poses_cleaned/class_1_cam_A_poses_cleaned.csv --max-gap-frames 3 --smooth-window 3 --norm-method torso --report reports/class_1_track_quality.csv
+</code></pre>
+<p>Cleaner CLI, dataset builder và video inference hiện đều lấy thời lượng track tối thiểu từ cấu hình. Hàm chuẩn hóa được vector hóa; đã đối chiếu đầu ra torso/bbox với implementation cũ trên 400 dòng pose thực, đồng thời chạy lại kiểm thử.</p>
+<p>Builder làm sạch riêng từng session/camera, tạo cửa sổ theo <code>(session_id, camera_id, track_id)</code> và từ chối pose trùng khóa. Cửa sổ có bước frame thiếu hoặc gap timestamp quá lớn được bỏ qua; chưa có cơ chế tái tạo timestep trống. [<a class="source" href="#source-S27">S27</a>]</p>
+<h2 id="section-27">7 Giai đoạn 5 Xây dựng đặc trưng tư thế và chuyển động</h2>
+<h3 id="section-28">7.1 Đầu vào và representation</h3>
+<p><code>compute_track_features</code> nhận bảng của một track và trả ma trận <code>[T,F]</code> kiểu float32. Mặc định <code>posefeat-v1</code> có 77 chiều; <code>posefeat-v2</code> thêm 17 mask, thành 94 chiều. Các feature có thứ tự cố định để weak rule và checkpoint sử dụng đúng cùng ý nghĩa cột. [<a class="source" href="#source-S06">S06</a>]</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Nhóm</th>
+<th>Số chiều</th>
+<th>Vị trí trong v1</th>
+<th>Cách tạo</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Tọa độ chuẩn hóa</td>
+<td>34</td>
+<td>0–33</td>
+<td>17 điểm × 2 tọa độ</td>
+</tr>
+<tr>
+<td>Vận tốc</td>
+<td>34</td>
+<td>34–67</td>
+<td>Hiệu tọa độ giữa hai dòng chia <code>dt</code></td>
+</tr>
+<tr>
+<td>Hình học</td>
+<td>6</td>
+<td>68–73</td>
+<td>Độ nghiêng vai, độ lệch mũi, tay cao, đầu thấp</td>
+</tr>
+<tr>
+<td>Năng lượng chuyển động</td>
+<td>1</td>
+<td>74</td>
+<td>RMS vận tốc trên 34 tọa độ</td>
+</tr>
+<tr>
+<td>Chất lượng</td>
+<td>2</td>
+<td>75–76</td>
+<td>Visibility và confidence trung bình</td>
+</tr>
+<tr>
+<td>Mask chỉ có ở v2</td>
+<td>17</td>
+<td>77–93</td>
+<td>Cặp tọa độ còn hữu hạn trước zero-fill feature</td>
+</tr>
+</tbody></table></div>
+<h3 id="section-29">7.2 Chi tiết công thức</h3>
+<p>Vận tốc dùng <code>dt = 1 / sample_fps</code>, nên <code>v[t] = (p[t] - p[t-1]) / dt</code>. Dòng đầu được chép vận tốc dòng thứ hai nếu có. Năng lượng chuyển động là căn bậc hai của trung bình bình phương 34 thành phần vận tốc.</p>
+<p>Sáu feature hình học gồm:</p>
+<ul>
+<li><code>shoulder_slope = atan2(y_vai_phải - y_vai_trái, x_vai_phải - x_vai_trái + 1e-6)</code>.</li>
+<li><code>head_proxy_x</code> và <code>head_proxy_y</code>: độ lệch mũi so với trung điểm vai.</li>
+<li><code>left_hand_raised</code> và <code>right_hand_raised</code>: phần dương của tọa độ y vai trừ y cổ tay tương ứng.</li>
+<li><code>head_down</code>: phần dương của y mũi trừ y trung điểm vai.</li>
+</ul>
+<p>Trong tọa độ ảnh, y tăng từ trên xuống dưới. Vì vậy cổ tay cao hơn vai sẽ có y nhỏ hơn, tạo feature tay giơ dương. Đây là quan hệ hình học; code không xác định động tác có đúng với nhiệm vụ học hay không bằng một bộ nhận dạng hoạt động riêng.</p>
+<h3 id="section-30">7.3 Xử lý thiếu và giới hạn</h3>
+<p>Trước khi đưa vào mô hình, NaN ở tọa độ được thay 0. v1 không có mask riêng, nên tọa độ thiếu có thể khó phân biệt với tọa độ thật bằng 0. v2 thêm mask lấy từ trạng thái hữu hạn của tọa độ sau làm sạch. Cuối cùng toàn bộ tensor được ép hữu hạn: NaN → 0, +Inf → 1, -Inf → -1.</p>
+<p>Vận tốc vẫn được tính giữa các dòng kế tiếp với dt cố định. Nếu track mất frame, khoảng thời gian thực có thể lớn hơn dt; nếu điểm chuyển từ thiếu sang có sau zero-fill, có thể tạo vận tốc giả. Đây là hạn chế của cách tính hiện tại và là lý do cần kiểm tra continuity/mask trước khi mở rộng mô hình.</p>
+<p>Các feature như gia tốc, góc khuỷu đầy đủ hoặc độ ổn định tư thế được nhắc trong danh sách ý tưởng của dự án, nhưng không phải các kênh bổ sung đang có trong vector 77/94 chiều. Không nên trình bày chúng như đã triển khai.</p>
+<h2 id="section-31">8 Giai đoạn 6 Tạo cửa sổ gán nhãn và chia dữ liệu</h2>
+<h3 id="section-32">8.1 Sliding window</h3>
+<p><code>build_track_windows</code> cắt chuỗi theo <strong>số dòng</strong>. Với sampling 10 FPS, window 4 giây và stride 2 giây, <code>W=40</code>, <code>S=20</code>. Các đoạn lần lượt là dòng <code>[0:40]</code>, <code>[20:60]</code>, <code>[40:80]</code>. Một track có T dòng tạo <code>floor((T-W)/S)+1</code> cửa sổ nếu T≥W. [<a class="source" href="#source-S07">S07</a>]</p>
+<p>Ví dụ track có 100 dòng liên tục tạo 4 cửa sổ, mỗi tensor <code>[40,77]</code> hoặc <code>[40,94]</code>. Mỗi cửa sổ có <code>window_id</code>, session, camera, track, timestamp đầu/cuối, phase, zone, version, chất lượng, nguồn nhãn và split. Tên ID có dạng <code>session_cam_A_trk001_w0000</code>.</p>
+<p>Ở 10 FPS liên tục, 40 quan sát từ t=0 đến t=3.900 ms có khoảng chênh timestamp là 3,9 giây, dù cấu hình gọi là cửa sổ 4 giây. Bản sửa từ chối cửa sổ bắc qua frame mất hoặc gap timestamp lớn. Phase được xét trên từng window; cửa sổ giao hai phase được đánh TRANSITION. Zone dùng mode trong window. Hệ thống chưa nội suy lại lưới thời gian đều.</p>
+<h3 id="section-33">8.2 Điều phối dataset</h3>
+<p><code>scripts/build_dataset.py</code> đọc pose, làm sạch nếu chưa có cột chuẩn hóa, gộp dữ liệu, đọc split cố định, tạo window theo track, gán nhãn theo mode và xuất metadata/tensor. [<a class="source" href="#source-S07">S07</a>]</p>
+<p>Ba mode là <code>weak</code>, <code>human</code>, <code>hybrid</code>. Mode weak gọi rule; mode human giữ các window ghép được với HUMAN/ADJUDICATED; mode hybrid dùng nhãn người khi có, giữ weak ở phần còn lại. Khi cùng <code>window_id</code> có nhãn phân xử, loader ưu tiên ADJUDICATED hơn HUMAN. Mode hybrid không tự tạo một human test set độc lập.</p>
+<pre><code class="language-powershell">python scripts/build_dataset.py --poses-dir data/poses --output-dir data/features --splits-dir data/splits --labels weak --feature-version v1 --config configs/baseline.yaml
+</code></pre>
+<p>Để tạo v2, dùng output riêng như <code>data/features_v2</code> và truyền <code>--feature-version v2</code>. Khi train v2 phải trỏ đúng NPZ v2; chọn cấu hình có tên v2 không tự chuyển tensor v1 thành v2.</p>
+<h3 id="section-34">8.3 Chia train validation test</h3>
+<p>Builder ưu tiên đọc cả ba file <code>train_sessions.txt</code>, <code>val_sessions.txt</code>, <code>test_sessions.txt</code>. Nếu chỉ có một phần file thì báo lỗi. Validator từ chối session trùng trong một split, giao giữa các split, session không có pose hoặc session pose chưa nằm trong split. SHA-256 từng file được lưu để truy vết.</p>
+<p>Nếu chưa có file nào, fallback sắp xếp session và chia theo thứ tự, dành khoảng 15% cho val và test, yêu cầu ít nhất 3 session. Đây là deterministic split; tham số seed không làm ngẫu nhiên hóa fallback. Khi đã freeze, không tùy ý đổi test để cải thiện điểm.</p>
+<p>Split baseline v0.1 đã lưu để đối chiếu:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Split</th>
+<th>Session</th>
+<th>Tổng window</th>
+<th>Có nhãn</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Train</td>
+<td>class_1 đến class_5, session_001, session_002</td>
+<td>13.481</td>
+<td>11.629</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>session_003, session_004</td>
+<td>12.011</td>
+<td>10.466</td>
+</tr>
+<tr>
+<td>Test</td>
+<td>session_005, session_006</td>
+<td>7.467</td>
+<td>6.518</td>
+</tr>
+<tr>
+<td>Tổng</td>
+<td>11 recording/session ID</td>
+<td>32.959</td>
+<td>28.613</td>
+</tr>
+</tbody></table></div>
+<p>Các con số lấy từ <code>data/features/split_report.json</code>. Tensor tổng có shape <code>[32959,40,77]</code>. 4.346 window chưa có nhãn được mã hóa -1. Trong test có 949 window không nhãn, gồm các cửa sổ chất lượng không đạt. Split theo session ngăn rò rỉ window cùng recording; vẫn cần kiểm tra các session có trùng nội dung hoặc cùng người/ngày quay khi đánh giá khả năng khái quát. [<a class="source" href="#source-S21">S21</a>]</p>
+<p>Dataset chờ review <strong>v0.2-context-review</strong> có 27.116 window: train 11.188, validation 10.013, test 5.915. Cùng file split với v0.1; số window giảm do kiểm tra gap. Tất cả phase hiệu lực đang UNKNOWN vì metadata chưa được người xác minh. Các khai báo cũ vẫn nằm trong declared_class_phase và audit; không chuyển thành nhãn thật. Bộ này chưa có target huấn luyện, cần hoàn tất review trước khi train. [<a class="source" href="#source-S27">S27</a>]</p>
+<h3 id="section-35">8.4 File đầu ra</h3>
+<p><code>participation_windows.csv/parquet</code> lưu metadata; <code>window_features.npz</code> lưu <code>X_train/y_train</code>, <code>X_val/y_val</code>, <code>X_test/y_test</code>, tensor tổng, nhãn tổng, các mảng window ID và feature schema. <code>split_report.json</code> lưu số lượng, nguồn nhãn, trạng thái chất lượng và hash split.</p>
+<p>Builder hiện lấy FPS, window, stride và ngưỡng track từ YAML nếu không có override CLI. Dataset version có thể đặt bằng <code>--dataset-version</code>. Feature version vẫn chọn tường minh qua CLI. Dataset mới lưu cấu hình hiệu lực và audit metadata; ba file split đóng băng không bị sửa.</p>
+<p>Nên để một bản pose chuẩn cho mỗi recording trong thư mục đầu vào. Builder từ chối khóa pose trùng để tránh đọc lặp raw/cleaned/tracked của cùng recording.</p>
+<h2 id="section-36">9 Giai đoạn 7 Thiết kế và huấn luyện mô hình temporal</h2>
+<h3 id="section-37">9.1 Dataset và dữ liệu batch</h3>
+<p><code>WindowFeatureDataset</code> nhận <code>[N,T,F]</code> và nhãn số. Nếu có nhãn, các mẫu -1 bị loại; feature chuyển float32, nhãn int64. DataLoader trộn train và giữ thứ tự val/test. Class weight được tính chỉ từ train: <code>w_c = N / (C × max(n_c,1))</code>. [<a class="source" href="#source-S08">S08</a>]</p>
+<p>Đầu vào baseline một batch là <code>[32,40,77]</code>. Mô hình trả logits <code>[32,3]</code>; softmax chuyển logits thành xác suất theo thứ tự canonical. Model factory chọn LSTM hoặc TCN từ <code>model.type</code> hoặc override CLI.</p>
+<h3 id="section-38">9.2 Kiến trúc LSTM thực tế</h3>
+<p><code>ParticipationLSTM</code> có LSTM 2 tầng, hidden 128, <code>batch_first=True</code>, dropout 0,30, mặc định một chiều. Sau LSTM, code lấy trung bình output theo thời gian và output timestep cuối, rồi cộng trung bình hai vector:</p>
+<pre><code class="language-text">X [B,40,77]
+  -&gt; LSTM output [B,40,128]
+  -&gt; 0,5 × (mean theo thời gian + output bước cuối) [B,128]
+  -&gt; Dropout
+  -&gt; Linear 128 -&gt; 64
+  -&gt; ReLU -&gt; Dropout
+  -&gt; Linear 64 -&gt; 3
+  -&gt; logits [B,3]
+</code></pre>
+<p>Class có tham số hỗ trợ bidirectional, nhưng factory hiện không truyền lựa chọn này từ cấu hình. Một chú thích nói head có layer norm; cấu trúc thực tế <strong>không có LayerNorm</strong>. Khi trình bày kiến trúc nên dựa vào các layer được tạo trong code. [<a class="source" href="#source-S09">S09</a>]</p>
+<h3 id="section-39">9.3 Kiến trúc TCN thực tế</h3>
+<p><code>ParticipationTCN</code> nhận cùng tensor với LSTM, chuyển thành <code>[B,F,T]</code>, dùng Conv1d 1×1 chiếu F về 64 channel. Bốn block có kernel 3 và dilation 1,2,4,8. Mỗi block gồm convolution, cắt phần padding bên phải, BatchNorm1d, ReLU, Dropout và cộng residual.</p>
+<pre><code class="language-text">X [B,40,77] -&gt; transpose [B,77,40]
+  -&gt; Conv1d 1x1 [B,64,40]
+  -&gt; 4 block dilation 1,2,4,8
+  -&gt; concat(mean theo thời gian, bước cuối) [B,128]
+  -&gt; Linear 128 -&gt; 64 -&gt; ReLU -&gt; Dropout
+  -&gt; Linear 64 -&gt; 3
+</code></pre>
+<p>Khác LSTM, TCN <strong>nối</strong> hai vector pooling thay vì lấy trung bình. Với một convolution mỗi block, receptive field convolution của chuỗi block này là <code>1 + (3-1) × (1+2+4+8) = 31</code> bước. Đây là tính toán từ kiến trúc; không phải một kết quả thực nghiệm độc lập. Global mean vẫn tổng hợp các output trên cả cửa sổ. [<a class="source" href="#source-S10">S10</a>]</p>
+<p>Padding/cropping tạo tính causal cho convolution. Tuy nhiên BatchNorm trong chế độ train dùng thống kê trên chiều thời gian, và bộ phân loại cần cả cửa sổ; chưa đủ căn cứ để mô tả toàn bộ hệ thống như bộ dự đoán streaming causal ở từng frame.</p>
+<h3 id="section-40">9.4 Vòng huấn luyện</h3>
+<p><code>scripts/train.py</code> đặt seed cho random, NumPy, PyTorch; tự chọn CUDA nếu có và không chỉ định thiết bị. Sau đó dùng CrossEntropyLoss có class weight và Adam. Mỗi batch thực hiện zero grad → forward → loss → backward → optimizer step. Mỗi epoch đánh giá validation; checkpoint tốt nhất được chọn theo Macro-F1 validation. [<a class="source" href="#source-S08">S08</a>, <a class="source" href="#source-S11">S11</a>]</p>
+<p>Nếu validation không cải thiện trong <code>--patience</code> epoch thì dừng sớm. Default CLI là 30 epoch tối đa, patience 10. Sau train, script nạp lại trọng số tốt nhất và đánh giá test. Không có scheduler, augmentation chuỗi hoặc hiệu chỉnh xác suất được triển khai trong vòng train này. Seed giúp tái lập nhưng chưa bảo đảm bitwise deterministic trên mọi GPU.</p>
+<pre><code class="language-powershell">python scripts/train.py --features data/features/window_features.npz --config configs/baseline.yaml --name lstm_baseline --epochs 30 --patience 10 --device cpu
+python scripts/train.py --features data/features/window_features.npz --config configs/experiments/tcn_baseline.yaml --name tcn_baseline --epochs 30 --patience 10 --device cpu
+</code></pre>
+<h3 id="section-41">9.5 Artifact và khả năng truy vết</h3>
+<p>Mỗi run tạo experiment ID, metadata, snapshot YAML, metrics JSON và training history CSV; checkpoint <code>.pt</code> nằm trong <code>models/checkpoints/</code>. Checkpoint lưu model state, optimizer state, epoch tốt nhất, loại mô hình, input size và một số tham số kiến trúc. Metadata bổ sung hash checkpoint, feature schema, phân phối lớp và override.</p>
+<p><code>new_experiment.py</code> ghi seed, git commit, dataset/split version và hash snapshot. Bản sửa đồng bộ model type, batch size, learning rate, patience và feature/dataset version hiệu lực vào snapshot. Patience lấy từ YAML nếu CLI không override. Train từ chối split không có nhãn, thay vì tạo kết quả từ phiếu trống. [<a class="source" href="#source-S11">S11</a>, <a class="source" href="#source-S17">S17</a>]</p>
+<p>Factory đã sửa để khôi phục cấu hình TCN lồng trong checkpoint; kiểm thử round-trip với hidden size, kernel và số level khác mặc định đã pass. Các checkpoint baseline cũ vẫn được hỗ trợ. [<a class="source" href="#source-S27">S27</a>]</p>
+<h2 id="section-42">10 Giai đoạn 8 Đánh giá và diễn giải kết quả</h2>
+<h3 id="section-43">10.1 Ghép tensor với metadata</h3>
+<p><code>scripts/evaluate.py</code> đọc checkpoint, tensor test và metadata window. Script yêu cầu các mảng <code>window_ids_test</code>, kiểm tra độ dài, kiểm tra ID trùng/thiếu và đối chiếu nhãn tensor với nhãn trong bảng bằng <strong>window_id</strong>. Cách này tránh ghép nhầm khi CSV thay đổi thứ tự. Các mẫu y=-1 được loại trước suy luận và tính metric. [<a class="source" href="#source-S12">S12</a>]</p>
+<pre><code class="language-powershell">python scripts/evaluate.py --experiment-dir reports/experiments/20261025-162855-lstm-full-v0-1 --features data/features/window_features.npz --windows-meta data/features/participation_windows.csv --config configs/baseline.yaml
+</code></pre>
+<p>Lệnh trên minh họa đánh giá lại một experiment có sẵn và sẽ ghi lại artifact đánh giá của experiment đó. Khi làm thí nghiệm mới, thay bằng experiment ID mới; không ghi đè kết quả đã chốt để thử tham số.</p>
+<h3 id="section-44">10.2 Các metric được tính</h3>
+<p>Từ confusion matrix, mỗi lớp có precision <code>TP/(TP+FP)</code>, recall <code>TP/(TP+FN)</code> và F1 là trung bình điều hòa của precision/recall. Macro-F1 là trung bình F1 ba lớp, giúp thấy rõ hơn chất lượng lớp ít mẫu. Balanced accuracy là trung bình recall ba lớp; accuracy là tỷ lệ đúng toàn bộ mẫu được đánh giá. Khi mẫu số bằng 0, code trả 0 cho metric lớp tương ứng.</p>
+<p>Script lưu hai bộ kết quả: <code>raw_metrics</code> từ argmax trên toàn bộ mẫu có nhãn; <code>accepted_metrics</code> chỉ trên mẫu qua gate. Đồng thời lưu coverage, uncertain rate, lý do gate, nguồn nhãn và số mẫu theo session. Accepted Macro-F1 luôn phải đi cùng coverage vì có thể tăng khi từ chối các mẫu khó.</p>
+<h3 id="section-45">10.3 Kết quả hiện hành trong artifact</h3>
+<p>Hai thí nghiệm full ngày 25/10/2026 cùng dùng split-v0.1 và feature v1. Mỗi thí nghiệm có 7.467 window test, 6.518 window có nhãn WEAK_RULE để đánh giá, loại 949 window không nhãn. [<a class="source" href="#source-S22">S22</a>, <a class="source" href="#source-S23">S23</a>]</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Chỉ số</th>
+<th>LSTM full</th>
+<th>TCN full</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Experiment ID</td>
+<td><code>20261025-162855-lstm-full-v0-1</code></td>
+<td><code>20261025-163801-tcn-full-v0-1</code></td>
+</tr>
+<tr>
+<td>Raw Macro-F1</td>
+<td>0,9098</td>
+<td>0,9027</td>
+</tr>
+<tr>
+<td>Raw balanced accuracy</td>
+<td>0,9107</td>
+<td>0,9070</td>
+</tr>
+<tr>
+<td>Raw accuracy so với nhãn quy tắc</td>
+<td>0,9228</td>
+<td>0,9170</td>
+</tr>
+<tr>
+<td>Accepted Macro-F1</td>
+<td>0,9151</td>
+<td>0,9198</td>
+</tr>
+<tr>
+<td>Accepted window</td>
+<td>6.423</td>
+<td>6.254</td>
+</tr>
+<tr>
+<td>Coverage trên 6.518 mẫu có nhãn</td>
+<td>98,54%</td>
+<td>95,95%</td>
+</tr>
+<tr>
+<td>Bị từ chối trong tập có nhãn</td>
+<td>95</td>
+<td>264</td>
+</tr>
+<tr>
+<td>Nguồn nhãn đánh giá</td>
+<td>WEAK_RULE</td>
+<td>WEAK_RULE</td>
+</tr>
+</tbody></table></div>
+<p>Trong artifact này, LSTM có raw Macro-F1 và coverage cao hơn; TCN có accepted Macro-F1 cao hơn nhưng từ chối nhiều mẫu hơn. Chưa có human test set hoặc nhiều lần chạy độc lập để kết luận mô hình nào tốt hơn khi triển khai thực tế. Các experiment cũ chỉ dùng đoạn 15 giây không được thay thế cho hai run full trong báo cáo hiện hành.</p>
+<p><strong>Mẫu số cần hiểu đúng:</strong> coverage 98,54% của LSTM là <code>6423/6518</code>, không phải <code>6423/7467</code>. Do các window không nhãn bị loại trước gate, coverage đánh giá không phản ánh toàn bộ mức bao phủ của mọi window từ video. Nếu tính số accepted đánh giá trên toàn bộ 7.467 window thì khoảng 86,02%, nhưng đây là tỷ lệ suy ra khác mẫu số, không phải field coverage được script báo cáo.</p>
+<h3 id="section-46">10.4 File kết quả</h3>
+<p><code>evaluation_report.json</code> là tổng hợp metric; <code>predictions.csv</code> là dấu vết từng window: true label, raw label, gated label, p_max, lý do gate, chất lượng và nguồn nhãn. <code>metric_scope</code> tự phân biệt weak, human hoặc mixed từ nguồn nhãn. Hệ thống hiện chưa có calibration ECE, temperature scaling, thí nghiệm M0/M1 và ablation hoàn chỉnh.</p>
+<h2 id="section-47">11 Giai đoạn 9 Xử lý bất định trong dự đoán</h2>
+<h3 id="section-48">Mục tiêu</h3>
+<p>Tầng bất định tránh ép mô hình trả một nhãn hành vi khi quan sát kém hoặc xác suất thấp. <code>explain_uncertainty_gate</code> độc lập với LSTM/TCN: đầu vào gồm ba xác suất, visibility, confidence và ngưỡng; đầu ra là nhãn canonical cùng lý do. [<a class="source" href="#source-S13">S13</a>]</p>
+<h3 id="section-49">Thứ tự quyết định</h3>
+<ol>
+<li>Kiểm tra vector xác suất có đúng 3 phần tử, hữu hạn, trong [0,1], tổng gần 1 và đúng thứ tự lớp.</li>
+<li>Nếu visibility &lt;0,60: trả UNCERTAIN, lý do LOW_VISIBILITY.</li>
+<li>Nếu mean keypoint confidence &lt;0,30: trả UNCERTAIN, lý do LOW_KEYPOINT_CONF.</li>
+<li>Nếu xác suất lớn nhất &lt;0,60: trả UNCERTAIN, lý do LOW_MODEL_CONF.</li>
+<li>Còn lại: lấy argmax, lý do ACCEPTED.</li>
+</ol>
+<p>Ví dụ xác suất <code>[0,72; 0,20; 0,08]</code>, visibility 0,80 và confidence 0,65 được chấp nhận HIGH. Giữ nguyên xác suất nhưng visibility 0,45 sẽ thành UNCERTAIN. Xác suất <code>[0,42; 0,38; 0,20]</code> vẫn thành UNCERTAIN dù pose đủ tốt. Đúng bằng ngưỡng được chấp nhận nếu các điều kiện khác đạt vì code dùng phép so sánh <code>&lt;</code>.</p>
+<p><code>coverage = accepted / số mẫu được đưa qua gate</code>; uncertain rate là phần còn lại. Softmax 0,60 không mặc nhiên đồng nghĩa xác suất đúng được hiệu chỉnh là 60%. Các ngưỡng cần chọn trên validation và giữ nguyên khi đánh giá test. Hiện code có gate và lý do rõ ràng, chưa có bằng chứng tune/calibration hệ thống.</p>
+<h2 id="section-50">12 Giai đoạn 10 Tổng hợp theo thời gian và vùng lớp</h2>
+<h3 id="section-51">12.1 Gán zone hình học</h3>
+<p><code>scripts/assign_zones.py</code> lấy tâm bbox, chuẩn hóa theo miền bbox quan sát trong recording rồi chia lưới 3×3. Cột là LEFT/CENTER/RIGHT; theo cấu hình mặc định, phía trên ảnh là BACK, phía dưới là FRONT. Tên zone có dạng <code>BACK-LEFT</code>. Đây là quy ước cần đối chiếu vị trí camera, không phải phép suy ra tự động hướng bảng. [<a class="source" href="#source-S14">S14</a>]</p>
+<pre><code class="language-text">x_norm = (bbox_center_x - min_bbox_x1) / observed_width
+y_norm = (bbox_center_y - min_bbox_y1) / observed_height
+</code></pre>
+<p>Miền quan sát phụ thuộc các detection trong video; gán zone hình học chưa phải sơ đồ ghế thật và không có hiệu chỉnh phối cảnh/homography. Khi đám đông hoặc camera thay đổi, cùng một chỗ vật lý có thể nhận zone khác.</p>
+<pre><code class="language-powershell">python scripts/assign_zones.py --poses-dir data/poses --output-dir data/poses_zones --config configs/zones/grid_3x3.yaml
+</code></pre>
+<p>Sau đó build dataset từ <code>data/poses_zones</code> để window có zone. Window hiện dùng zone phổ biến nhất trong cửa sổ; lưới vẫn là quy ước hình học, không tự xác minh hướng bảng/camera.</p>
+<h3 id="section-52">12.2 Tổng hợp timeline</h3>
+<p><code>aggregate_timeline</code> nhóm theo <code>(session_id, bucket thời gian)</code>, mặc định bucket 60 giây. Bucket lấy từ <code>t_start_ms</code>, không trải một window sang nhiều bucket theo số giây chồng lấn. Việc giữ session riêng tránh gộp phút 0 của các video khác nhau. [<a class="source" href="#source-S14">S14</a>]</p>
+<p>Mỗi nhóm có số window, số HIGH/MODERATE/LOW/UNCERTAIN, tỷ lệ và chất lượng trung bình. Các trường <code>pct_*</code> được lưu dạng tỷ lệ 0–1 dù có tiền tố pct. Khi hiển thị phần trăm cần nhân 100.</p>
+<h3 id="section-53">12.3 Tổng hợp vùng và ý nghĩa thống kê</h3>
+<p><code>aggregate_zones</code> nhóm theo zone, lưu cùng hệ đếm và N. Nếu không có zone thật nào thì trả bảng rỗng. Hàm có thể gộp nhiều session nếu đầu vào chứa nhiều session, nên cần lọc trước khi muốn kết luận cho một lớp hoặc một buổi cụ thể.</p>
+<p>Các window chồng lấn và một track xuất hiện nhiều lần. Do đó, <code>n_windows</code> không phải số người duy nhất, tỷ lệ HIGH không phải tỷ lệ học sinh và cũng chưa phải tỷ lệ thời gian chính xác. Một track bị tách thành nhiều ID cũng không tương ứng nhiều người thật. Heatmap hiện là phân phối kết quả, chưa phải bản đồ F1 hoặc bằng chứng về bias. Muốn đánh giá sai lệch vị trí cần nhãn người, N đủ lớn, chất lượng pose, mức che khuất và metric riêng từng zone.</p>
+<h2 id="section-54">13 Giai đoạn 11 Suy luận video mới dashboard và xuất báo cáo</h2>
+<h3 id="section-55">13.1 Luồng video mới</h3>
+<p><code>scripts/predict_video.py</code> nhận video và checkpoint, kiểm tra file, tạo ngưỡng từ YAML, trích pose có tracking, gán zone nếu được cấu hình, làm sạch, nạp mô hình, tạo feature theo input size và chạy gate. Nó không cần split train/test và không tự tạo ground truth. [<a class="source" href="#source-S16">S16</a>]</p>
+<p>Checkpoint input size 94 kích hoạt feature có mask; 77 dùng v1. Code kiểm tra chiều feature trước khi dự đoán. Mô hình temporal dùng thiết bị chọn bởi <code>--device</code> (mặc định CPU). Suy luận chia batch bằng <code>--batch-size</code> để hạn chế bộ nhớ activation; pipeline vẫn giữ tensor feature trong RAM nên chưa phải streaming hoàn toàn.</p>
+<pre><code class="language-powershell">python scripts/predict_video.py --video data/raw/class_1.mp4 --checkpoint models/checkpoints/20261025-162855-lstm-full-v0-1.pt --out-dir reports/inference/class_1_demo --max-frames 150 --device cpu
+</code></pre>
+<p>Đầu ra gồm <code>predictions.csv</code>, <code>inference_meta.json</code> và thư mục export. Khi không có nhãn, summary chỉ báo phân phối, chất lượng, coverage và cảnh báo không có ground truth; không tính accuracy. <code>inference_meta.json</code> ghi thời gian, số frame, số window accepted/uncertain, FPS và thời gian xử lý trên mỗi phút video.</p>
+<p><strong>Cấu hình đã nối xuyên suốt:</strong> YAML pose được truyền tới extractor. Hai video mới ngày 09/11 đã chạy với yolo11m-pose.pt, imgsz 1280 và checkpoint LSTM full v0.1. Có 107 và 23 window; accepted lần lượt 74 và 12. Đây là inference không có ground truth. Các run CPU có tải đồng thời và bước xử lý preview nên không dùng làm benchmark cô lập. [<a class="source" href="#source-S27">S27</a>]</p>
+<h3 id="section-56">13.2 Giao diện Streamlit</h3>
+<p><code>app/streamlit_app.py</code> đọc artifact bằng pandas/JSON, cache danh sách và nội dung, dùng Plotly để vẽ. Logic train không nằm trong UI. App có sáu tab: [<a class="source" href="#source-S16">S16</a>]</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tab</th>
+<th>Chức năng hiện có</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Tổng quan</td>
+<td>Raw/accepted Macro-F1, coverage, N và metadata</td>
+</tr>
+<tr>
+<td>Timeline</td>
+<td>Phân phối theo phút, lọc session, biểu đồ cột</td>
+</tr>
+<tr>
+<td>Vùng lớp</td>
+<td>Bảng N và heatmap 3×3, cảnh báo N&lt;20</td>
+</tr>
+<tr>
+<td>Preview ẩn danh</td>
+<td>Chọn và phát video overlay đã có trong <code>data/poses/</code></td>
+</tr>
+<tr>
+<td>Export</td>
+<td>Tạo bundle, đổi bucket và tải file</td>
+</tr>
+<tr>
+<td>Video mới</td>
+<td>Upload, chọn checkpoint, giới hạn sampled frame, gọi pipeline</td>
+</tr>
+</tbody></table></div>
+<p>Tab video mới lưu file local trong <code>data/raw/uploads/</code>, gọi <code>predict_video.py</code> bằng <code>subprocess.run</code>, chờ hoàn tất rồi hiển thị bảng và summary. Default demo là 150 sampled frame. Giao diện hiện có spinner, chưa có tiến độ từng công đoạn hoặc hàng đợi tác vụ nền. App cũng yêu cầu có experiment metadata ngay khi khởi động; nếu không có thì <code>st.stop()</code> trước phần upload.</p>
+<pre><code class="language-powershell">python -m streamlit run app/streamlit_app.py
+</code></pre>
+<h3 id="section-57">13.3 Xuất báo cáo</h3>
+<p><code>export_bundle</code> kiểm tra các cột bắt buộc rồi ghi năm artifact. [<a class="source" href="#source-S14">S14</a>]</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Nội dung</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>results.csv</code></td>
+<td>Bảng kết quả từng window</td>
+</tr>
+<tr>
+<td><code>timeline.csv</code></td>
+<td>Tổng hợp theo session và bucket</td>
+</tr>
+<tr>
+<td><code>zone_summary.csv</code></td>
+<td>Tổng hợp theo zone</td>
+</tr>
+<tr>
+<td><code>summary.json</code></td>
+<td>N, coverage, uncertain rate, nguồn nhãn, cảnh báo</td>
+</tr>
+<tr>
+<td><code>summary_report.md</code></td>
+<td>Báo cáo dễ đọc với bảng timeline và zone</td>
+</tr>
+</tbody></table></div>
+<p>Ví dụ xuất từ experiment có sẵn:</p>
+<pre><code class="language-powershell">python scripts/export_report.py --experiment-dir reports/experiments/20261025-162855-lstm-full-v0-1 --out-dir reports/export_demo --bucket-seconds 60
+</code></pre>
+<p>Summary có thể tính accuracy trên accepted nếu có <code>true_label</code>, nhưng giữ tên <code>accepted_accuracy_vs_labeled_source</code> để không đồng nhất nhãn weak với nhãn người. Khi không có ground truth, giá trị này là null.</p>
+<h3 id="section-58">13.4 Overlay và giới hạn ẩn danh</h3>
+<p><code>src/pose/visualization.py</code> vẽ skeleton, bbox và anonymous track ID lên video, có hàm <code>apply_face_blur</code>. Vùng blur lấy từ keypoint mặt và biên mở rộng; nếu thiếu thì fallback phần trên khoảng 28% bbox. Code có đường tạo MP4 bằng OpenCV và chuyển mã nếu công cụ cần thiết sẵn có.</p>
+<pre><code class="language-powershell">python scripts/visualize_poses.py --all --blur-face
+</code></pre>
+<p>Anonymous ID không tự xóa khuôn mặt trên video nền. Các hàm render tổng quát vẫn có tùy chọn blur; luồng video mới bật làm mờ mặc định, tạo head_blurred_preview.mp4 và dùng H.264 khi dependency FFmpeg sẵn có. Vùng làm mờ đã mở rộng ra toàn đầu/mặt. App chỉ liệt kê preview đã làm mờ; vẫn cần kiểm tra người bị detector bỏ sót trước khi công bố. HUD nhận tên model thực dùng, không cố định YOLOv8. [<a class="source" href="#source-S02">S02</a>, <a class="source" href="#source-S16">S16</a>, <a class="source" href="#source-S20">S20</a>]</p>
+<h2 id="section-59">14 Giai đoạn 12 Kiểm thử benchmark và đóng gói</h2>
+<h3 id="section-60">14.1 Kiểm thử phần mềm</h3>
+<p>Repository có test cho mapping nhãn, tính nhất quán cấu hình, schema dữ liệu, nguồn nhãn, pose thiếu, cleaner, feature/mask, cửa sổ, split leakage, forward LSTM/TCN, checkpoint, một bước train/evaluate, ghép metadata bằng ID, gate, zone, aggregation/export và bootstrap notebook. [<a class="source" href="#source-S24">S24</a>]</p>
+<p>Lệnh chạy theo hướng dẫn dự án:</p>
+<pre><code class="language-powershell">python scripts/check_setup.py
+python -m pytest -q --basetemp=D:/ThiGiacMayTinh/.pytest_tmp
+</code></pre>
+<p><code>--basetemp</code> phải trỏ tới thư mục tạm dành riêng cho pytest, không chứa dữ liệu cần giữ vì pytest có thể dọn nội dung. Đặt ngoài repository giúp test tìm root notebook không nhận nhầm thư mục tạm là repo.</p>
+<p>Đã chạy lại ngày 09/11/2026: 133 test pass; dashboard và app gán nhãn đều AppTest 0 exception. Có thêm kiểm thử phase/timeline, gap, nhãn người, cấu hình suy luận, snapshot và TCN non-default. Kiểm thử tool gồm nhấn lưu trên phiếu tạm cho cả Quân/Phong, số 0.8, mở lại mức che khuất, phiếu độc lập khi đổi tên/bộ dữ liệu, bằng chứng bắt buộc, nhãn khớp tiêu chí, khung đúng track, không dùng tọa độ cũ khi mất người, seek và cache clip. Trình duyệt mở/phát clip H.264 4 giây ở dataset cũ, mobile không tràn ngang. CI cấu hình chạy Ubuntu/Python 3.12, cài requirements, kiểm tra skeleton rồi pytest. Có workflow không đồng nghĩa lần chạy CI mới nhất đã thành công.</p>
+<h3 id="section-61">14.2 Đo hiệu năng</h3>
+<p><code>scripts/benchmark.py</code> đo pose/tracker, tốc độ temporal model và tùy chọn end-to-end. Benchmark model dùng tensor ngẫu nhiên batch 122 window, warm-up rồi 3 trial ×100 lượt, lấy trial nhanh nhất và chia cho 122 để báo ms/window. Đó là tốc độ trung bình quy đổi theo batch, không phải latency độc lập của một request đơn. [<a class="source" href="#source-S25">S25</a>]</p>
+<pre><code class="language-powershell">python scripts/benchmark.py --video data/raw/class_1.mp4 --pose-frames 60 --trackers bytetrack.yaml,botsort.yaml --max-frames 150 --end-to-end --checkpoint models/checkpoints/20261025-162855-lstm-full-v0-1.pt --out reports/benchmark_demo.md
+</code></pre>
+<p>Artifact benchmark hiện lưu môi trường Windows 10 AMD64, Python 3.14.7, PyTorch 2.14.1+cpu. Chưa ghi đủ model CPU/RAM vật lý để tái lập phần cứng chính xác. Kết quả lưu như sau:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Phép đo</th>
+<th>Kết quả lưu</th>
+<th>Điều kiện</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ByteTrack pose</td>
+<td>4,33 sampled FPS</td>
+<td>60 sampled frame, class_1</td>
+</tr>
+<tr>
+<td>BoT-SORT pose</td>
+<td>4,06 sampled FPS</td>
+<td>Cùng 60 frame</td>
+</tr>
+<tr>
+<td>LSTM full</td>
+<td>0,260 ms/window quy đổi</td>
+<td>Batch 122, best trial</td>
+</tr>
+<tr>
+<td>TCN full</td>
+<td>0,140 ms/window quy đổi</td>
+<td>Cùng kiểu benchmark</td>
+</tr>
+<tr>
+<td>LSTM tham số</td>
+<td>246.531</td>
+<td>input 77, cấu hình full baseline</td>
+</tr>
+<tr>
+<td>TCN tham số</td>
+<td>63.363</td>
+<td>Cấu hình full baseline</td>
+</tr>
+<tr>
+<td>End-to-end</td>
+<td>6,26 sampled FPS</td>
+<td>150 sampled frame, 66 window</td>
+</tr>
+<tr>
+<td>Thời gian nội bộ E2E</td>
+<td>23,955 giây</td>
+<td>Đo trong script suy luận</td>
+</tr>
+<tr>
+<td>Thời gian xử lý mỗi phút video</td>
+<td>95,82 giây/phút</td>
+<td>Quy đổi từ video ngắn</td>
+</tr>
+<tr>
+<td>Thời gian subprocess bên ngoài</td>
+<td>35,283 giây</td>
+<td>Có thêm overhead khởi động</td>
+</tr>
+</tbody></table></div>
+<p>Pose FPS riêng và E2E dùng phạm vi/warm-up khác nhau, không dùng chúng để kết luận rằng thêm mô hình làm hệ thống nhanh hơn. Chỉ số <code>peak_python_ram_mb</code> dùng tracemalloc, không đo toàn bộ RAM của tiến trình, native tensors hay VRAM. ID switches và fragmentation đang N/A vì chưa có nhãn tracking. [<a class="source" href="#source-S25">S25</a>]</p>
+<p>Tốc độ temporal rất nhỏ so với trích pose trong các artifact này; đây là dấu hiệu pose là phần chi phí lớn trên CPU. Chưa đủ bằng chứng để cam kết real time, GPU performance hoặc thời gian video dài. Khi benchmark mới cần ghi phần cứng, phiên bản, chiều dài video, sampled FPS, batch size, warm-up, số lần lặp và độ phân tán.</p>
+<h3 id="section-62">14.3 Đóng gói thực nghiệm</h3>
+<p>Gói bàn giao cần có code, requirements, config, hướng dẫn, split đã freeze, schema feature, metadata thí nghiệm, checkpoint được lưu đúng nơi và báo cáo giới hạn. Với Colab, notebook chỉ nên mount dữ liệu phù hợp và gọi <code>src/</code>/<code>scripts/</code>; không sao chép thành một codebase khác. Các notebook hiện được mô tả là template, chưa phải bằng chứng đã chạy huấn luyện hoàn chỉnh trên Colab.</p>
+<p>Task demo cuối và đóng gói cuối còn NOT STARTED trong bảng trạng thái. Muốn nghiệm thu cần test với video độc lập, hoàn tất human annotation, kiểm tra ẩn danh và đo hiệu năng đúng điều kiện triển khai.</p>
+<h2 id="section-63">15 Hướng dẫn chạy dự án theo từng nhu cầu</h2>
+<h3 id="section-64">15.1 Cài môi trường local</h3>
+<p>Chạy từ repository root. Các lệnh là hướng dẫn vận hành, có thể cài dependency và tạo artifact khi người vận hành thực hiện.</p>
+<pre><code class="language-powershell">Set-Location D:/ThiGiacMayTinh/observable-learning-engagement
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+python scripts/check_setup.py
+</code></pre>
+<p>Nếu PowerShell không cho activate theo chính sách máy, có thể gọi trực tiếp <code>.venv/Scripts/python.exe</code> cho từng lệnh. Với GPU, cần bản PyTorch phù hợp môi trường GPU và ghi lại cấu hình hiệu lực; không lấy benchmark CPU hiện có làm kết quả GPU.</p>
+<h3 id="section-65">15.2 Xem kết quả đã có</h3>
+<p>Khi đã có <code>metadata.json</code>, <code>evaluation_report.json</code>, <code>predictions.csv</code> và checkpoint tương ứng, chỉ cần chạy Streamlit. Không bắt buộc huấn luyện lại. Các tab overview/timeline/zone dùng artifact lưu; tab video mới cần checkpoint tồn tại trên đĩa.</p>
+<h3 id="section-66">15.3 Tạo bộ dữ liệu và huấn luyện mới</h3>
+<p>Thực hiện lần lượt: kiểm tra video/metadata → trích pose có <code>--track</code> cho từng video → giữ một bản pose chuẩn → gán zone nếu cần → freeze split → build feature v1/v2 → kiểm tra nguồn nhãn và số lượng → train → evaluate → export. Lệnh cụ thể nằm tại các giai đoạn 3–11.</p>
+<p>Các file split hiện hành có đủ 11 session. Nếu chỉ trích một video rồi build với split cũ, validator sẽ báo thiếu session; đó là hành vi đúng. Muốn làm dataset thử riêng cần thư mục pose và split thử riêng, có ít nhất 3 session để tạo train/val/test; không sửa split chính chỉ để chạy thử.</p>
+<p>Huấn luyện với tensor v2 phải dùng NPZ v2 và cấu hình v2. Mô hình input 77 không sử dụng trực tiếp tensor 94 chiều. Các model factory không tự ánh xạ feature bằng tên khi schema thay đổi.</p>
+<h3 id="section-67">15.4 Phân tích video mới</h3>
+<p>Dùng tab Video mới hoặc CLI <code>predict_video.py</code> với checkpoint đã chọn. Bắt đầu bằng khoảng 150 sampled frame để kiểm tra luồng; bỏ <code>--max-frames</code> ở CLI nếu muốn xử lý hết video. Chất lượng đầu ra phụ thuộc track có đủ 40 quan sát và chất lượng pose; tăng giới hạn frame không bảo đảm mọi người đều có window hợp lệ.</p>
+<p>Pipeline hiện hướng tới xử lý file video. Mặc dù sơ đồ mục tiêu có camera, chưa có entry point live webcam hoàn chỉnh trong app/predict script đã kiểm tra. Không trình bày tính năng camera thời gian thực như đã bàn giao.</p>
+<h2 id="section-68">16 Trạng thái hiện tại và hướng phát triển</h2>
+<h3 id="section-69">16.1 Phần đã có triển khai</h3>
+<p>Theo <code>docs/PROJECT_STATUS.md</code>, các phần cốt lõi đã có code/artifact gồm pose, tracking, quality gate, cleaning, feature v1/v2, windows và frozen split, LSTM/TCN, train/evaluate, uncertainty, dashboard và export. Upload video đã gọi được full inference. Các bằng chứng về độ đúng phần mềm và độ đúng khoa học cần đọc riêng: test phần mềm không thay thế nhãn người.</p>
+<p>Ở tầng pose, repository có cả baseline YOLOv8n và nhánh YOLO11m-HD, cùng trọng số YOLOv8m có thể chọn qua CLI. Nhánh YOLO11 có cấu hình, đường chạy và artifact overlay riêng; chưa có đánh giá đối chứng theo extractor hoặc liên kết đầy đủ từ model pose tới từng dataset temporal. [<a class="source" href="#source-S26">S26</a>]</p>
+<h3 id="section-70">16.2 Phần còn thiếu</h3>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Hạng mục</th>
+<th>Tình trạng lưu</th>
+<th>Việc cần thực hiện</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Nhãn người và double annotation</td>
+<td>Chưa có human test set</td>
+<td>Gán độc lập, kiểm tra schema, QA và phân xử</td>
+</tr>
+<tr>
+<td>Thu thập dữ liệu chính</td>
+<td>PARTIAL</td>
+<td>Xác minh đủ thời lượng, người, phase và metadata</td>
+</tr>
+<tr>
+<td>M0 rule baseline và M1 ML</td>
+<td>NOT STARTED</td>
+<td>Xây baseline so sánh độc lập trên cùng split</td>
+</tr>
+<tr>
+<td>Representation/motion/window ablation</td>
+<td>NOT STARTED</td>
+<td>Thiết kế biến thể, chọn bằng validation</td>
+</tr>
+<tr>
+<td>Calibration</td>
+<td>NOT STARTED</td>
+<td>Reliability, ECE, temperature scaling hoặc phương pháp phù hợp</td>
+</tr>
+<tr>
+<td>Phân tích F1/bias theo zone</td>
+<td>PARTIAL</td>
+<td>Bổ sung ground truth, N, pose quality và occlusion</td>
+</tr>
+<tr>
+<td>Tracker quality</td>
+<td>PARTIAL</td>
+<td>Gán ground truth track và đo ID switch/fragmentation</td>
+</tr>
+<tr>
+<td>Ẩn danh demo</td>
+<td>PARTIAL</td>
+<td>Bật blur phù hợp và kiểm tra trực quan</td>
+</tr>
+<tr>
+<td>Benchmark dài và GPU</td>
+<td>PARTIAL</td>
+<td>Đo đúng video/hardware triển khai, nhiều lần lặp</td>
+</tr>
+<tr>
+<td>Demo cuối và package cuối</td>
+<td>NOT STARTED</td>
+<td>Kiểm tra độc lập và đóng gói bàn giao</td>
+</tr>
+</tbody></table></div>
+<h3 id="section-71">16.3 Thứ tự thực hiện đề xuất</h3>
+<p>Trước hết cần hoàn thiện nhãn người, vì đây là điều kiện để đánh giá chất lượng độc lập. Song song có thể xử lý các khác biệt cấu hình và khóa dữ liệu đã nêu ở giai đoạn 4–7, bảo đảm pipeline sử dụng cùng sample rate, feature schema và kiến trúc checkpoint. Sau đó huấn luyện lại theo split cố định, chạy baseline/ablation, chọn ngưỡng trên validation và đánh giá test một lần theo protocol đã thống nhất.</p>
+<p>Bước cuối là chuẩn hóa demo ẩn danh, benchmark trên video dài và đóng gói môi trường. Những thay đổi này nên tách thành nhiệm vụ có artifact kiểm chứng, không chỉ cập nhật trạng thái trong báo cáo. Phần này là hướng thực hiện tiếp theo, không phải danh sách chức năng đã có.</p>
+<h2 id="section-72">17 Các điểm đã sửa và phần cần hoàn tất</h2>
+<p>Ngày 09/11 đã sửa: không mặc định thiếu phase là lecture; không tự luân phiên phase khi cắt video; không tự xác nhận consent; áp dụng timeline theo window; tách camera; bỏ window qua gap; từ chối pose trùng; nối YAML pose tới inference; thêm batching và thiết bị temporal; sửa checkpoint TCN, snapshot hiệu lực và lỗi biến sess khi save-viz; sửa template/QA; thêm báo cáo vị trí tách human/weak; bật preview làm mờ trong luồng video mới và bổ sung codec H.264. [<a class="source" href="#source-S27">S27</a>]</p>
+<p>Phần chưa thể hoàn tất tự động: người thật xác minh phase và gán nhãn độc lập, phân xử, đánh giá accuracy/F1 và sai lệch vị trí trên nhãn đó. Các run v0.1 giữ nguyên ý nghĩa weak-label; chưa train lại trên dataset mới đang chờ review. Chưa đo video dài/GPU, chưa có calibration/ablation đầy đủ. Tính độc lập theo người/buổi quay vẫn cần kiểm tra nguồn; tên thư mục session không chứng minh được điều đó.</p>
+<p>App gán nhãn: <code>python -m streamlit run app/annotation_app.py --server.port 8502</code>, mở <a href="http://127.0.0.1:8502">http://127.0.0.1:8502</a>, chọn Quân/Phong để vào phiếu riêng. Hướng dẫn QA, đánh giá và bàn giao: <code>docs/HUMAN_REVIEW_RUNBOOK.md</code>.</p>
+<h2 id="section-73">18 Danh mục mã nguồn và bằng chứng</h2>
+<p>Các đường dẫn dưới đây tính từ thư mục gốc repository. Tên hàm giúp định vị nội dung cụ thể khi đọc code.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mã</th>
+<th>File hoặc nhóm file</th>
+<th>Nội dung đối chiếu</th>
+</tr>
+</thead>
+<tbody><tr id="source-S01"><td>S01</td>
+<td><code>src/contracts/labels.py</code>, <code>docs/scope.md</code></td>
+<td>Mapping nhãn, annotation state và provenance</td>
+</tr>
+<tr id="source-S02"><td>S02</td>
+<td><code>src/pose/extractor.py</code>, <code>scripts/extract_pose.py</code></td>
+<td><code>extract_frame_poses</code>, <code>extract_poses_from_video</code>, CLI</td>
+</tr>
+<tr id="source-S03"><td>S03</td>
+<td><code>src/pose/tracker.py</code></td>
+<td><code>compute_track_statistics</code>, <code>filter_short_tracks</code></td>
+</tr>
+<tr id="source-S04"><td>S04</td>
+<td><code>src/preprocessing/quality_gate.py</code></td>
+<td><code>evaluate_pose_quality</code></td>
+</tr>
+<tr id="source-S05"><td>S05</td>
+<td><code>src/preprocessing/cleaner.py</code>, <code>scripts/clean_poses.py</code></td>
+<td>Interpolation, smoothing, normalization</td>
+</tr>
+<tr id="source-S06"><td>S06</td>
+<td><code>src/preprocessing/features.py</code>, <code>feature_contract.py</code> trong cùng thư mục</td>
+<td>Feature 77/94, <code>validate_temporal_features</code></td>
+</tr>
+<tr id="source-S07"><td>S07</td>
+<td><code>src/preprocessing/windows.py</code>, <code>weak_labels.py</code>, <code>scripts/build_dataset.py</code></td>
+<td>Window, weak rule, frozen split, human join</td>
+</tr>
+<tr id="source-S08"><td>S08</td>
+<td><code>src/training/dataset.py</code>, <code>trainer.py</code></td>
+<td>Dataset, class weight, train/evaluate loop, metric</td>
+</tr>
+<tr id="source-S09"><td>S09</td>
+<td><code>src/models/lstm.py</code></td>
+<td><code>ParticipationLSTM</code></td>
+</tr>
+<tr id="source-S10"><td>S10</td>
+<td><code>src/models/tcn.py</code>, <code>src/models/factory.py</code></td>
+<td>TCN, factory và checkpoint reconstruction</td>
+</tr>
+<tr id="source-S11"><td>S11</td>
+<td><code>scripts/train.py</code></td>
+<td>Huấn luyện, chọn checkpoint, metadata</td>
+</tr>
+<tr id="source-S12"><td>S12</td>
+<td><code>scripts/evaluate.py</code></td>
+<td>Join theo window ID, raw/accepted metric</td>
+</tr>
+<tr id="source-S13"><td>S13</td>
+<td><code>src/uncertainty/gate.py</code></td>
+<td>Gate và lý do từ chối</td>
+</tr>
+<tr id="source-S14"><td>S14</td>
+<td><code>scripts/assign_zones.py</code>, <code>configs/zones/grid_3x3.yaml</code>, <code>src/reporting/aggregation.py</code>, <code>exporter.py</code></td>
+<td>Zone, timeline, summary, export</td>
+</tr>
+<tr id="source-S15"><td>S15</td>
+<td><code>scripts/sample_annotation_subset.py</code>, <code>scripts/dataset_qa.py</code>, <code>docs/annotation_guide.md</code></td>
+<td>Human annotation, QA, Cohen’s kappa</td>
+</tr>
+<tr id="source-S16"><td>S16</td>
+<td><code>scripts/predict_video.py</code>, <code>app/streamlit_app.py</code>, <code>src/pose/visualization.py</code></td>
+<td>Inference, UI, blur, overlay</td>
+</tr>
+<tr id="source-S17"><td>S17</td>
+<td><code>scripts/new_experiment.py</code>, <code>docs/experiment_protocol.md</code></td>
+<td>Experiment ID, snapshot, hash và version</td>
+</tr>
+<tr id="source-S18"><td>S18</td>
+<td><code>requirements.txt</code>, <code>configs/baseline.yaml</code>, <code>docs/ENVIRONMENT.md</code></td>
+<td>Dependency và tham số baseline</td>
+</tr>
+<tr id="source-S19"><td>S19</td>
+<td><code>docs/data_collection_protocol.md</code>, <code>docs/dataset_schema.md</code></td>
+<td>Thu thập, schema và metadata</td>
+</tr>
+<tr id="source-S20"><td>S20</td>
+<td><code>docs/privacy_and_consent.md</code>, <code>docs/LIMITATIONS.md</code>, <code>docs/PROJECT_STATUS.md</code></td>
+<td>Quyền riêng tư, giới hạn và trạng thái</td>
+</tr>
+<tr id="source-S21"><td>S21</td>
+<td><code>data/features/split_report.json</code>, <code>data/splits/*_sessions.txt</code></td>
+<td>Số window, nguồn nhãn, split cố định</td>
+</tr>
+<tr id="source-S22"><td>S22</td>
+<td><code>reports/experiments/20261025-162855-lstm-full-v0-1/evaluation_report.json</code></td>
+<td>Metric LSTM full</td>
+</tr>
+<tr id="source-S23"><td>S23</td>
+<td><code>reports/experiments/20261025-163801-tcn-full-v0-1/evaluation_report.json</code></td>
+<td>Metric TCN full</td>
+</tr>
+<tr id="source-S24"><td>S24</td>
+<td><code>tests/</code>, <code>.github/workflows/ci.yml</code>, <code>docs/PROJECT_STATUS.md</code></td>
+<td>Nội dung test, workflow và kết quả xác minh lưu</td>
+</tr>
+<tr id="source-S25"><td>S25</td>
+<td><code>scripts/benchmark.py</code>, <code>reports/benchmark.json</code>, <code>reports/benchmark.md</code></td>
+<td>Phương pháp và số đo hiệu năng lưu</td>
+</tr>
+<tr id="source-S26"><td>S26</td>
+<td><code>configs/experiments/pose_yolo11m_hd.yaml</code>, <code>src/pose/extractor.py</code>, <code>scripts/extract_pose.py</code>, <code>scripts/visualize_poses.py</code>, <code>yolo11m-pose.pt</code>, <code>data/poses/class_1_yolo11m_hd_overlay.mp4</code></td>
+<td>Nhánh YOLO11m-HD, chọn model/imgsz, trọng số và artifact overlay local</td>
+</tr>
+<tr id="source-S27"><td>S27</td>
+<td><code>src/preprocessing/context.py</code>, <code>scripts/audit_dataset.py</code>, <code>scripts/evaluate_human.py</code>, <code>scripts/prepare_inference_annotations.py</code>, <code>src/reporting/bias_analysis.py</code>, <code>app/annotation_app.py</code>, <code>docs/HUMAN_REVIEW_RUNBOOK.md</code></td>
+<td>Đợt sửa 09/11, audit dataset và quy trình đánh giá độc lập</td>
+</tr>
+</tbody></table></div>
+<h2 id="section-74">19 Thuật ngữ dùng khi trình bày</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Thuật ngữ</th>
+<th>Ý nghĩa trong dự án</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Pose</td>
+<td>Vị trí các điểm khớp cơ thể 2D và confidence</td>
+</tr>
+<tr>
+<td>Keypoint</td>
+<td>Một điểm như vai, khuỷu, cổ tay hoặc mũi</td>
+</tr>
+<tr>
+<td>Track</td>
+<td>Chuỗi detection được tracker ghép theo thời gian</td>
+</tr>
+<tr>
+<td>Window</td>
+<td>Đoạn gồm số bước cố định của một track</td>
+</tr>
+<tr>
+<td>Temporal model</td>
+<td>Mô hình học quan hệ theo thời gian trong window</td>
+</tr>
+<tr>
+<td>Weak label</td>
+<td>Nhãn tự sinh từ quy tắc, cần tách nguồn với nhãn người</td>
+</tr>
+<tr>
+<td>Ground truth</td>
+<td>Nhãn tham chiếu độc lập theo quy trình đã kiểm chứng</td>
+</tr>
+<tr>
+<td>Leakage</td>
+<td>Dữ liệu liên quan bị lọt giữa train và tập đánh giá</td>
+</tr>
+<tr>
+<td>Macro-F1</td>
+<td>Trung bình F1 các lớp, mỗi lớp trọng số ngang nhau</td>
+</tr>
+<tr>
+<td>Coverage</td>
+<td>Tỷ lệ mẫu được chấp nhận trong tập đưa qua gate</td>
+</tr>
+<tr>
+<td>Calibration</td>
+<td>Mức phù hợp giữa xác suất mô hình và tần suất đúng</td>
+</tr>
+<tr>
+<td>Ablation</td>
+<td>Thử bỏ/đổi một thành phần để đo đóng góp của nó</td>
+</tr>
+<tr>
+<td>Head orientation proxy</td>
+<td>Chỉ dấu hình học đầu gần đúng, không phải gaze</td>
+</tr>
+<tr>
+<td>Zone</td>
+<td>Vùng hình học trên ảnh theo cấu hình lưới</td>
+</tr>
+</tbody></table></div>
+<p>Một cách mô tả ngắn khi thuyết trình: hệ thống chuyển video thành chuỗi tư thế của các track ẩn danh, chuẩn hóa và trích đặc trưng để LSTM/TCN ước lượng ba mức tham gia quan sát được trong từng cửa sổ; tầng bất định giữ lại các dự đoán đủ căn cứ, sau đó tổng hợp theo thời gian và vùng. Kết quả thực nghiệm hiện tại là mức đồng thuận với nhãn quy tắc, cần nhãn người độc lập để đánh giá chất lượng hành vi.</p>
+<p class="endnote">Observable Learning Engagement · Tài liệu phân tích mã nguồn · 09/11/2026</p></main>
+<script>const links=[...document.querySelectorAll('nav a')];const observer=new IntersectionObserver(entries=>{for(const e of entries){if(e.isIntersecting){for(const a of links)a.classList.toggle('active',a.hash==='#'+e.target.id)}}},{rootMargin:'-5% 0px -80% 0px'});document.querySelectorAll('h2[id]').forEach(h=>observer.observe(h));</script>
+</body></html>

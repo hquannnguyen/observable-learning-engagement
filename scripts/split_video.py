@@ -99,7 +99,7 @@ def create_metadata_template(
     fps: int = 30,
     resolution: str = "1920x1080",
     duration_s: float = 0.0,
-    phase_name: str = "lecture",
+    phase_name: str = "UNKNOWN",
     participants: int = 8,
     date_str: Optional[str] = None,
 ) -> Dict[str, Any]:
@@ -121,7 +121,9 @@ def create_metadata_template(
             }
         ],
         "lighting_condition": "normal",
-        "consent_confirmed": True,
+        "phase_verified": False,
+        "phase_source": "DECLARED_UNVERIFIED" if phase_name != "UNKNOWN" else "MISSING",
+        "consent_confirmed": False,
         "notes": f"Generated from raw recording for {session_id}.",
     }
 
@@ -268,10 +270,10 @@ def main() -> None:
         phase_list = (
             [p.strip() for p in args.phases.split(",")]
             if args.phases
-            else ["lecture"] * len(cut_list)
+            else ["UNKNOWN"] * len(cut_list)
         )
         if len(phase_list) < len(cut_list):
-            phase_list.extend(["lecture"] * (len(cut_list) - len(phase_list)))
+            phase_list.extend(["UNKNOWN"] * (len(cut_list) - len(phase_list)))
 
         for i, cut in enumerate(cut_list):
             if "-" not in cut:
@@ -298,8 +300,9 @@ def main() -> None:
             if t_dur < 10.0:
                 break
             sess_id = f"{args.session_prefix}{args.start_session + i:03d}"
-            # Default alternating phases
-            phase_name = "lecture" if i % 3 == 0 else ("individual_work" if i % 3 == 1 else "discussion")
+            # Cutting a recording cannot determine its classroom activity.
+            declared = [p.strip() for p in args.phases.split(",")] if args.phases else []
+            phase_name = declared[i] if i < len(declared) else "UNKNOWN"
             segments.append((t_start, t_dur, sess_id, phase_name))
     else:
         logger.error("Must specify either --duration (e.g. 15m) or --cuts (e.g. 00:00-15:00,15:00-30:00).")
@@ -337,6 +340,10 @@ def main() -> None:
                 participants=args.participants,
             )
             meta_path = sess_dir / "metadata.json"
+            meta["source_recording_id"] = video_path.stem
+            meta["source_video"] = str(video_path)
+            meta["source_start_ms"] = int(round(start_s * 1000))
+            meta["source_end_ms"] = int(round((start_s + dur_s) * 1000))
             meta_path.write_text(json.dumps(meta, indent=2, ensure_ascii=False), encoding="utf-8")
             logger.info("Created session '%s': %s & metadata.json", sess_id, video_out)
             created_sessions.append(sess_id)

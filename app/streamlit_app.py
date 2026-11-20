@@ -17,6 +17,7 @@ import streamlit as st
 
 from src.reporting.aggregation import aggregate_timeline, aggregate_zones
 from src.reporting.exporter import export_bundle
+from src.reporting.bias_analysis import analyze_positions
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPERIMENTS = ROOT / "reports" / "experiments"
@@ -62,7 +63,8 @@ def load_csv(path: str) -> pd.DataFrame:
 def list_overlays() -> List[str]:
     if not OVERLAYS.is_dir():
         return []
-    return sorted([p.name for p in OVERLAYS.glob("*overlay*.mp4")])
+    return sorted([str(p) for p in OVERLAYS.glob("*blur*.mp4")] +
+                  [str(p) for p in (ROOT / "reports" / "inference").glob("*/head_blurred_preview.mp4")])
 
 
 def metric_row(label: str, value: Any) -> None:
@@ -228,6 +230,11 @@ def main() -> None:
                 st.dataframe(matrix, width="stretch")
             if zones["n_windows"].min() < 20:
                 st.warning("Có vùng N < 20; không nên kết luận chênh lệch theo vị trí.")
+            positional, evidence = analyze_positions(zone_df)
+            st.subheader("Chất lượng và bằng chứng đánh giá theo vị trí")
+            if evidence["status"] == "HUMAN_REVIEW_REQUIRED":
+                st.info("Chưa có nhãn người để đánh giá độ chính xác theo vùng. Điểm weak agreement chỉ phản ánh mức khớp với quy tắc.")
+            st.dataframe(positional, width="stretch")
 
     with tabs[3]:
         st.subheader("Preview overlay ẩn danh")
@@ -235,11 +242,11 @@ def main() -> None:
         if not overlays:
             st.info("Không tìm thấy video overlay trong `data/poses/`.")
         else:
-            choice = st.selectbox("Video overlay", overlays)
-            st.video(str(OVERLAYS / choice))
+            choice = st.selectbox("Video overlay", overlays, format_func=lambda value: f"{Path(value).parent.name}/{Path(value).name}")
+            st.video(choice)
             st.caption(
-                "Overlay chỉ có skeleton + anonymous track ID. Không có tên/MSSV. "
-                "Không dùng video này để nhận diện cá nhân."
+                "Preview đã bật làm mờ vùng đầu của người được phát hiện. "
+                "Cần kiểm tra trực quan các trường hợp detector bỏ sót trước khi chia sẻ."
             )
 
     with tabs[4]:
@@ -287,6 +294,8 @@ def main() -> None:
             st.info("Không tìm thấy checkpoint nào có metadata.")
         else:
             ckpt_label = st.selectbox("Checkpoint", sorted(checkpoint_options))
+            pose_configs = {"YOLOv8n Pose": "configs/baseline.yaml", "YOLO11m Pose độ phân giải 1280": "configs/experiments/pose_yolo11m_hd.yaml"}
+            pose_choice = st.selectbox("Bộ trích tư thế", list(pose_configs))
             max_frames = st.number_input(
                 "Giới hạn số frame sampled (để demo nhanh)",
                 min_value=20,
@@ -298,7 +307,8 @@ def main() -> None:
             if uploaded is not None and st.button("Chạy phân tích"):
                 upload_dir = ROOT / "data" / "raw" / "uploads"
                 upload_dir.mkdir(parents=True, exist_ok=True)
-                video_path = upload_dir / uploaded.name
+                safe_name = Path(uploaded.name).name
+                video_path = upload_dir / safe_name
                 video_path.write_bytes(uploaded.getbuffer())
                 out_dir = ROOT / "reports" / "inference" / Path(uploaded.name).stem
                 cmd = [
@@ -308,6 +318,7 @@ def main() -> None:
                     "--checkpoint", checkpoint_options[ckpt_label],
                     "--out-dir", str(out_dir),
                     "--max-frames", str(int(max_frames)),
+                    "--config", pose_configs[pose_choice],
                 ]
                 with st.spinner("Đang chạy pipeline..."):
                     proc = subprocess.run(
@@ -317,6 +328,8 @@ def main() -> None:
                     st.error("Pipeline thất bại. Chi tiết cuối log:")
                     st.code(proc.stderr[-3000:] or proc.stdout[-3000:])
                 else:
+                    load_csv.clear()
+                    load_json.clear()
                     st.success(f"Hoàn tất. Kết quả: `{out_dir}`")
                     new_preds = load_csv(str(out_dir / "predictions.csv"))
                     if not new_preds.empty:
@@ -326,6 +339,11 @@ def main() -> None:
                             f"{int((new_preds['gated_label'] == 'UNCERTAIN').sum())} uncertain"
                         )
                         st.dataframe(new_preds, width="stretch")
+                        st.dataframe(analyze_positions(new_preds)[0], width="stretch")
+                    preview_file = out_dir / "head_blurred_preview.mp4"
+                    if preview_file.is_file():
+                        st.video(str(preview_file))
+                        st.caption("Làm mờ theo detection; kiểm tra người bị bỏ sót trước khi chia sẻ.")
                     summary_file = out_dir / "export" / "summary.json"
                     if summary_file.is_file():
                         st.download_button(

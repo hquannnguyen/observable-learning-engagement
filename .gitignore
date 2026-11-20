@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 .venv/
+.runtime-deps/
 venv/
 
 # IDE / OS
@@ -26,6 +27,10 @@ Thumbs.db
 !/data/features/.gitkeep
 /data/features_zones/*
 /data/features_v2/*
+/data/features_context_v0_2/
+/data/annotations/human_review_v0_2/
+/data/annotations/.preview_cache/
+/releases/
 
 # Synthetic annotations kept only for local audit
 /data/annotations/deprecated/

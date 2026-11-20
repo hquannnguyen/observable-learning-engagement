@@ -352,6 +352,9 @@ def extract_poses_from_video(
         "total_detections": len(df),
         "confidence_threshold": eff_conf_thresh,
         "track_enabled": track,
+        "pose_model": eff_model_name,
+        "imgsz": eff_imgsz,
+        "tracker": tracker_cfg if track else None,
     }
 
     if output_path is not None:

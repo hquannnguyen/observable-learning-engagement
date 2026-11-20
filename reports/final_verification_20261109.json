@@ -1,0 +1,18 @@
+{
+  "frozen_splits_unchanged": true,
+  "candidate_tensor_shape": [
+    27116,
+    40,
+    77
+  ],
+  "candidate_targets_unlabelled": true,
+  "blank_independent_forms": [
+    130,
+    130
+  ],
+  "bundle_files": 190,
+  "bundle_crc_and_hashes": "PASS",
+  "raw_video_in_bundle": false,
+  "latest_annotation_tool_report": "reports/annotation_tool_verification_20261109.json",
+  "tests_passed": 133
+}

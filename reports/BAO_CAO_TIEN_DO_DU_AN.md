@@ -45,7 +45,7 @@ danh tính; không gắn nhãn tiêu cực như “lười”, “chán”, “m
    không còn phụ thuộc thứ tự dòng.
 4. **Đính chính metric:** mọi con số hiện tại là **weak-label agreement**, không phải
    accuracy trên hành vi người thật. Chưa có human test set.
-5. **Đính chính trạng thái sản phẩm:** dashboard/export/zone/TCN/benchmark **chưa có**.
+5. **Đính chính trạng thái sản phẩm:** dashboard/export/zone/TCN/benchmark **đã có**; đánh giá độc lập còn chờ nhãn người.
 
 ---
 
@@ -184,3 +184,6 @@ Nhóm đã hoàn thành được pipeline kỹ thuật cốt lõi và biết ch�
 Điểm mạnh hiện tại là **tính tái lập và contract dữ liệu**; điểm yếu lớn nhất là
 **chưa có ground truth người thật**. Báo cáo này cố ý không tuyên bố độ chính xác hành vi
 khi chưa có bằng chứng tương ứng.
+
+
+> Cập nhật 09/11/2026: xem docs/HUMAN_REVIEW_RUNBOOK.md và docs/PROJECT_STATUS.md. Nhãn phase cũ sinh tự động chưa được xác minh; dataset chờ review mới có 27.116 window. Không dùng số liệu baseline lịch sử như metric trên nhãn người.

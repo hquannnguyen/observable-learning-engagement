@@ -155,6 +155,7 @@ def main() -> None:
             logger.error("Video file does not exist: %s", video_file)
             sys.exit(1)
 
+        sess = args.session or video_file.stem
         out_path = Path(args.output)
         if out_path.is_dir() or (not out_path.suffix and not out_path.exists()):
             out_path.mkdir(parents=True, exist_ok=True)

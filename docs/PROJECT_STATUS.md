@@ -1,10 +1,24 @@
 # PROJECT STATUS — CVF25PRJ10
 
 > **Nguồn sự thật duy nhất về trạng thái task.**  
-> Cập nhật lần cuối: 2026-10-25  
-> Xác minh gần nhất: `python -m pytest -q --basetemp=D:\ThiGiacMayTinh\.pytest_tmp` → **103 passed**;  
+> Cập nhật lần cuối: 2026-11-09
+> Xác minh gần nhất: `python -m pytest -q -p no:cacheprovider --basetemp=D:/ThiGiacMayTinh/.pytest_rubric_focus_final_20261109` → **133 passed**;
 > Streamlit `AppTest` → **0 exception**.  
 > Không dùng báo cáo cũ làm bằng chứng; báo cáo đã được đính chính tại `reports/`.
+
+
+## Cập nhật đã thực hiện ngày 09/11/2026
+
+- Dataset baseline v0.1 và checkpoint cũ giữ nguyên; metric vẫn là weak-label agreement.
+- Đã sửa context theo timeline và nguồn xác minh, window qua gap, grouping camera, cấu hình hiệu lực, TCN checkpoint, công cụ template/QA, và preview làm mờ mặc định trong luồng video mới.
+- Phát hiện metadata split_video cũ tự luân phiên phase. Dataset mới `data/features_context_v0_2/` có 27.116 window (train 11.188 / val 10.013 / test 5.915), phase chưa xác minh được giữ UNKNOWN, không tự sinh nhãn. Ba file split giữ nguyên SHA256.
+- Hai video người dùng cung cấp, không có trong split cũ, đã chạy YOLO11m-Pose 1280 + checkpoint LSTM v0.1: 107 window (74 accepted/33 uncertain), 23 window (12/11). Không có ground-truth accuracy. Preview H.264 và phiếu gán nhãn độc lập cho 130 window.
+- Có `app/annotation_app.py`, `scripts/evaluate_human.py`, `scripts/analyze_positions.py`, audit dataset và công cụ đóng gói review local.
+- Tool gán nhãn cho Quân/Phong: chọn tên để mở phiếu riêng, tiến độ, xem đoạn video/ngữ cảnh, lưu và chuyển cửa sổ chưa gán, tải CSV. Đã sửa lỗi pandas 3 khi lưu confidence `0.8`, giữ mức che khuất khi mở lại; kiểm thử nhấn nút lưu thật trên phiếu tạm cho cả hai người.
+- Tool mở mặc định mẫu 600 cửa sổ theo từng người từ dataset cũ (200 train / 100 val / 300 test); hai video mới có 130 cửa sổ là bộ bổ sung. Clip cắt đúng đoạn từ video gốc, có khung vàng, làm tối vùng khác và phóng to người cần gán. Không phụ thuộc overlay cũ chỉ dài 15 giây.
+- Tiêu chí `v0.3-pilot`: người gán ghi bốn khoảng bằng chứng, căn cứ nhiệm vụ, hành vi và xác nhận; nhãn phải khớp bảng quy đổi. Ngưỡng 3/4 là đề xuất riêng chưa được kiểm chứng, cần pilot và thống nhất trước gán test chính thức. Tham khảo `docs/ANNOTATION_RUBRIC_PILOT.md`; không tuyên bố đạt chứng nhận BROMP.
+- Kiểm thử 133 passed; dashboard và app gán nhãn AppTest 0 exception. Đã thử video đúng người trên trình duyệt, 4 giây H.264, không tràn ngang mobile; đoạn gốc sau mốc 15 giây vẫn render đủ. Chưa có HUMAN hoàn tất, chưa train lại trên v0.2, chưa nghiệm thu cuối hoặc kết luận bias.
+- Hướng dẫn thao tác: `docs/HUMAN_REVIEW_RUNBOOK.md`. Các bảng số liệu v0.1 dưới đây là baseline lịch sử.
 
 ## Quy ước trạng thái
 
@@ -59,18 +73,18 @@
 | T37 | Timeline & zone dashboard | **DONE** | Timeline theo session/phút + heatmap 3×3 (có cảnh báo N) |
 | T38 | Export result/report | **DONE** | `src/reporting/exporter.py`, `scripts/export_report.py`; 5 artifact |
 | T39 | Full-flow integration & performance | **PARTIAL** | `predict_video.py` end-to-end; benchmark 4.95 FPS / 121 s/video-min (class_1, 150 frame); chưa video dài/GPU |
-| T40 | Demo & final QA | **NOT STARTED** | — |
-| T41 | Final package | **NOT STARTED** | — |
+| T40 | Demo & final QA | **PARTIAL** | Hai video ngoài split chạy được; preview làm mờ; còn QA/nghiệm thu độc lập |
+| T41 | Final package | **PARTIAL** | Có công cụ/gói review local; chưa nghiệm thu dataset/nhãn người |
 
 ## Tổng hợp
 
 | Nhóm | Số task |
 |---|---:|
 | DONE | 17 |
-| PARTIAL | 14 |
+| PARTIAL | 16 |
 | DRAFT | 1 |
 | BLOCKED | 1 |
-| NOT STARTED | 8 |
+| NOT STARTED | 6 |
 
 ## Kết quả đã xác minh (weak-label)
 

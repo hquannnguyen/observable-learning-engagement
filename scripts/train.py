@@ -59,11 +59,13 @@ def main() -> None:
     parser.add_argument("--epochs", type=int, default=30, help="Maximum epochs to train.")
     parser.add_argument("--batch-size", type=int, default=None, help="Batch size override.")
     parser.add_argument("--lr", type=float, default=None, help="Learning rate override.")
-    parser.add_argument("--patience", type=int, default=10, help="Early stopping patience.")
+    parser.add_argument("--patience", type=int, default=None, help="Early stopping patience; defaults to config.")
     parser.add_argument("--device", type=str, default=None, help="Device ('cpu', 'cuda').")
     parser.add_argument("--notes", type=str, default="", help="Free-form notes stored in experiment metadata.")
     parser.add_argument("--model", choices=("lstm", "tcn"), default=None, help="Override model.type from config.")
     args = parser.parse_args()
+    if args.epochs < 1:
+        parser.error("--epochs must be positive")
 
     feat_path = Path(args.features)
     if not feat_path.is_file():
@@ -83,6 +85,9 @@ def main() -> None:
 
     batch_size = int(args.batch_size if args.batch_size is not None else train_cfg.get("batch_size", 32))
     lr = float(args.lr if args.lr is not None else train_cfg.get("learning_rate", 0.001))
+    patience = args.patience if args.patience is not None else int(train_cfg.get("early_stopping_patience", 10))
+    if batch_size <= 0 or lr <= 0 or patience <= 0:
+        raise ValueError("Batch size, learning rate and patience must be positive")
     hidden_size = int(model_cfg.get("hidden_size", 128))
     num_layers = int(model_cfg.get("num_layers", 2))
     num_classes = int(model_cfg.get("num_classes", 3))
@@ -107,6 +112,8 @@ def main() -> None:
     train_ds = WindowFeatureDataset(X_train, y_train)
     val_ds = WindowFeatureDataset(X_val, y_val)
     test_ds = WindowFeatureDataset(X_test, y_test)
+    if not len(train_ds) or not len(val_ds) or not len(test_ds):
+        raise ValueError("Every split needs completed labels. Collect human labels or explicitly use an exploratory weak dataset; no labels are invented.")
 
     train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False)
@@ -114,6 +121,12 @@ def main() -> None:
 
     input_size = X_train.shape[-1] if len(X_train) > 0 else 77
     model_type = (args.model or model_cfg.get("type", "lstm")).lower()
+    cfg["model"]["type"] = model_type
+    cfg["training"].update(batch_size=batch_size, learning_rate=lr, early_stopping_patience=patience, epochs=args.epochs)
+    cfg["data"]["feature_schema_version"] = feature_schema_version
+    for key in ("dataset_version", "split_version"):
+        if key in data.files:
+            cfg["data"][key] = str(data[key])
     model = build_model(model_cfg, input_size=input_size, model_type=model_type).to(device)
     logger.info("Model architecture: %s (input_size=%d)", model_type, input_size)
 
@@ -131,6 +144,7 @@ def main() -> None:
         name=args.name,
         config_path=Path(args.config),
         notes=args.notes or "LSTM training run.",
+        effective_config=cfg,
     )
     metadata = json.loads((exp_dir / "metadata.json").read_text(encoding="utf-8"))
     experiment_id = metadata["experiment_id"]
@@ -182,8 +196,8 @@ def main() -> None:
             logger.info("  --> Saved new best model checkpoint (Val Macro-F1: %.4f)", best_val_f1)
         else:
             patience_counter += 1
-            if patience_counter >= args.patience:
-                logger.info("Early stopping triggered at epoch %d (patience=%d).", epoch, args.patience)
+            if patience_counter >= patience:
+                logger.info("Early stopping triggered at epoch %d (patience=%d).", epoch, patience)
                 break
 
     # Load best model for test set evaluation
@@ -228,7 +242,7 @@ def main() -> None:
             "batch_size": batch_size,
             "learning_rate": lr,
             "epochs": args.epochs,
-            "patience": args.patience,
+            "patience": patience,
             "device": str(device),
         },
     }
