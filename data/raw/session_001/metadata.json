@@ -1,0 +1,29 @@
+{
+  "session_id": "session_001",
+  "date": "2026-10-18",
+  "camera_id": "cam_A",
+  "fps": 30,
+  "resolution": "1920x1080",
+  "camera_view": "front_oblique",
+  "participants": 24,
+  "lighting_condition": "normal",
+  "consent_confirmed": true,
+  "class_phase": [
+    {
+      "name": "lecture",
+      "start_ms": 0,
+      "end_ms": 1200000
+    },
+    {
+      "name": "individual_work",
+      "start_ms": 1200000,
+      "end_ms": 3600000
+    },
+    {
+      "name": "discussion",
+      "start_ms": 3600000,
+      "end_ms": 4750000
+    }
+  ],
+  "notes": "Lớp học thực hành có laptop đặt trên bàn, góc quay chéo trước từ trên cao (front_oblique)."
+}

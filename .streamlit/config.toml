@@ -1,0 +1,3 @@
+[server]
+maxUploadSize = 10000 # 10 GB limit for large classroom videos
+enableXsrfProtection = false

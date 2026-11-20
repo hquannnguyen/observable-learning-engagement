@@ -6,6 +6,7 @@ docs/dataset_schema.md and configs/baseline.yaml.
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 import logging
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -59,6 +60,92 @@ for i in range(17):
 POSE_EXTRA_COLUMNS = ["visible_ratio", "mean_keypoint_conf", "zone_id"]
 
 POSE_COLUMNS: List[str] = POSE_BASE_COLUMNS + POSE_KEYPOINT_COLUMNS + POSE_EXTRA_COLUMNS
+
+# COCO 17 human skeleton connections for visualization
+SKELETON_PAIRS = [
+    (0, 1), (0, 2), (1, 3), (2, 4),           # Head
+    (5, 6),                                   # Shoulders
+    (5, 7), (7, 9),                           # Left arm
+    (6, 8), (8, 10),                          # Right arm
+    (5, 11), (6, 12),                         # Torso
+    (11, 12),                                 # Hips
+    (11, 13), (13, 15),                       # Left leg
+    (12, 14), (14, 16),                       # Right leg
+]
+
+
+def assign_zone_id(bbox: Tuple[float, float, float, float], img_w: int, img_h: int) -> str:
+    """Assign 3x3 classroom zone based on normalized center of bounding box.
+
+    Camera layout follows docs/data_collection_protocol.md:
+    FRONT (closest to camera, lower Y): F-L, F-C, F-R
+    MIDDLE (intermediate rows):        M-L, M-C, M-R
+    BACK (furthest rows, upper Y):     B-L, B-C, B-R
+    """
+    if img_w <= 0 or img_h <= 0:
+        return "UNKNOWN"
+
+    x1, y1, x2, y2 = bbox
+    cx = (x1 + x2) / 2.0 / img_w
+    cy = (y1 + y2) / 2.0 / img_h
+
+    # Y-axis (Row depth in typical elevated front classroom camera)
+    # Higher Y in image coordinates = closer to camera (FRONT)
+    if cy >= 0.66:
+        row = "F"
+    elif cy >= 0.33:
+        row = "M"
+    else:
+        row = "B"
+
+    # X-axis (Column)
+    if cx < 0.33:
+        col = "L"
+    elif cx <= 0.66:
+        col = "C"
+    else:
+        col = "R"
+
+    return f"{row}-{col}"
+
+
+@dataclass
+class TrackedPose:
+    """Representation of a single tracked student's pose in a frame."""
+    frame_idx: int
+    timestamp_ms: int
+    track_id: int
+    bbox: Tuple[float, float, float, float]  # (x1, y1, x2, y2)
+    bbox_conf: float
+    keypoints: np.ndarray  # Shape: (17, 3) -> [x, y, conf]
+    visible_ratio: float
+    mean_keypoint_conf: float
+    zone_id: str
+
+    def to_dict(self, session_id: str = "session_001", camera_id: str = "cam_A") -> Dict[str, Any]:
+        """Convert to dict matching docs/dataset_schema.md Section 5."""
+        row: Dict[str, Any] = {
+            "session_id": session_id,
+            "camera_id": camera_id,
+            "frame_idx": self.frame_idx,
+            "timestamp_ms": self.timestamp_ms,
+            "track_id": self.track_id,
+            "bbox_x1": round(self.bbox[0], 2),
+            "bbox_y1": round(self.bbox[1], 2),
+            "bbox_x2": round(self.bbox[2], 2),
+            "bbox_y2": round(self.bbox[3], 2),
+            "bbox_conf": round(self.bbox_conf, 4),
+        }
+        for idx in range(17):
+            x, y, conf = self.keypoints[idx]
+            row[f"kpt_{idx:02d}_x"] = round(float(x), 2)
+            row[f"kpt_{idx:02d}_y"] = round(float(y), 2)
+            row[f"kpt_{idx:02d}_conf"] = round(float(conf), 4)
+
+        row["visible_ratio"] = round(self.visible_ratio, 4)
+        row["mean_keypoint_conf"] = round(self.mean_keypoint_conf, 4)
+        row["zone_id"] = self.zone_id
+        return row
 
 
 def load_pose_config(
