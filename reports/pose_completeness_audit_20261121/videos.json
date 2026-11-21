@@ -1,0 +1,80 @@
+{
+  "class_1": {
+    "path": "data\\raw\\class_1.mp4",
+    "fps": 30.0,
+    "frames": 450,
+    "seconds": 15.0
+  },
+  "class_2": {
+    "path": "data\\raw\\class_2.mp4",
+    "fps": 30.0,
+    "frames": 450,
+    "seconds": 15.0
+  },
+  "class_3": {
+    "path": "data\\raw\\class_3.mp4",
+    "fps": 30.0,
+    "frames": 533,
+    "seconds": 17.766666666666666
+  },
+  "class_4": {
+    "path": "data\\raw\\class_4.mp4",
+    "fps": 30.0,
+    "frames": 367,
+    "seconds": 12.233333333333333
+  },
+  "class_5": {
+    "path": "data\\raw\\class_5.mp4",
+    "fps": 30.0,
+    "frames": 443,
+    "seconds": 14.766666666666667
+  },
+  "class_6": {
+    "path": "data\\raw\\class_6.mp4",
+    "fps": 30.0,
+    "frames": 300,
+    "seconds": 10.0
+  },
+  "class_7": {
+    "path": "data\\raw\\class_7.mp4",
+    "fps": 30.0,
+    "frames": 300,
+    "seconds": 10.0
+  },
+  "session_001": {
+    "path": "data\\raw\\session_001\\cam_A.mp4",
+    "fps": 29.996666666666666,
+    "frames": 26997,
+    "seconds": 900.0
+  },
+  "session_002": {
+    "path": "data\\raw\\session_002\\cam_A.mp4",
+    "fps": 29.9977776954702,
+    "frames": 26997,
+    "seconds": 899.9666666666667
+  },
+  "session_003": {
+    "path": "data\\raw\\session_003\\cam_A.mp4",
+    "fps": 29.996666666666666,
+    "frames": 26997,
+    "seconds": 900.0
+  },
+  "session_004": {
+    "path": "data\\raw\\session_004\\cam_A.mp4",
+    "fps": 29.996666666666666,
+    "frames": 26997,
+    "seconds": 900.0
+  },
+  "session_005": {
+    "path": "data\\raw\\session_005\\cam_A.mp4",
+    "fps": 29.996666543205304,
+    "frames": 26996,
+    "seconds": 899.9666666666667
+  },
+  "session_006": {
+    "path": "data\\raw\\session_006\\cam_A.mp4",
+    "fps": 30.0,
+    "frames": 7515,
+    "seconds": 250.5
+  }
+}

@@ -33,7 +33,10 @@ from src.contracts.labels import CANONICAL_TRAINING_LABELS
 from src.models.factory import build_model
 from src.preprocessing.features import FEATURE_SCHEMA_VERSION
 from src.training.dataset import WindowFeatureDataset
-from src.training.trainer import compute_multiclass_metrics, evaluate_model, train_epoch
+from src.training.trainer import (
+    TemperatureScaler, compute_accuracy_coverage_curve, compute_ece,
+    evaluate_model, predict_logits, train_epoch,
+)
 from scripts.new_experiment import create_experiment
 
 logging.basicConfig(
@@ -62,10 +65,14 @@ def main() -> None:
     parser.add_argument("--patience", type=int, default=None, help="Early stopping patience; defaults to config.")
     parser.add_argument("--device", type=str, default=None, help="Device ('cpu', 'cuda').")
     parser.add_argument("--notes", type=str, default="", help="Free-form notes stored in experiment metadata.")
-    parser.add_argument("--model", choices=("lstm", "tcn"), default=None, help="Override model.type from config.")
+    parser.add_argument("--model", choices=("lstm", "bilstm", "tcn"), default=None, help="Override model.type from config.")
+    parser.add_argument("--calibrate", action="store_true", help="Fit temperature and select confidence threshold on validation labels.")
+    parser.add_argument("--min-validation-coverage", type=float, default=0.90, help="Minimum model-confidence coverage for threshold selection.")
     args = parser.parse_args()
     if args.epochs < 1:
         parser.error("--epochs must be positive")
+    if not 0 < args.min_validation_coverage <= 1:
+        parser.error("--min-validation-coverage must be in (0, 1]")
 
     feat_path = Path(args.features)
     if not feat_path.is_file():
@@ -123,6 +130,8 @@ def main() -> None:
     model_type = (args.model or model_cfg.get("type", "lstm")).lower()
     cfg["model"]["type"] = model_type
     cfg["training"].update(batch_size=batch_size, learning_rate=lr, early_stopping_patience=patience, epochs=args.epochs)
+    if args.calibrate:
+        cfg["training"].update(calibrate=True, min_validation_coverage=args.min_validation_coverage)
     cfg["data"]["feature_schema_version"] = feature_schema_version
     for key in ("dataset_version", "split_version"):
         if key in data.files:
@@ -186,6 +195,7 @@ def main() -> None:
                 "optimizer_state_dict": optimizer.state_dict(),
                 "best_val_f1": best_val_f1,
                 "model_type": model_type,
+                "bidirectional": bool(getattr(model, "bidirectional", False)),
                 "input_size": input_size,
                 "hidden_size": hidden_size,
                 "num_layers": num_layers,
@@ -204,6 +214,34 @@ def main() -> None:
     logger.info("Loading best checkpoint from epoch %d for Test evaluation...", best_epoch)
     checkpoint = torch.load(best_ckpt_path, map_location=device)
     model.load_state_dict(checkpoint["model_state_dict"])
+
+    calibration = None
+    if args.calibrate:
+        val_logits = predict_logits(model, val_ds.features).clone()
+        val_targets = torch.from_numpy(val_ds.labels)
+        temperature = TemperatureScaler().fit(val_logits, val_targets, lr=0.1)
+        raw_probs = val_logits.softmax(dim=-1).numpy()
+        calibrated_probs = (val_logits / temperature).softmax(dim=-1).numpy()
+        curve = compute_accuracy_coverage_curve(
+            calibrated_probs, val_ds.labels,
+            thresholds=[0.0, *np.arange(0.35, 1.0, 0.05).round(2).tolist()],
+        )
+        candidates = curve[curve.n_accepted >= args.min_validation_coverage * len(val_ds)]
+        selected = candidates.sort_values(["accuracy", "coverage", "threshold"], ascending=[False, False, True]).iloc[0]
+        calibration = {
+            "fit_split": "val",
+            "coverages_apply_to": "model_confidence_only",
+            "validation_windows": len(val_ds),
+            "temperature": temperature,
+            "min_probability": float(selected.threshold),
+            "validation_ece_before": compute_ece(raw_probs, val_ds.labels),
+            "validation_ece_after": compute_ece(calibrated_probs, val_ds.labels),
+            "validation_nll_before": float(nn.functional.cross_entropy(val_logits, val_targets)),
+            "validation_nll_after": float(nn.functional.cross_entropy(val_logits / temperature, val_targets)),
+            "validation_accuracy_vs_coverage": curve.astype(object).where(curve.notna(), None).to_dict(orient="records"),
+        }
+        checkpoint["calibration"] = calibration
+        torch.save(checkpoint, best_ckpt_path)
 
     test_loss, test_metrics = evaluate_model(model, test_loader, criterion, device, num_classes)
     logger.info("================ FINAL TEST EVALUATION ================")
@@ -238,6 +276,7 @@ def main() -> None:
         "checkpoint_path": str(best_ckpt_path),
         "checkpoint_sha256": checkpoint_sha256,
         "class_counts_train": class_counts,
+        "calibration": calibration,
         "overrides": {
             "batch_size": batch_size,
             "learning_rate": lr,

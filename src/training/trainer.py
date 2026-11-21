@@ -137,6 +137,8 @@ class TemperatureScaler(nn.Module):
 
     def __init__(self, init_temperature: float = 1.0) -> None:
         super().__init__()
+        if not np.isfinite(init_temperature) or init_temperature <= 0:
+            raise ValueError("temperature must be finite and positive")
         self.temperature = nn.Parameter(torch.tensor(float(init_temperature)))
 
     def forward(self, logits: torch.Tensor) -> torch.Tensor:
@@ -153,17 +155,24 @@ class TemperatureScaler(nn.Module):
         """Optimize temperature parameter T by minimizing NLL on validation set."""
         self.train()
         nll_criterion = nn.CrossEntropyLoss()
-        optimizer = torch.optim.LBFGS([self.temperature], lr=lr, max_iter=max_iter)
+        initial = float(self.temperature.detach().item())
+        log_temperature = nn.Parameter(torch.tensor(initial).log().to(val_logits))
+        optimizer = torch.optim.LBFGS([log_temperature], lr=lr, max_iter=max_iter, line_search_fn="strong_wolfe")
+        logits = val_logits.detach()
 
         def eval_loss():
             optimizer.zero_grad()
-            loss = nll_criterion(self.forward(val_logits), val_targets)
+            loss = nll_criterion(logits / log_temperature.clamp(-4.6, 4.6).exp(), val_targets)
             loss.backward()
             return loss
 
         optimizer.step(eval_loss)
         self.eval()
-        return float(torch.clamp(self.temperature, min=0.01).item())
+        fitted = float(log_temperature.detach().clamp(-4.6, 4.6).exp().item())
+        with torch.no_grad():
+            if np.isfinite(fitted) and nll_criterion(logits / fitted, val_targets) <= nll_criterion(logits / initial, val_targets):
+                self.temperature.fill_(fitted)
+        return float(self.temperature.detach().item())
 
 
 def compute_ece(
@@ -196,6 +205,8 @@ def compute_accuracy_coverage_curve(
     probs: np.ndarray,
     targets: np.ndarray,
     thresholds: Optional[List[float]] = None,
+    *,
+    eligible: Optional[np.ndarray] = None,
 ) -> pd.DataFrame:
     """Compute Accuracy vs Coverage curve across varying confidence thresholds."""
     if thresholds is None:
@@ -208,13 +219,15 @@ def compute_accuracy_coverage_curve(
     curve_rows = []
     for tau in thresholds:
         accepted_mask = confidences >= tau
+        if eligible is not None:
+            accepted_mask &= eligible
         n_accepted = int(np.sum(accepted_mask))
         coverage = round(n_accepted / max(total, 1), 4)
 
         if n_accepted > 0:
             acc = round(float(np.mean(predictions[accepted_mask] == targets[accepted_mask])), 4)
         else:
-            acc = 1.0
+            acc = None
 
         curve_rows.append({
             "threshold": tau,
@@ -225,3 +238,14 @@ def compute_accuracy_coverage_curve(
         })
 
     return pd.DataFrame(curve_rows)
+
+
+def predict_logits(model: nn.Module, features: np.ndarray, batch_size: int = 128) -> torch.Tensor:
+    """Compute logits in bounded inference batches, returned on CPU."""
+    device = next(model.parameters()).device
+    model.eval()
+    with torch.inference_mode():
+        return torch.cat([
+            model(torch.from_numpy(features[i:i + batch_size]).float().to(device)).cpu()
+            for i in range(0, len(features), batch_size)
+        ])

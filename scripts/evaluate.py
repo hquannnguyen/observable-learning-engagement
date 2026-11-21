@@ -35,6 +35,7 @@ from src.models.factory import model_from_checkpoint
 from src.training.trainer import (
     compute_accuracy_coverage_curve,
     compute_ece,
+    predict_logits,
     compute_multiclass_metrics,
 )
 from src.uncertainty.gate import UncertaintyThresholds, explain_uncertainty_gate
@@ -133,13 +134,17 @@ def main() -> None:
     unc_cfg = cfg.get("uncertainty", {})
     qg_cfg = cfg.get("quality_gate", {})
 
+    checkpoint = torch.load(ckpt_path, map_location="cpu")
+    calibration = checkpoint.get("calibration") or {}
+    temperature = float(calibration.get("temperature", 1.0))
     thresholds = UncertaintyThresholds(
         min_visible_ratio=float(qg_cfg.get("min_visible_ratio", 0.60)),
         min_mean_keypoint_confidence=float(qg_cfg.get("min_mean_keypoint_confidence", 0.30)),
-        min_probability=float(unc_cfg.get("min_probability", 0.60)),
+        min_probability=float(calibration.get("min_probability", unc_cfg.get("min_probability", 0.60))),
+        upper_body_min_visible_ratio=float(qg_cfg.get("upper_body_min_visible_ratio", 0.72))
+        if qg_cfg.get("allow_upper_body_visibility") else None,
     )
 
-    checkpoint = torch.load(ckpt_path, map_location="cpu")
     model = model_from_checkpoint(checkpoint)
     model.load_state_dict(checkpoint["model_state_dict"])
     model.eval()
@@ -184,9 +189,10 @@ def main() -> None:
             f"{missing_ids[:5]} (total {len(missing_ids)}). Rebuild metadata and tensors together."
         )
 
-    with torch.no_grad():
-        x_tensor = torch.from_numpy(X_valid).float()
-        probs = model.predict_proba(x_tensor).numpy()
+    if N == 0:
+        raise ValueError("Test split has no labeled windows.")
+    logits = predict_logits(model, X_valid)
+    probs = (logits / temperature).softmax(dim=-1).numpy()
 
     records: List[Dict[str, Any]] = []
     accepted_preds: List[int] = []
@@ -213,6 +219,7 @@ def main() -> None:
             probabilities=probs[i],
             visible_ratio=vis,
             mean_keypoint_confidence=conf,
+            upper_body_visible_ratio=row.get("mean_upper_body_visible_ratio"),
             thresholds=thresholds,
             class_labels=CANONICAL_TRAINING_LABELS,
         )
@@ -308,7 +315,8 @@ def main() -> None:
         metric_scope = "mixed_labels"
 
     ece = compute_ece(probs, y_valid)
-    acc_cov_df = compute_accuracy_coverage_curve(probs, y_valid)
+    eligible = predictions_df.gate_reason.isin(["ACCEPTED", "LOW_MODEL_CONF"]).to_numpy()
+    acc_cov_df = compute_accuracy_coverage_curve(probs, y_valid, eligible=eligible)
     logger.info("  Expected Calibration Error (ECE): %.4f", ece)
 
     report = {
@@ -320,13 +328,16 @@ def main() -> None:
         "coverage": round(coverage, 4),
         "uncertain_rate": round(uncertain_rate, 4),
         "calibration": {
+            "temperature": temperature,
+            "validation_fit": calibration or None,
             "expected_calibration_error": ece,
-            "accuracy_vs_coverage": acc_cov_df.to_dict(orient="records"),
+            "accuracy_vs_coverage": acc_cov_df.astype(object).where(acc_cov_df.notna(), None).to_dict(orient="records"),
         },
         "thresholds": {
             "min_probability": thresholds.min_probability,
             "min_visible_ratio": thresholds.min_visible_ratio,
             "min_mean_keypoint_confidence": thresholds.min_mean_keypoint_confidence,
+            "upper_body_min_visible_ratio": thresholds.upper_body_min_visible_ratio,
         },
         "label_source_counts": {str(k): int(v) for k, v in label_source_counts.items()},
         "gate_reason_counts": gate_reason_counts,

@@ -86,13 +86,18 @@ def interpolate_missing_keypoints(
     for _, group in out.groupby("track_id", sort=False):
         group = group.sort_values("frame_idx").copy()
 
-        track_max_gap = 0
+        gap_lengths = pd.Series(0, index=group.index, dtype=int)
         for x_col, y_col in zip(kpt_x_cols, kpt_y_cols):
-            track_max_gap = max(track_max_gap, compute_max_interpolated_gap_frames(group[x_col]))
-            group[x_col] = _interpolate_bounded_series(group[x_col], max_gap=max_gap_frames)
-            group[y_col] = _interpolate_bounded_series(group[y_col], max_gap=max_gap_frames)
+            for column in (x_col, y_col):
+                original = group[column]
+                missing = original.isna()
+                lengths = missing.groupby((~missing).cumsum()).transform("sum")
+                filled = _interpolate_bounded_series(original, max_gap=max_gap_frames)
+                filled_lengths = lengths.where(missing & filled.notna(), 0)
+                gap_lengths = gap_lengths.combine(filled_lengths, max)
+                group[column] = filled
 
-        group["max_interpolated_gap_frames"] = min(track_max_gap, max_gap_frames)
+        group["max_interpolated_gap_frames"] = gap_lengths
         cleaned_groups.append(group)
 
     result = pd.concat(cleaned_groups, axis=0).sort_index()
@@ -129,6 +134,7 @@ def smooth_keypoints(
         group = group.sort_values("frame_idx").copy()
 
         if len(group) >= window_size:
+            observed = group[coord_cols].notna()
             if method == "gaussian":
                 # Gaussian weights for 3-tap window: [0.25, 0.50, 0.25]
                 # for 5-tap: approx binomial
@@ -149,6 +155,7 @@ def smooth_keypoints(
                     .mean()
                 )
 
+            group[coord_cols] = group[coord_cols].where(observed)
         smoothed_groups.append(group)
 
     result = pd.concat(smoothed_groups, axis=0).sort_index()
@@ -204,6 +211,7 @@ def clean_and_normalize_poses(
     smooth_window: int = 3,
     normalization_method: str = "torso",
     fill_remaining_missing: bool = False,
+    merge_max_gap_seconds: float | None = None,
 ) -> pd.DataFrame:
     """End-to-end cleaning and normalization pipeline for pose detections.
 
@@ -224,12 +232,18 @@ def clean_and_normalize_poses(
     Returns:
         Cleaned, smoothed, and normalized poses DataFrame.
     """
-    from src.pose.tracker import filter_short_tracks
+    from src.pose.tracker import filter_short_tracks, merge_fragmented_tracks
+    from src.preprocessing.quality_gate import upper_body_visibility
 
     if df.empty:
         return df.copy()
 
     logger.info("Starting pose cleaning pipeline on %d rows...", len(df))
+    if merge_max_gap_seconds is not None:
+        recordings = [key for key in ("session_id", "camera_id") if key in df]
+        if any(df[key].nunique(dropna=False) > 1 for key in recordings):
+            raise ValueError("Track merging requires one recording/camera at a time.")
+        df = merge_fragmented_tracks(df, max_gap_seconds=merge_max_gap_seconds)
 
     # Step 1: Filter short tracks
     step1 = filter_short_tracks(df, min_track_seconds=min_track_seconds)
@@ -238,6 +252,10 @@ def clean_and_normalize_poses(
         return step1
 
     # Step 2: Interpolate short gaps
+    step1 = step1.copy()
+    upper_visible = upper_body_visibility(step1)
+    if upper_visible is not None and "upper_body_visible_ratio" not in step1:
+        step1["upper_body_visible_ratio"] = upper_visible
     step2 = interpolate_missing_keypoints(step1, max_gap_frames=max_gap_frames)
 
     # Step 3: Smooth keypoints temporally

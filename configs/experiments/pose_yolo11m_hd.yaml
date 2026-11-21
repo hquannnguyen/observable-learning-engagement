@@ -16,3 +16,9 @@ tracking:
 
 video:
   sample_fps: 10
+
+quality_gate:
+  allow_upper_body_visibility: true
+  upper_body_min_visible_ratio: 0.72
+  min_visible_ratio: 0.60
+  min_mean_keypoint_confidence: 0.30

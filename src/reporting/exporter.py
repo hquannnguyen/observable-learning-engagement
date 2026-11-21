@@ -108,6 +108,7 @@ def export_bundle(
     experiment_id: Optional[str] = None,
     metric_scope: str = "weak_rule_labels",
     bucket_seconds: int = 60,
+    anonymize: bool = True,
 ) -> Dict[str, str]:
     """Write results.csv, timeline.csv, zone_summary.csv, summary.json, summary_report.md."""
     _validate_predictions(predictions)
@@ -130,7 +131,15 @@ def export_bundle(
         "summary_report": out / "summary_report.md",
     }
 
-    predictions.to_csv(paths["results"], index=False)
+    # window_id embeds the track ID. Whitelist reporting fields so imported
+    # pose, identity and free-text columns cannot enter the shareable bundle.
+    public_columns = [
+        "session_id", "camera_id", "t_start_ms", "t_end_ms", "class_phase", "zone_id",
+        "true_label", "pred_label", "gated_label", "p_max", "gate_reason", "label_source",
+        "mean_visible_ratio", "mean_pose_confidence", "quality_state",
+    ]
+    results = predictions[[c for c in public_columns if c in predictions]] if anonymize else predictions
+    results.to_csv(paths["results"], index=False)
     timeline.to_csv(paths["timeline"], index=False)
     zones.to_csv(paths["zone_summary"], index=False)
     paths["summary"].write_text(json.dumps(summary, indent=2), encoding="utf-8")

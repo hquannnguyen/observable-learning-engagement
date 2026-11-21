@@ -11,6 +11,7 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Dict, List
+from uuid import uuid4
 
 import pandas as pd
 import streamlit as st
@@ -136,12 +137,14 @@ def main() -> None:
             input_mode = st.radio("Loại dữ liệu đầu vào", ["Tải lên Video (.mp4, .mov, .avi, .mkv)", "Tải lên File Pose (.csv)"])
             ckpt_label = st.selectbox("Mô hình kiểm định (Checkpoint)", sorted(checkpoint_options) if checkpoint_options else ["Không tìm thấy checkpoint"])
         with col_in2:
+            override_probability = st.checkbox("Chỉnh ngưỡng tin cậy")
             min_prob = st.slider(
                 "Ngưỡng tin cậy cổng bất định (min_probability)",
                 min_value=0.50,
                 max_value=0.95,
                 value=0.60,
                 step=0.05,
+                disabled=not override_probability,
                 help="Nếu xác suất lớp cao nhất thấp hơn ngưỡng này, mẫu được phân loại là UNCERTAIN.",
             )
             pose_configs = {
@@ -167,12 +170,13 @@ def main() -> None:
             if not checkpoint_options or ckpt_label not in checkpoint_options:
                 st.error("Chưa có checkpoint mô hình hợp lệ.")
             else:
-                upload_dir = ROOT / "data" / "raw" / "uploads"
+                run_id = uuid4().hex
+                upload_dir = ROOT / "data" / "raw" / "uploads" / run_id
                 upload_dir.mkdir(parents=True, exist_ok=True)
                 safe_name = Path(uploaded.name).name
                 saved_path = upload_dir / safe_name
                 saved_path.write_bytes(uploaded.getbuffer())
-                out_dir = ROOT / "reports" / "inference" / Path(uploaded.name).stem
+                out_dir = ROOT / "reports" / "inference" / run_id
 
                 cmd = [
                     sys.executable,
@@ -180,8 +184,10 @@ def main() -> None:
                     "--checkpoint", checkpoint_options[ckpt_label],
                     "--out-dir", str(out_dir),
                     "--config", pose_configs[pose_choice],
-                    "--min-probability", str(min_prob),
+                    "--session-id", run_id,
                 ]
+                if override_probability:
+                    cmd.extend(["--min-probability", str(min_prob)])
                 if "Video" in input_mode:
                     cmd.extend(["--video", str(saved_path)])
                     if max_frames > 0:
@@ -199,6 +205,7 @@ def main() -> None:
                 else:
                     load_csv.clear()
                     load_json.clear()
+                    st.session_state["latest_inference"] = str(out_dir)
                     st.success(f"Suy luận hoàn tất! Kết quả lưu tại: `{out_dir}`")
                     new_preds = load_csv(str(out_dir / "predictions.csv"))
                     if not new_preds.empty:
@@ -238,12 +245,29 @@ def main() -> None:
                             mime="application/json",
                         )
 
+    latest_run = st.session_state.get("latest_inference")
+    analysis_dir, analysis_scope, analysis_id = exp_dir, metric_scope, metadata.get("experiment_id")
+    if latest_run and st.sidebar.radio("Dữ liệu cho biểu đồ và báo cáo", ["Lượt suy luận mới", "Experiment"]) == "Lượt suy luận mới":
+        analysis_dir = Path(latest_run)
+        predictions = load_csv(str(analysis_dir / "predictions.csv"))
+        zone_predictions = pd.DataFrame()
+        analysis_scope = "inference_no_ground_truth"
+        inference_meta = load_json(str(analysis_dir / "inference_meta.json"))
+        analysis_id = Path(inference_meta["checkpoint"]).stem
+
     with tabs[1]:
         st.subheader("Phân phối theo thời gian")
         if predictions.empty:
             st.info("Experiment này chưa có `predictions.csv`.")
         else:
-            timeline = aggregate_timeline(predictions)
+            timeline_input = predictions
+            if "class_phase" in predictions:
+                phases = sorted(set(predictions["class_phase"].dropna()) & {"lecture", "individual_work", "discussion"})
+                if phases:
+                    phase = st.selectbox("Pha hoạt động", ["Tất cả"] + phases)
+                    if phase != "Tất cả":
+                        timeline_input = predictions[predictions["class_phase"].eq(phase)]
+            timeline = aggregate_timeline(timeline_input)
             sessions = ["Tất cả"] + sorted(timeline["session_id"].unique().tolist())
             chosen = st.selectbox("Session", sessions)
             view = timeline if chosen == "Tất cả" else timeline[timeline["session_id"] == chosen]
@@ -274,7 +298,7 @@ def main() -> None:
                         color="label",
                         facet_col="session_id" if chosen == "Tất cả" else None,
                         labels={"minute_index": "Phút", "count": "Số window"},
-                        title="Số window theo phút (weak-label)",
+                        title="Số cửa sổ theo phút",
                     )
                     st.plotly_chart(fig, width="stretch")
                 except ImportError:
@@ -338,12 +362,12 @@ def main() -> None:
         else:
             bucket = st.number_input("Khoảng thời gian tổng hợp (giây)", min_value=10, max_value=600, value=60, step=10)
             if st.button("Tạo gói báo cáo ẩn danh (results, timeline, zone_summary, summary.json, report.md)"):
-                out_dir = exp_dir / "export_ui"
+                out_dir = analysis_dir / "export_ui"
                 paths = export_bundle(
                     predictions,
                     out_dir,
-                    experiment_id=metadata.get("experiment_id"),
-                    metric_scope=metric_scope,
+                    experiment_id=analysis_id,
+                    metric_scope=analysis_scope,
                     bucket_seconds=int(bucket),
                 )
                 st.success(f"Đã xuất thành công {len(paths)} tệp vào `{out_dir}`.")

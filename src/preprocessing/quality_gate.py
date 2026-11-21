@@ -13,11 +13,25 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
 import pandas as pd
+import numpy as np
 import yaml
 
 from src.pose.tracker import compute_track_statistics
 
 logger = logging.getLogger(__name__)
+
+
+def upper_body_visibility(poses: pd.DataFrame) -> pd.Series | None:
+    """Fraction of 11 upper-body joints with observed coordinates."""
+    xs = [f"kpt_{i:02d}_x" for i in range(11)]
+    ys = [f"kpt_{i:02d}_y" for i in range(11)]
+    if not set(xs + ys) <= set(poses):
+        return None
+    x, y = poses[xs].to_numpy(dtype=float), poses[ys].to_numpy(dtype=float)
+    visible = (np.isfinite(x) & np.isfinite(y) & ((x != 0) | (y != 0))).mean(axis=1)
+    if "visible_ratio" in poses:
+        visible = np.minimum(visible, poses["visible_ratio"].to_numpy(dtype=float) * 17 / 11)
+    return pd.Series(visible, index=poses.index)
 
 
 def load_quality_gate_config(
@@ -107,6 +121,7 @@ def evaluate_pose_quality(
     )
 
     out = df.copy()
+    observed_upper = upper_body_visibility(out)
 
     # Upper body keypoint conf columns (indices 0..10: head + shoulders + arms)
     upper_conf_cols = [f"kpt_{i:02d}_conf" for i in range(11) if f"kpt_{i:02d}_conf" in out.columns]
@@ -123,13 +138,15 @@ def evaluate_pose_quality(
     quality_states = []
     quality_reasons = []
 
-    for _, row in out.iterrows():
+    for position, (_, row) in enumerate(out.iterrows()):
         t_id = row.get("track_id")
         vis = float(row.get("visible_ratio", 0.0))
         mean_c = float(row.get("mean_keypoint_conf", 0.0))
 
         # Check upper body visibility if columns are present
-        if len(upper_conf_cols) == 11:
+        if observed_upper is not None:
+            upper_vis = float(observed_upper.iloc[position])
+        elif len(upper_conf_cols) == 11:
             raw_upper_vis = sum(float(row[c]) >= 0.25 for c in upper_conf_cols) / 11.0
             # Total upper visible keypoints cannot exceed total visible keypoints across the body
             max_possible_upper_vis = (vis * 17.0) / 11.0

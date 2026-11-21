@@ -292,6 +292,7 @@ def main() -> None:
     with open(args.config, "r", encoding="utf-8") as fh:
         cfg = yaml.safe_load(fh) or {}
     quality_thresholds = cfg.get("quality_gate", {})
+    tracking = cfg.get("tracking", {})
     sample_fps = args.sample_fps or float(cfg.get("video", {}).get("sample_fps", 10))
     window_seconds = args.window_seconds or float(cfg.get("sequence", {}).get("window_seconds", 4))
     stride_seconds = args.stride_seconds or float(cfg.get("sequence", {}).get("stride_seconds", 2))
@@ -335,7 +336,13 @@ def main() -> None:
         if not df.empty and "track_id" in df.columns:
             # Clean and normalize if not already done
             if "norm_kpt_00_x" not in df.columns:
-                df = pd.concat([clean_and_normalize_poses(g, min_track_seconds=float(cfg.get("tracking", {}).get("min_track_seconds", 2))) for _, g in df.groupby(["session_id", "camera_id"])], ignore_index=True)
+                df = pd.concat([
+                    clean_and_normalize_poses(
+                        group, min_track_seconds=float(tracking.get("min_track_seconds", 2)),
+                        merge_max_gap_seconds=tracking.get("merge_max_gap_seconds"),
+                    )
+                    for _, group in df.groupby(["session_id", "camera_id"])
+                ], ignore_index=True)
             if not df.empty:
                 all_dfs.append(df)
 

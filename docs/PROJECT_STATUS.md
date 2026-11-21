@@ -1,5 +1,9 @@
 # PROJECT STATUS — CVF25PRJ10
 
+## Kiểm tra và cập nhật ngày 21/11/2026
+
+Đã sửa luồng re-label với phiếu riêng từng người, preview đúng camera/track, metadata gap, inference từ CSV, export ẩn danh, lựa chọn dữ liệu suy luận mới trên dashboard, checkpoint BiLSTM và calibration từ validation. Chi tiết kiểm tra và giới hạn nằm ở `reports/UPDATE_VERIFICATION_20261121.md`. Số đo A/B pose lưu ở `reports/pose_ab_20261120.json`. Các task yêu cầu human ground truth, benchmark dài và kiểm chứng tracker vẫn cần bằng chứng nghiệm thu.
+
 > **Nguồn sự thật duy nhất về trạng thái task.**  
 > Cập nhật lần cuối: 2026-11-09
 > Xác minh gần nhất: `python -m pytest -q -p no:cacheprovider --basetemp=D:/ThiGiacMayTinh/.pytest_rubric_focus_final_20261109` → **133 passed**;

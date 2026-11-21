@@ -1,0 +1,14 @@
+session,path,rows,columns,missing_columns,sampled_frames_with_detections,first_s,last_s,video_seconds,temporal_extent_pct,detection_frame_coverage_pct_at_10fps,median_interval_ms,tracks,missing_track_rows,duplicate_keys,finite_coordinate_pct,mean_visible_ratio,mean_pose_confidence,assessment
+class_1,data\poses_zones\class_1_cam_A_poses.csv,1771,65,,150,0.0,14.9,15.0,100.0,100.0,100.0,17,0,0,80.43,0.8043,0.6677,FULL_SAMPLED_TIMELINE
+class_2,data\poses_zones\class_2_cam_A_poses.csv,1744,65,,150,0.0,14.9,15.0,100.0,100.0,100.0,27,0,0,80.62,0.8062,0.6769,FULL_SAMPLED_TIMELINE
+class_3,data\poses_zones\class_3_cam_A_poses.csv,2261,65,,178,0.0,17.7,17.767,100.0,100.0,100.0,28,0,0,83.19,0.8319,0.685,FULL_SAMPLED_TIMELINE
+class_4,data\poses_zones\class_4_cam_A_poses.csv,1264,65,,123,0.0,12.2,12.233,100.0,100.0,100.0,21,0,0,81.28,0.8128,0.6785,FULL_SAMPLED_TIMELINE
+class_5,data\poses_zones\class_5_cam_A_poses.csv,1805,65,,148,0.0,14.7,14.767,100.0,100.0,100.0,23,0,0,79.7,0.797,0.6543,FULL_SAMPLED_TIMELINE
+class_6,data\poses\class_6_cam_A_poses.csv,23,64,,2,0.0,0.1,10.0,2.0,2.0,100.0,16,0,0,64.96,0.6496,0.6077,INCOMPLETE
+class_7,data\poses\class_7_cam_A_poses.csv,30,64,,2,0.0,0.1,10.0,2.0,2.0,100.0,15,0,0,65.29,0.653,0.5728,INCOMPLETE
+session_001,data\poses_zones\session_001_cam_A_poses.csv,138290,65,,9000,0.0,899.933,900.0,100.0,100.0,100.0,416,0,0,68.49,0.6849,0.5513,FULL_SAMPLED_TIMELINE
+session_002,data\poses_zones\session_002_cam_A_poses.csv,139475,65,,9000,0.0,899.933,899.967,100.0,100.0,100.0,405,0,0,68.52,0.6852,0.5444,FULL_SAMPLED_TIMELINE
+session_003,data\poses_zones\session_003_cam_A_poses.csv,136008,65,,9000,0.0,899.933,900.0,100.0,100.0,100.0,375,0,0,68.41,0.6841,0.5524,FULL_SAMPLED_TIMELINE
+session_004,data\poses_zones\session_004_cam_A_poses.csv,121371,65,,9000,0.0,899.933,900.0,100.0,100.0,100.0,567,0,0,69.44,0.6944,0.5668,FULL_SAMPLED_TIMELINE
+session_005,data\poses_zones\session_005_cam_A_poses.csv,129086,65,,9000,0.0,899.933,899.967,100.0,100.0,100.0,437,0,0,67.6,0.676,0.5411,FULL_SAMPLED_TIMELINE
+session_006,data\poses_zones\session_006_cam_A_poses.csv,33559,65,,2505,0.0,250.4,250.5,100.0,100.0,100.0,354,0,0,70.68,0.7068,0.5665,FULL_SAMPLED_TIMELINE

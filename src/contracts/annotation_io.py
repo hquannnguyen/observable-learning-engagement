@@ -49,6 +49,12 @@ def save_annotation_row(path: Path, window_id: str, updates: dict) -> pd.DataFra
         if key not in frame:
             frame[key] = pd.Series("", index=frame.index, dtype=object)
         frame.at[matches[0], key] = value
+    write_annotation_csv(path, frame)
+    return frame
+
+
+def write_annotation_csv(path: Path, frame: pd.DataFrame) -> None:
+    """Publish a complete CSV with a same-directory atomic replacement."""
     temporary = None
     try:
         with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", newline="", suffix=".tmp", dir=path.parent, delete=False) as handle:
@@ -58,4 +64,3 @@ def save_annotation_row(path: Path, window_id: str, updates: dict) -> pd.DataFra
     finally:
         if temporary is not None:
             temporary.unlink(missing_ok=True)
-    return frame

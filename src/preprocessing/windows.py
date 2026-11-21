@@ -65,6 +65,9 @@ def build_track_windows(
     min_conf = float(
         (quality_thresholds or {}).get("min_mean_keypoint_confidence", 0.30)
     )
+    upper_min = (quality_thresholds or {}).get("upper_body_min_visible_ratio", 0.72) if (
+        quality_thresholds or {}
+    ).get("allow_upper_body_visibility") else None
 
     W = int(round(window_seconds * sample_fps))
     S = int(round(stride_seconds * sample_fps))
@@ -126,7 +129,13 @@ def build_track_windows(
             else 1.0
         )
 
-        if mean_vis < min_vis:
+        upper_visible = (
+            float(w_rows["upper_body_visible_ratio"].mean())
+            if "upper_body_visible_ratio" in w_rows else None
+        )
+        if mean_vis < min_vis and not (
+            upper_min is not None and upper_visible is not None and upper_visible >= float(upper_min)
+        ):
             quality_state = "INVALID"
             quality_reason = "LOW_VISIBILITY"
         elif mean_conf < min_conf:
@@ -159,6 +168,7 @@ def build_track_windows(
             "quality_state": quality_state,
             "quality_reason": quality_reason,
             "mean_visible_ratio": round(mean_vis, 4),
+            "mean_upper_body_visible_ratio": round(upper_visible, 4) if upper_visible is not None else None,
             "mean_pose_confidence": round(mean_conf, 4),
             "max_interpolated_gap_frames": int(w_rows["max_interpolated_gap_frames"].max()) if "max_interpolated_gap_frames" in w_rows else 0,
             "participation_label": None,

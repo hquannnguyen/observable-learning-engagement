@@ -1,0 +1,59 @@
+{
+  "platform": "Windows-10-10.0.19045-SP0",
+  "device": "cpu",
+  "torch": "2.14.1+cpu",
+  "results": [
+    {
+      "video": "class_1",
+      "model": "yolov8n-pose.pt",
+      "imgsz": null,
+      "sampled_frames": 60,
+      "detections": 627,
+      "elapsed_s": 9.11,
+      "fps": 6.59,
+      "visible_ratio": 0.7921,
+      "mean_keypoint_conf": 0.6523,
+      "occluded_ratio": 0.0,
+      "invalid_ratio": 0.0
+    },
+    {
+      "video": "class_1",
+      "model": "yolo11m-pose.pt",
+      "imgsz": 1280,
+      "sampled_frames": 60,
+      "detections": 830,
+      "elapsed_s": 91.01,
+      "fps": 0.66,
+      "visible_ratio": 0.7064,
+      "mean_keypoint_conf": 0.6416,
+      "occluded_ratio": 0.0398,
+      "invalid_ratio": 0.0
+    },
+    {
+      "video": "class_3",
+      "model": "yolov8n-pose.pt",
+      "imgsz": null,
+      "sampled_frames": 60,
+      "detections": 748,
+      "elapsed_s": 7.91,
+      "fps": 7.59,
+      "visible_ratio": 0.8434,
+      "mean_keypoint_conf": 0.6947,
+      "occluded_ratio": 0.0,
+      "invalid_ratio": 0.0
+    },
+    {
+      "video": "class_3",
+      "model": "yolo11m-pose.pt",
+      "imgsz": 1280,
+      "sampled_frames": 60,
+      "detections": 752,
+      "elapsed_s": 96.53,
+      "fps": 0.62,
+      "visible_ratio": 0.7526,
+      "mean_keypoint_conf": 0.6792,
+      "occluded_ratio": 0.0027,
+      "invalid_ratio": 0.0
+    }
+  ]
+}

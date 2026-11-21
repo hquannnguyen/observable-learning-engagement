@@ -10,10 +10,11 @@ import numpy as np
 import pandas as pd
 
 from src.pose.video_codec import ffmpeg_executable
-from src.pose.visualization import apply_face_blur
+from src.pose.visualization import apply_face_blur, draw_skeleton_on_frame
 
 BOX_COLUMNS = ["timestamp_ms", "track_id", "bbox_x1", "bbox_y1", "bbox_x2", "bbox_y2"]
 HEAD_COLUMNS = [f"kpt_{i:02d}_{axis}" for i in range(5) for axis in ("x", "y", "conf")]
+KEYPOINT_COLUMNS = [f"kpt_{i:02d}_{axis}" for i in range(17) for axis in ("x", "y", "conf")]
 
 
 def read_review_boxes(path):
@@ -38,7 +39,7 @@ def fit_image(image, width, height):
     return result
 
 
-def compose_target_frame(frame, boxes, track_id, crop_box, timestamp_ms, anonymize=True):
+def compose_target_frame(frame, boxes, track_id, crop_box, timestamp_ms, anonymize=True, skeleton=False):
     """Yellow box + undimmed target on the left; enlarged same target on the right."""
     frame = frame.copy()
     if anonymize:
@@ -56,6 +57,10 @@ def compose_target_frame(frame, boxes, track_id, crop_box, timestamp_ms, anonymi
         y1, y2 = max(0, y1), min(h, y2)
         found = x2 > x1 and y2 > y1
         if found:
+            if skeleton and all(c in target for c in KEYPOINT_COLUMNS):
+                keypoints = target.iloc[0][KEYPOINT_COLUMNS].to_numpy(dtype=float).reshape(17, 3)
+                keypoints[~np.isfinite(keypoints).all(axis=1)] = 0
+                draw_skeleton_on_frame(frame, keypoints, bbox=(x1, y1, x2, y2), show_bbox=False)
             scene[y1:y2, x1:x2] = frame[y1:y2, x1:x2]
             cv2.rectangle(scene, (x1, y1), (x2, y2), (0, 240, 255), max(4, w // 320))
             cx1, cy1, cx2, cy2 = crop_box
@@ -70,16 +75,28 @@ def compose_target_frame(frame, boxes, track_id, crop_box, timestamp_ms, anonymi
     return canvas, found
 
 
-def render_annotation_preview(video_path, pose_path, track_id, start_ms, end_ms, cache_dir, anonymize=True):
+def render_annotation_preview(video_path, pose_path, track_id, start_ms, end_ms, cache_dir,
+                              anonymize=True, *, recording=None, skeleton=False):
     video_path, pose_path, cache_dir = Path(video_path), Path(pose_path), Path(cache_dir)
     signature = ["focus-v2", str(video_path.resolve()), video_path.stat().st_mtime_ns, video_path.stat().st_size,
-                 str(pose_path.resolve()), pose_path.stat().st_mtime_ns, str(track_id), float(start_ms), float(end_ms), anonymize]
+                 str(pose_path.resolve()), pose_path.stat().st_mtime_ns, str(track_id), float(start_ms), float(end_ms), anonymize,
+                 recording, skeleton]
     cache_key = hashlib.sha256(json.dumps(signature).encode()).hexdigest()[:24]
     cache_dir.mkdir(parents=True, exist_ok=True)
     output, audit_path = cache_dir / f"{cache_key}.mp4", cache_dir / f"{cache_key}.json"
     if output.is_file() and audit_path.is_file():
         return output, json.loads(audit_path.read_text())
-    poses = read_review_boxes(pose_path)
+    if recording is None and not skeleton:
+        poses = read_review_boxes(pose_path)
+    else:
+        columns = BOX_COLUMNS + (KEYPOINT_COLUMNS if skeleton else HEAD_COLUMNS) + ["session_id", "camera_id"]
+        poses = pd.read_csv(pose_path, usecols=lambda name: name in columns)
+        if recording is not None:
+            session, camera = recording
+            if not {"session_id", "camera_id"} <= set(poses.columns):
+                raise ValueError("CSV pose thiếu khóa session_id hoặc camera_id.")
+            poses = poses[poses.session_id.astype(str).eq(session) & poses.camera_id.astype(str).eq(camera)]
+        poses["track_id"] = pd.to_numeric(poses["track_id"], errors="coerce").astype("Int64")
     poses = poses[poses.timestamp_ms.between(float(start_ms) - 75, float(end_ms) + 75)]
     target = poses[poses.track_id.astype(str).eq(str(track_id))]
     if target.empty:
@@ -117,7 +134,7 @@ def render_annotation_preview(video_path, pose_path, track_id, start_ms, end_ms,
                     if not ok:
                         break
                     boxes = nearest_frame_boxes(poses, timestamp)
-                    result, found = compose_target_frame(frame, boxes, track_id, crop, timestamp, anonymize)
+                    result, found = compose_target_frame(frame, boxes, track_id, crop, timestamp, anonymize, skeleton)
                     writer.write(result)
                     matched += int(found)
                     rendered += 1

@@ -64,9 +64,12 @@ def predict_dataframe(
     window_seconds: float = 4.0,
     stride_seconds: float = 2.0,
     batch_size: int = 128,
+    temperature: float = 1.0,
 ) -> pd.DataFrame:
     """Build windows per track, run the model, apply the uncertainty gate."""
     records: List[Dict[str, Any]] = []
+    if not np.isfinite(temperature) or temperature <= 0:
+        raise ValueError("temperature must be finite and positive")
     tensors: List[np.ndarray] = []
     include_mask = input_size == 94
 
@@ -101,7 +104,10 @@ def predict_dataframe(
         raise ValueError("batch_size must be positive")
     device = next(model.parameters()).device
     with torch.no_grad():
-        probs = np.concatenate([model.predict_proba(torch.from_numpy(X[i:i + batch_size]).float().to(device)).cpu().numpy() for i in range(0, len(X), batch_size)])
+        probs = np.concatenate([
+            torch.softmax(model(torch.from_numpy(X[i:i + batch_size]).float().to(device)) / temperature, dim=-1).cpu().numpy()
+            for i in range(0, len(X), batch_size)
+        ])
 
     rows: List[Dict[str, Any]] = []
     for i, record in enumerate(records):
@@ -110,6 +116,7 @@ def predict_dataframe(
             probs[i],
             visible_ratio=float(record["mean_visible_ratio"]),
             mean_keypoint_confidence=float(record["mean_pose_confidence"]),
+            upper_body_visible_ratio=record.get("mean_upper_body_visible_ratio"),
             thresholds=thresholds,
             class_labels=CANONICAL_TRAINING_LABELS,
         )
@@ -130,6 +137,7 @@ def predict_dataframe(
                 "gate_reason": reason,
                 "label_source": None,
                 "mean_visible_ratio": record["mean_visible_ratio"],
+                "mean_upper_body_visible_ratio": record.get("mean_upper_body_visible_ratio"),
                 "mean_pose_confidence": record["mean_pose_confidence"],
                 "quality_state": record["quality_state"],
             }
@@ -139,8 +147,9 @@ def predict_dataframe(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run the full inference flow on a video or pose dataset.")
-    parser.add_argument("--video", default=None, help="Path to input video")
-    parser.add_argument("--poses", default=None, help="Path to existing extracted poses.csv")
+    inputs = parser.add_mutually_exclusive_group(required=True)
+    inputs.add_argument("--video", help="Path to input video")
+    inputs.add_argument("--poses", help="Path to existing extracted poses.csv")
     parser.add_argument("--checkpoint", required=True)
     parser.add_argument("--out-dir", default=None)
     parser.add_argument("--session-id", default=None)
@@ -153,9 +162,6 @@ def main() -> None:
     parser.add_argument("--min-probability", type=float, default=None, help="Override uncertainty gate min_probability")
     parser.add_argument("--skip-preview", action="store_true", help="Skip head-blurred preview; never export an unblurred preview implicitly.")
     args = parser.parse_args()
-
-    if not args.video and not args.poses:
-        parser.error("At least one of --video or --poses must be provided.")
 
     video = Path(args.video) if args.video else None
     checkpoint_path = Path(args.checkpoint)
@@ -174,11 +180,17 @@ def main() -> None:
         cfg = yaml.safe_load(fh) or {}
     qg = cfg.get("quality_gate", {})
     unc = cfg.get("uncertainty", {})
-    min_prob = float(args.min_probability if args.min_probability is not None else unc.get("min_probability", 0.60))
+    checkpoint = torch.load(checkpoint_path, map_location="cpu")
+    calibration = checkpoint.get("calibration") or {}
+    temperature = float(calibration.get("temperature", 1.0))
+    min_prob = float(args.min_probability if args.min_probability is not None else
+                     calibration.get("min_probability", unc.get("min_probability", 0.60)))
     thresholds = UncertaintyThresholds(
         min_visible_ratio=float(qg.get("min_visible_ratio", 0.60)),
         min_mean_keypoint_confidence=float(qg.get("min_mean_keypoint_confidence", 0.30)),
         min_probability=min_prob,
+        upper_body_min_visible_ratio=float(qg.get("upper_body_min_visible_ratio", 0.72))
+        if qg.get("allow_upper_body_visibility") else None,
     )
 
     if video is not None:
@@ -196,9 +208,9 @@ def main() -> None:
         poses = pd.read_csv(args.poses)
         args.skip_preview = True
         meta = {
-            "sample_fps": float(cfg.get("pose_extractor", {}).get("sample_fps", 10.0)),
-            "sampled_frames": int(len(poses["frame_idx"].unique())) if "frame_idx" in poses.columns else int(len(poses)),
-            "raw_frames": int(len(poses)),
+            "sample_fps": float(cfg.get("video", {}).get("sample_fps", 10.0)),
+            "sampled_frames": int(len(poses[["session_id", "camera_id", "frame_idx"]].drop_duplicates())),
+            "raw_frames": None,
             "pose_model": "pre_extracted_poses",
             "confidence_threshold": float(qg.get("min_mean_keypoint_confidence", 0.30)),
             "total_detections": int(len(poses)),
@@ -214,9 +226,13 @@ def main() -> None:
     raw_poses = poses.copy()
     out_dir.mkdir(parents=True, exist_ok=True)
     raw_poses.to_csv(out_dir / "poses.csv", index=False)
-    poses = clean_and_normalize_poses(poses, min_track_seconds=float(cfg.get("tracking", {}).get("min_track_seconds", 2.0)))
+    tracking = cfg.get("tracking", {})
+    poses = pd.concat([
+        clean_and_normalize_poses(group, min_track_seconds=float(tracking.get("min_track_seconds", 2.0)),
+                                  merge_max_gap_seconds=tracking.get("merge_max_gap_seconds"))
+        for _, group in poses.groupby(["session_id", "camera_id"], sort=False)
+    ], ignore_index=True)
 
-    checkpoint = torch.load(checkpoint_path, map_location="cpu")
     model = model_from_checkpoint(checkpoint)
     model.to(torch.device(args.device or "cpu"))
     input_size = int(checkpoint.get("input_size", 77))
@@ -231,6 +247,7 @@ def main() -> None:
         window_seconds=float(cfg.get("sequence", {}).get("window_seconds", 4.0)),
         stride_seconds=float(cfg.get("sequence", {}).get("stride_seconds", 2.0)),
         batch_size=args.batch_size,
+        temperature=temperature,
     )
 
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -252,6 +269,7 @@ def main() -> None:
         out_dir / "export",
         experiment_id=checkpoint_path.stem,
         metric_scope="inference_no_ground_truth",
+        anonymize=bool(cfg.get("reporting", {}).get("anonymize", True)),
     )
     elapsed = time.perf_counter() - started
     video_seconds = float(meta["sampled_frames"]) / max(float(meta["sample_fps"]), 1e-9)
@@ -260,7 +278,7 @@ def main() -> None:
         "session_id": session_id,
         "checkpoint": str(checkpoint_path),
         "sampled_frames": int(meta["sampled_frames"]),
-        "raw_frames": int(meta["raw_frames"]),
+        "raw_frames": meta["raw_frames"],
         "sample_fps": float(meta["sample_fps"]),
         "resolution": meta.get("resolution"),
         "pose_model": meta.get("pose_model"),
@@ -268,6 +286,8 @@ def main() -> None:
         "tracker": meta.get("tracker"),
         "config": str(Path(args.config).resolve()),
         "temporal_device": str(next(model.parameters()).device),
+        "temperature": temperature,
+        "min_probability": min_prob,
         "preview": str(preview_path) if preview_path else None,
         "poses": str(out_dir / "poses.csv"),
         "privacy_mode": "head_blur_detected_people_requires_visual_review" if preview_path else "no_preview",
@@ -284,7 +304,7 @@ def main() -> None:
         json.dumps(inference_meta, indent=2), encoding="utf-8"
     )
 
-    logger.info("Video: %s | frames sampled: %s", video.name, meta["sampled_frames"])
+    logger.info("Input: %s | frames sampled: %s", (video or Path(args.poses)).name, meta["sampled_frames"])
     logger.info(
         "Windows: %d | accepted: %d | uncertain: %d",
         len(predictions),
