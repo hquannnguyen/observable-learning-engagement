@@ -8,8 +8,8 @@ Usage:
     # Run fast batch (640px):
     python scripts/batch_extract_sessions.py --imgsz 640
 
-    # Run only a specific session (e.g. session_001):
-    python scripts/batch_extract_sessions.py --sessions session_001 --imgsz 1280
+    # Run on Google Colab GPU with custom raw dir:
+    python scripts/batch_extract_sessions.py --raw-dir "/content/drive/MyDrive/ThiGiacMaytinh" --device cuda
 """
 
 from __future__ import annotations
@@ -118,6 +118,38 @@ def backup_existing_poses(out_path: Path, session_names: list[str]) -> None:
                 logger.info("Backed up existing %s -> %s", old_parquet.name, backup_dir.name)
 
 
+def resolve_session_video(raw_path: Path, sess: str) -> Path | None:
+    """Find video path for a session supporting multiple folder layouts."""
+    candidates = [
+        raw_path / sess / "cam_A.mp4",
+        raw_path / sess / "cam_A.MOV",
+        raw_path / sess / "cam_A.avi",
+        raw_path / f"{sess}.mp4",
+        raw_path / f"{sess}.MOV",
+        raw_path / "data" / "raw" / sess / "cam_A.mp4",
+        raw_path / "data" / "raw" / sess / "cam_A.MOV",
+    ]
+    for c in candidates:
+        if c.is_file():
+            return c
+
+    # Check any video inside session directory
+    sess_dir = raw_path / sess
+    if sess_dir.is_dir():
+        for ext in [".mp4", ".mov", ".avi", ".mkv"]:
+            matches = list(sess_dir.glob(f"*{ext}")) + list(sess_dir.glob(f"*{ext.upper()}"))
+            if matches:
+                return matches[0]
+
+    # Recursive check
+    for ext in [".mp4", ".mov", ".avi", ".mkv"]:
+        rec = list(raw_path.glob(f"**/{sess}/cam_A{ext}")) + list(raw_path.glob(f"**/{sess}{ext}"))
+        if rec:
+            return rec[0]
+
+    return None
+
+
 def main() -> None:
     args = parse_args()
     raw_path = Path(args.raw_dir)
@@ -133,18 +165,23 @@ def main() -> None:
     # Validate video files exist
     valid_sessions = []
     for sess in target_sessions:
-        v_file = raw_path / sess / "cam_A.mp4"
-        if v_file.is_file():
+        v_file = resolve_session_video(raw_path, sess)
+        if v_file and v_file.is_file():
             valid_sessions.append((sess, v_file))
         else:
-            logger.warning("Video not found for %s at %s, skipping.", sess, v_file)
+            logger.warning("Video not found for %s under %s, skipping.", sess, raw_path)
 
     if not valid_sessions:
-        logger.error("No valid session videos found to process!")
+        logger.error("No valid session videos found to process in %s!", raw_path)
+        logger.error("Directory contents of %s:", raw_path)
+        if raw_path.is_dir():
+            for child in sorted(raw_path.iterdir()):
+                logger.error(" - %s (%s)", child.name, "dir" if child.is_dir() else f"{child.stat().st_size} bytes")
         sys.exit(1)
 
-    logger.info("Found %d session videos to process: %s",
-                len(valid_sessions), [s for s, _ in valid_sessions])
+    logger.info("Found %d session videos to process:", len(valid_sessions))
+    for s, vf in valid_sessions:
+        logger.info("  • %s -> %s", s, vf)
 
     # Backup existing poses unless disabled
     if not args.no_backup:
