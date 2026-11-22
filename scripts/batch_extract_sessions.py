@@ -148,11 +148,32 @@ def resolve_session_video(raw_path: Path, sess: str) -> Path | None:
             if matches:
                 return matches[0]
 
-    # Recursive check
+    # Recursive check within raw_path
     for ext in [".mp4", ".mov", ".avi", ".mkv"]:
         rec = list(raw_path.glob(f"**/{sess}/cam_A{ext}")) + list(raw_path.glob(f"**/{sess}{ext}"))
         if rec:
             return rec[0]
+
+    # Smart fallback checks for common Colab / Google Drive / local layouts
+    fallback_roots = [
+        raw_path / "CVF25PRJ10_Data",
+        raw_path / "Dataset",
+        raw_path.parent / "CVF25PRJ10_Data",
+        raw_path.parent / "Dataset",
+        raw_path.parent,
+        Path("/content/drive/MyDrive/CVF25PRJ10_Data"),
+        Path("/content/drive/MyDrive/ThiGiacMaytinh/CVF25PRJ10_Data"),
+        Path("/content/drive/MyDrive/ThiGiacMayTinh/CVF25PRJ10_Data"),
+        Path("/content/drive/MyDrive"),
+        Path("data/raw"),
+    ]
+    for fb in fallback_roots:
+        if fb.is_dir() and fb != raw_path:
+            for ext in [".mp4", ".mov", ".avi", ".mkv"]:
+                found = list(fb.glob(f"**/{sess}/cam_A{ext}")) + list(fb.glob(f"**/{sess}{ext}"))
+                if found and found[0].is_file():
+                    logger.info("Found %s video at fallback location: %s", sess, found[0])
+                    return found[0]
 
     return None
 
@@ -203,6 +224,19 @@ def main() -> None:
 
     logger.info("Model: %s | Resolution: %dpx | Confidence: %.2f | Sample FPS: %.1f",
                 model_name, eff_imgsz, eff_conf, eff_fps)
+
+    # If in resume mode, report upfront status of all sessions
+    if args.resume:
+        logger.info("=" * 60)
+        logger.info("RESUME CHECK FOR SESSIONS IN: %s", out_path)
+        for s, _ in valid_sessions:
+            sp = out_path / f"{s}_cam_A_poses.parquet"
+            if sp.is_file() and sp.stat().st_size > 1024:
+                logger.info("  ✓ %s: COMPLETED (Found %s, %.1f MB) -> Will skip",
+                            s, sp.name, sp.stat().st_size / (1024 * 1024))
+            else:
+                logger.info("  ⏳ %s: PENDING -> Will extract", s)
+        logger.info("=" * 60)
 
     # Preload YOLO11 model once
     logger.info("Preloading YOLO11 model into memory: %s ...", model_name)
