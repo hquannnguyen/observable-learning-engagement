@@ -5,11 +5,13 @@ Usage:
     # Run full batch with YOLO11 HD (1280px):
     python scripts/batch_extract_sessions.py --imgsz 1280
 
-    # Run fast batch (640px):
-    python scripts/batch_extract_sessions.py --imgsz 640
-
-    # Run on Google Colab GPU with custom raw dir:
-    python scripts/batch_extract_sessions.py --raw-dir "/content/drive/MyDrive/ThiGiacMaytinh" --device cuda
+    # Run on Google Colab GPU saving directly to Google Drive with auto-resume:
+    python scripts/batch_extract_sessions.py \
+        --raw-dir "/content/drive/MyDrive/ThiGiacMaytinh" \
+        --output-dir "/content/drive/MyDrive/ThiGiacMaytinh/poses" \
+        --resume \
+        --imgsz 640 \
+        --device cuda
 """
 
 from __future__ import annotations
@@ -96,6 +98,11 @@ def parse_args() -> argparse.Namespace:
         "--no-backup",
         action="store_true",
         help="Skip backing up existing session pose CSV files.",
+    )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="Skip sessions whose pose parquet files already exist in output-dir.",
     )
     return parser.parse_args()
 
@@ -208,6 +215,14 @@ def main() -> None:
         out_csv = out_path / f"{sess}_cam_A_poses.csv"
         out_parquet = out_path / f"{sess}_cam_A_poses.parquet"
 
+        # Auto-resume check: skip if parquet already exists and has valid size
+        if args.resume and out_parquet.is_file() and out_parquet.stat().st_size > 1024:
+            logger.info("=" * 60)
+            logger.info("[%d/%d] RESUME MODE: Skipping %s (Found %s, size=%.1f KB)",
+                        idx, len(valid_sessions), sess, out_parquet.name, out_parquet.stat().st_size / 1024.0)
+            logger.info("=" * 60)
+            continue
+
         logger.info("=" * 60)
         logger.info("[%d/%d] STARTING POSE EXTRACTION: %s (%s)",
                     idx, len(valid_sessions), sess, video_file.name)
@@ -243,12 +258,12 @@ def main() -> None:
                     vid_elapsed, fps_speed)
 
     total_elapsed = time.perf_counter() - total_start
-    total_frames = sum(m["sampled_frames"] for m in summary.values())
-    total_detections = sum(m["total_detections"] for m in summary.values())
+    total_frames = sum(m["sampled_frames"] for m in summary.values()) if summary else 0
+    total_detections = sum(m["total_detections"] for m in summary.values()) if summary else 0
 
     logger.info("=" * 60)
-    logger.info("ALL SESSIONS POSE EXTRACTION COMPLETED SUCCESSFULLY!")
-    logger.info("Total Sessions    : %d", len(valid_sessions))
+    logger.info("POSE EXTRACTION BATCH COMPLETED!")
+    logger.info("Processed Sessions: %d", len(summary))
     logger.info("Total Frames      : %d", total_frames)
     logger.info("Total Detections  : %d", total_detections)
     logger.info("Total Time        : %.1fs (%.2f hours)", total_elapsed, total_elapsed / 3600.0)
