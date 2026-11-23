@@ -1,0 +1,44 @@
+experiment_id: yolo11_feat94_weak_v02
+parent_config: configs/baseline.yaml
+description: Frozen G1 weak-label exploratory dataset using YOLO11m pose detections
+  and posefeat-v2.
+project:
+  id: CVF25PRJ10
+  task_code: CVFP26BCPPRJC012
+  seed: 42
+data:
+  dataset_version: v0.1
+  split_version: split-v0.1
+  label_schema_version: labels-v1
+  feature_schema_version: posefeat-v2
+video:
+  sample_fps: 10
+pose:
+  model: yolo11m-pose.pt
+  confidence_threshold: 0.35
+tracking:
+  tracker: bytetrack.yaml
+  min_track_seconds: 2.0
+quality_gate:
+  min_visible_ratio: 0.6
+  upper_body_min_visible_ratio: 0.72
+  min_mean_keypoint_confidence: 0.3
+sequence:
+  window_seconds: 4
+  stride_seconds: 2
+model:
+  type: tcn
+  num_classes: 3
+  hidden_size: 128
+  num_layers: 2
+  dropout: 0.3
+training:
+  batch_size: 32
+  optimizer: adam
+  learning_rate: 0.001
+  early_stopping_patience: 10
+  primary_metric: macro_f1
+  epochs: 2
+uncertainty:
+  min_probability: 0.6
+  output_label: UNCERTAIN

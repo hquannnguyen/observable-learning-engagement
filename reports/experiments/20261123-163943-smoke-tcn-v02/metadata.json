@@ -1,0 +1,28 @@
+{
+  "experiment_id": "20261123-163943-smoke-tcn-v02",
+  "created_at": "2026-11-23T16:39:43.290306+07:00",
+  "name": "smoke_tcn_v02",
+  "seed": 42,
+  "git_commit": "cef07c5b5cd42daeacded5e0167936d21b0a6114",
+  "dataset_version": "v0.1",
+  "split_version": "split-v0.1",
+  "source_config": "configs\\experiments\\yolo11_feat94_weak_v02.yaml",
+  "config_sha256": "414a2d8fa029fec56ada3919693d66373c970fc61962db1256cce49f667b5088",
+  "notes": "smoke run on v0.2 weak dataset",
+  "checkpoint_path": "models\\checkpoints\\20261123-163943-smoke-tcn-v02.pt",
+  "checkpoint_sha256": "6fe55edeb369ddf5634292228e3058ce860d60086316f85b4276257e8edccfaf",
+  "feature_schema_version": "posefeat-v2",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 2923,
+    "MODERATE_OBSERVED_PARTICIPATION": 3419,
+    "LOW_OBSERVED_PARTICIPATION": 142
+  },
+  "metrics_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261123-163943-smoke-tcn-v02\\metrics.json",
+  "overrides": {
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "epochs": 2,
+    "patience": 10,
+    "device": "cpu"
+  }
+}

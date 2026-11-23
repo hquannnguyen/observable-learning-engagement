@@ -26,14 +26,20 @@ Thumbs.db
 /data/poses/*
 !/data/poses/.gitkeep
 /data/poses_zones/*
+/data/poses_excluded_split_v0_1/
 /data/features/*
 !/data/features/.gitkeep
+/data/features_v02_yolo11_weak/
 /data/features_zones/*
 /data/features_v2/*
 /data/features_context_v0_2/
 /data/annotations/human_review_v0_2/
 /data/annotations/.preview_cache/
 /releases/
+
+# Debug raw frame dumps (privacy)
+/reports/class_overlays/
+/reports/debug_class_3_hand_raise/
 
 # Synthetic annotations kept only for local audit
 /data/annotations/deprecated/
@@ -58,6 +64,7 @@ Thumbs.db
 !/reports/experiments/*/training_history.csv
 !/reports/experiments/*/split_report.json
 !/reports/experiments/*/notes.md
+!/reports/experiments/*/*baseline_results.json
 
 # Local legacy artifacts
 /reports/legacy/

@@ -1,0 +1,68 @@
+{
+  "gate": "G1",
+  "dataset_version": "v0.2-yolo11-feat94-weak",
+  "feature_schema_version": "posefeat-v2",
+  "split_version": "split-v0.1",
+  "created_at": "2026-11-23T16:46:17.102240",
+  "canonical_recordings": [
+    "class_1",
+    "class_2",
+    "class_3",
+    "class_4",
+    "class_5",
+    "session_001",
+    "session_002",
+    "session_003",
+    "session_004",
+    "session_005",
+    "session_006"
+  ],
+  "split_hashes": {
+    "test_sessions.txt": {
+      "path": "data\\splits\\test_sessions.txt",
+      "sha256": "070836e0ba628290b28e9cc6ceee47e740ef9c6d760582c85f4924b662c12c7a",
+      "size_bytes": 26
+    },
+    "train_sessions.txt": {
+      "path": "data\\splits\\train_sessions.txt",
+      "sha256": "265c7336ea77d07822d852b0c93edba4c38d2d3419b336f62d8901c148550ba8",
+      "size_bytes": 71
+    },
+    "val_sessions.txt": {
+      "path": "data\\splits\\val_sessions.txt",
+      "sha256": "d561f49d6dba3a54b63d2ddc280cef8f3998399eddea0c1102c04b35bb18117b",
+      "size_bytes": 26
+    }
+  },
+  "config": {
+    "path": "configs\\experiments\\yolo11_feat94_weak_v02.yaml",
+    "sha256": "577e29683f100e8940ec13e9d13ec96c02a9192eabe9d46232d318e05a0e8a60"
+  },
+  "features": {
+    "build_metadata.json": {
+      "path": "data\\features_v02_yolo11_weak\\build_metadata.json",
+      "sha256": "9bb84716a93e7022e9275bed9eb7d846cf9c341d9813d25d70a745a25c2aaee6",
+      "size_bytes": 794
+    },
+    "participation_windows.csv": {
+      "path": "data\\features_v02_yolo11_weak\\participation_windows.csv",
+      "sha256": "49eda74da1e8b16ee802a6dcfb675ddbb1907142420035db444ec8e9d797be7d",
+      "size_bytes": 5954266
+    },
+    "participation_windows.parquet": {
+      "path": "data\\features_v02_yolo11_weak\\participation_windows.parquet",
+      "sha256": "1ddab405f91257f5172434e0f460ad426607d066e4011c9504a298032f70d635",
+      "size_bytes": 454694
+    },
+    "split_report.json": {
+      "path": "data\\features_v02_yolo11_weak\\split_report.json",
+      "sha256": "a8520e3e641b2f7a3fdf00ce629f388d2c5adf68c6ff25298c1acb2b0e58d0b2",
+      "size_bytes": 4773
+    },
+    "window_features.npz": {
+      "path": "data\\features_v02_yolo11_weak\\window_features.npz",
+      "sha256": "5064e50528d9fd053893fec0b3b8b06871433c46f3b751740d6ed4b0659abe16",
+      "size_bytes": 156498703
+    }
+  }
+}
