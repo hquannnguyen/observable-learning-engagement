@@ -1,3 +1,0 @@
-session_id,camera_id,track_id,t_start_ms,t_end_ms,class_phase,atomic_behavior,participation_label,annotation_state,label_source,label_rule_version,annotation_guide_version,annotation_confidence,occlusion_level,zone_id,annotator_id,notes,window_id,phase_verified,phase_source,video_path,pose_overlay_path
-human_review_v0_2,cam_A,007,0,3900,UNKNOWN,,,,,,v0.2,,,FRONT,,,w0,False,UNKNOWN,,
-human_review_v0_2,cam_A,007,2000,5900,UNKNOWN,,,,,,v0.2,,,FRONT,,,w1,False,UNKNOWN,,
