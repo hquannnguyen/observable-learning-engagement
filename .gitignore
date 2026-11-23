@@ -10,6 +10,7 @@ venv/
 .idea/
 .DS_Store
 Thumbs.db
+tests/.tmp/
 
 # Secrets
 .env
