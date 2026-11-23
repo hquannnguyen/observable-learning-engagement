@@ -14,15 +14,23 @@ from src.contracts.annotation_rubric import EVIDENCE_OPTIONS, RUBRIC_VERSION, ev
 from src.pose.annotation_preview import render_annotation_preview
 from scripts.dataset_qa import validate_annotation_dataframe
 
-PEOPLE = {"Quân": ("Nguyễn Hữu Quân", "annotator_a.csv"), "Phong": ("Vũ Văn Phong", "annotator_b.csv")}
-DATASET_NAMES = {"human_review_v0_2": "Dataset cũ · bộ gán nhãn chính", "external_review_20261109": "Hai video mới · đánh giá bổ sung"}
+PEOPLE = {
+    "Phong": ("Vũ Văn Phong", "annotator_b.csv"),
+    "Tài": ("Vũ Đức Tài", "annotator_a.csv"),
+    "Quân": ("Nguyễn Hữu Quân", "annotator_a.csv"),
+}
+DATASET_NAMES = {
+    "review_v03": "Bộ gán nhãn v0.3 (600 cửa sổ YOLO11)",
+    "human_review_v0_2": "Dataset cũ · bộ gán nhãn chính",
+    "external_review_20261109": "Hai video mới · đánh giá bổ sung",
+}
 PHASES = {"UNKNOWN": "Chưa xác định", "lecture": "Giảng bài", "individual_work": "Làm bài cá nhân", "discussion": "Thảo luận"}
 STATES = {"VALID": "Đủ bằng chứng — gán mức tham gia", "OCCLUDED": "Bị che khuất", "TRANSITION": "Đang chuyển hoạt động/trạng thái", "INVALID": "Không đủ bằng chứng / chưa rõ nhiệm vụ / lỗi ID hoặc video"}
 LABELS = dict(zip(CANONICAL_TRAINING_LABELS, ["Cao", "Trung bình", "Thấp"]))
 
-st.set_page_config(page_title="Quân & Phong · Gán nhãn", layout="wide")
+st.set_page_config(page_title="Phong & Tài · Gán nhãn", layout="wide")
 st.title("Gán nhãn hành vi quan sát được")
-st.caption("Mỗi nhãn = một người (track ID) trong một cửa sổ khoảng 4 giây. Xem đúng người trong toàn bộ cửa sổ; Quân và Phong gán trên phiếu riêng.")
+st.caption("Mỗi nhãn = một người (track ID) trong một cửa sổ khoảng 4 giây. Xem đúng người trong toàn bộ cửa sổ; Phong và Tài gán trên phiếu riêng.")
 with st.expander("Hướng dẫn chọn nhãn"):
     st.markdown("""
 1. Xem đúng **track ID** trong toàn bộ khoảng thời gian, xác định pha hoạt động thực tế.
