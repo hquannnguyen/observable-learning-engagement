@@ -4,6 +4,24 @@ import pytest
 from app.studio_view import _save_600_window
 from src.contracts.annotation_io import read_annotation_csv
 from src.contracts.labels import HIGH
+from src.contracts.annotation_io import save_annotation_row
+
+
+def test_zone_fill_is_scoped_and_preserves_existing_values(tmp_path):
+    path = tmp_path / "a.csv"
+    rows = []
+    for i, (session, camera, track, zone) in enumerate([
+        ("s1", "A", "1", ""), ("s1", "A", "1", ""),
+        ("s1", "A", "1", "B-C"), ("s2", "A", "1", ""),
+        ("s1", "B", "1", ""), ("s1", "A", "2", ""),
+    ]):
+        rows.append(dict(window_id=str(i), session_id=session, camera_id=camera,
+                         track_id=track, zone_id=zone, annotation_confidence=""))
+    pd.DataFrame(rows).to_csv(path, index=False)
+    save_annotation_row(path, "0", dict(annotation_state="VALID", participation_label=HIGH,
+        label_source="HUMAN", label_rule_version="", annotator_id="Phong",
+        annotation_confidence=0.8, zone_id="F-C"), fill_track_zone=True)
+    assert read_annotation_csv(path).zone_id.tolist() == ["F-C", "F-C", "B-C", "", "", ""]
 
 
 def test_studio_saves_only_requested_window_without_overwriting_other_edits(tmp_path):

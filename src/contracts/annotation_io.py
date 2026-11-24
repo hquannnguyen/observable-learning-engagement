@@ -27,7 +27,7 @@ def read_annotation_csv(path: Path) -> pd.DataFrame:
     return frame
 
 
-def save_annotation_row(path: Path, window_id: str, updates: dict) -> pd.DataFrame:
+def save_annotation_row(path: Path, window_id: str, updates: dict, *, fill_track_zone: bool = False) -> pd.DataFrame:
     """Reload before editing one stable key; atomically replace only this person's file."""
     if set(updates) - EDITABLE_FIELDS:
         raise ValueError("Không được thay đổi khóa video/track/thời gian của cửa sổ.")
@@ -49,6 +49,13 @@ def save_annotation_row(path: Path, window_id: str, updates: dict) -> pd.DataFra
         if key not in frame:
             frame[key] = pd.Series("", index=frame.index, dtype=object)
         frame.at[matches[0], key] = value
+    if fill_track_zone and updates.get("zone_id") and {"session_id", "camera_id", "track_id"} <= set(frame):
+        current = frame.loc[matches[0]]
+        same_track = pd.Series(True, index=frame.index)
+        for key in ("session_id", "camera_id", "track_id"):
+            same_track &= frame[key].astype(str).eq(str(current[key]))
+        empty_zone = frame["zone_id"].fillna("").astype(str).str.strip().eq("")
+        frame.loc[same_track & empty_zone, "zone_id"] = updates["zone_id"]
     write_annotation_csv(path, frame)
     return frame
 

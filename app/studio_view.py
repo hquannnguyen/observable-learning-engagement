@@ -566,14 +566,40 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
         new_st_600 = m_c1.selectbox("Trạng thái:", state_opts, index=state_opts.index(s_val), key=f"sb_600_state:{wk}")
 
         phase_opts = ["lecture", "individual_work", "discussion", "UNKNOWN"]
-        p_val = cur_row.get("class_phase", "lecture")
-        new_phase_600 = m_c2.selectbox("Pha học:", phase_opts, index=phase_opts.index(p_val) if p_val in phase_opts else 3, key=f"sb_600_phase:{wk}")
+        # Unreviewed rows contain legacy metadata, not an annotator choice.
+        # Use the requested lecture default; preserve completed human reviews.
+        reviewed = bool(str(cur_row.get("annotator_id", "")).strip()) and cur_st_val in ANNOTATION_STATES
+        p_val = cur_row.get("class_phase", "lecture") if reviewed else "lecture"
+        new_phase_600 = m_c2.selectbox("Pha học:", phase_opts,
+            index=phase_opts.index(p_val) if p_val in phase_opts and p_val != "UNKNOWN" else 0,
+            key=f"sb_600_phase_lecture_default:{wk}")
 
         m_c3, m_c4 = st.columns(2)
         zone_opts = ["F-L", "F-C", "F-R", "M-L", "M-C", "M-R", "B-L", "B-C", "B-R", "FRONT", "MIDDLE", "BACK"]
-        z_val = cur_row.get("zone_id", "M-C")
         zone_opts = [""] + zone_opts
-        new_zone_600 = m_c3.selectbox("Vùng ghế:", zone_opts, index=zone_opts.index(z_val) if z_val in zone_opts else 0, key=f"sb_600_zone:{wk}")
+
+        # Keep memory separate for each person's file, recording and track.
+        sess_trk_key = f"{cand_path.resolve()}:{session_id}:{camera_id}:{track_id}"
+        memory = st.session_state.setdefault("track_zone_map_v2", {})
+        remembered_zone = memory.get(sess_trk_key, "")
+        if not remembered_zone:
+            same = df_600[df_600.session_id.astype(str).eq(session_id)
+                & df_600.camera_id.astype(str).eq(camera_id)
+                & df_600.track_id.astype(str).eq(track_id)]
+            zones = same.zone_id.fillna("").astype(str).str.strip()
+            unique_zones = zones[zones.ne("")].unique()
+            if len(unique_zones) == 1:
+                remembered_zone = unique_zones[0]
+        stored_zone = str(cur_row.get("zone_id", "")).strip()
+        z_val = stored_zone or remembered_zone
+        zone_key = f"sb_600_zone_v2:{wk}"
+        if not stored_zone and remembered_zone and zone_key not in st.session_state:
+            st.session_state[zone_key] = remembered_zone
+        def remember_zone():
+            st.session_state["track_zone_map_v2"][sess_trk_key] = st.session_state[zone_key]
+        new_zone_600 = m_c3.selectbox("Vùng ghế:", zone_opts,
+            index=zone_opts.index(z_val) if z_val in zone_opts else 0,
+            key=zone_key, on_change=remember_zone)
 
         occ_opts = ["none", "partial", "heavy"]
         o_val = cur_row.get("occlusion_level", "none")
@@ -695,7 +721,8 @@ def _save_600_window(
             "method": "WHOLE_WINDOW_HUMAN_REVIEW", "basis": "DIRECT_HUMAN_OBSERVATION",
             "confirmed": confirmed}, ensure_ascii=False),
     }
-    save_annotation_row(primary_file_path, str(df_600.at[row_idx, "window_id"]), updates)
+    save_annotation_row(primary_file_path, str(df_600.at[row_idx, "window_id"]), updates,
+                        fill_track_zone=True)
 
 
 # ----------------------------------------------------------------------
