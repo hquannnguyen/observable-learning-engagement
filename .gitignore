@@ -22,6 +22,9 @@ tests/.tmp/
 !/data/raw/*/
 !/data/raw/.gitkeep
 !/data/raw/**/metadata.json
+*.zip
+*.tar
+*.gz
 
 # Generated datasets/artifacts
 /data/poses/*

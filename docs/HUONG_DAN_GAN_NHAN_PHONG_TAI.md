@@ -66,19 +66,32 @@ Khi mở `AnnotationStudio_V2_Standalone.exe`, nếu màn hình video bị đen 
 
 ---
 
-## 4. PHƯƠNG ÁN DỰ PHÒNG: GÁN NHÃN QUA WEB STREAMLIT (`app/annotation_app.py`)
+## 4. GÁN NHÃN TRÊN WEB STREAMLIT (`app/annotation_app.py`) — KHUYÊN DÙNG NHẤT
 
-Nếu không muốn phải chọn video và pose thủ công, hai bạn có thể sử dụng ứng dụng web Streamlit nội bộ đã được cấu hình tự động $100\%$:
+> [!TIP]
+> **Giao diện Web Studio V2 hoàn toàn mới (Chạy mượt trong trình duyệt):**
+> * Không cần cài đặt phần mềm ngoài, không cần `ffmpeg` (dùng thuần OpenCV giải mã trực tiếp).
+> * **Có sẵn menu chọn nhanh từng Session / Class**, tự động nối đúng video và file pose $1-1$, không sợ chọn nhầm file.
+> * **Chức năng BỎ CHE MẶT:** Checkbox `[x] Bỏ che mặt (Xem rõ mặt)` được **bật mặc định**, giúp nhìn rõ 100% mắt, nét mặt và hướng quay đầu của sinh viên để đánh giá chuẩn xác nhất.
+> * **Gán siêu tốc 1-click:** Bấm nút `[🟢 CAO]`, `[🟡 VỪA]`, `[🔴 THẤP]`, `[⚪ BỊ CHE]` là tự lưu và tự nhảy sang sinh viên tiếp theo (chế độ `[x] Tự nhảy SV`). Không cần gõ tay bất kỳ ký tự nào!
 
+### Cách chạy:
+Mở Terminal tại thư mục dự án và chạy:
 ```powershell
 python -m streamlit run app/annotation_app.py
 ```
 
-Trong giao diện trình duyệt:
-1. Bạn Phong chọn **Phong** (`annotator_b.csv`), bạn Tài chọn **Tài** (`annotator_a.csv`).
-2. Chọn bộ cửa sổ: **600 cửa sổ · phiếu độc lập Phong và Tài**.
-3. Hệ thống tự động đọc đúng video và crop đúng khung xương theo từng dòng `window_id`, không cần người gán phải chọn file video hay pose.
-4. Xem video clip, chọn nhãn `HIGH / MODERATE / LOW / OCCLUDED` và bấm **Lưu**.
+### Các bước thao tác trên Web:
+1. **Chọn người gán:** Tích chọn **Phong** hoặc **Tài** ở đầu trang.
+2. **Tab 1: 🚀 Giao diện Studio (Kiểu Tiến - Chọn Nhanh Không Điền Lâu):**
+   * **BƯỚC 1 (Chọn Video):** Chọn phiên học trong dropdown (ví dụ `session_005 (TEST · 0s-60s)` hoặc `class_1`), bấm `[🚀 Cắt Cửa Sổ 4s & Vào Gán Nhãn -> Sang BƯỚC 2]`.
+   * **BƯỚC 2 (Gán nhãn):**
+     * Màn hình trái: Hiện toàn cảnh lớp học kèm khung viền màu (`🟢 CAO`, `🟡 VỪA`, `🔴 THẤP`, `⚪ BỊ CHE`, viền trắng to là SV đang chọn). Bên dưới là dải 5 ảnh crop diễn biến 4 giây kèm khung xương vàng.
+     * **Bỏ che mặt:** Kiểm tra checkbox `[x] Bỏ che mặt (Xem rõ mặt)` ở thanh trên (mặc định đã bật).
+     * Màn hình phải: Bấm trực tiếp vào 1 trong 4 nút `[CAO]`, `[VỪA]`, `[THẤP]`, `[BỊ CHE]`. Tool sẽ tự lưu và nhảy sang sinh viên kế tiếp.
+     * Tích chọn nhanh hành vi (nếu cần): Nhìn bảng, Đọc/viết, Giơ tay, Thảo luận, Cúi đầu...
+     * Duyệt cả mốc: Bấm `[✓ DUYỆT CẢ LỚP Ở MỐC NÀY & SANG MỐC TIẾP]`.
+   * **BƯỚC 3 (Kiểm định & Tải file):** Kiểm tra thống kê phân bố nhãn và tải CSV hoặc đồng bộ trực tiếp vào Master Dataset.
 
 ---
 

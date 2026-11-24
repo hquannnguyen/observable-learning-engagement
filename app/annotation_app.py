@@ -13,6 +13,7 @@ from src.contracts.labels import ANNOTATION_STATES, CANONICAL_TRAINING_LABELS
 from src.contracts.annotation_rubric import EVIDENCE_OPTIONS, RUBRIC_VERSION, evidence_label
 from src.pose.annotation_preview import render_annotation_preview
 from scripts.dataset_qa import validate_annotation_dataframe
+from app.studio_view import render_studio_tab
 
 PEOPLE = {
     "Phong": ("Vũ Văn Phong", "annotator_b.csv"),
@@ -65,7 +66,8 @@ if person is None:
     st.info("Chọn Phong hoặc Tài để mở phiếu của bạn.")
     st.stop()
 annotator, filename = PEOPLE[person]
-forms = sorted((ROOT / "data/annotations").glob(f"**/{filename}"), key=lambda p: (p.parent.name != "human_review_v0_2", str(p)))
+priority = {"review_v03_independent_20261124": 0, "human_review_v0_2": 1}
+forms = sorted((ROOT / "data/annotations").glob(f"**/{filename}"), key=lambda p: (priority.get(p.parent.name, 2), str(p)))
 if not forms:
     st.info("Chưa có phiếu. Chuẩn bị bộ review bằng scripts/prepare_inference_annotations.py.")
     st.stop()
@@ -86,128 +88,142 @@ if df.empty:
     st.info("Phiếu chưa có cửa sổ.")
     st.stop()
 
-complete = df["annotation_state"].isin(ANNOTATION_STATES) & df["annotator_id"].ne("")
-done = int(complete.sum())
-st.write(f"**{annotator}** · Đã lưu **{done}/{len(df)}** cửa sổ theo từng người · Còn **{len(df) - done}**")
-st.progress(done / len(df))
-scope = str(selected)
-window_key = f"window:{scope}"
-pending_key = f"pending:{scope}"
-unfinished = list(df.index[~complete])
-if pending_key in st.session_state:
-    st.session_state[window_key] = st.session_state.pop(pending_key)
-if window_key not in st.session_state or st.session_state[window_key] not in df.index:
-    pilot = [i for i in unfinished if "split" in df and df.at[i, "split"] in ("train", "val")]
-    st.session_state[window_key] = pilot[0] if pilot else (unfinished[0] if unfinished else 0)
+tab_studio, tab_rubric = st.tabs([
+    "🚀 Giao diện Studio (Kiểu Tiến - Chọn Nhanh Không Điền Lâu)",
+    "📋 Giao diện Thí điểm Rubric (4 Khoảng Thời Gian)",
+])
 
-def move_window(step):
-    st.session_state[window_key] = max(0, min(len(df) - 1, st.session_state[window_key] + step))
+with tab_studio:
+    render_studio_tab(person, annotator, selected)
 
-def next_unfinished():
-    current = st.session_state[window_key]
-    remaining = [i for i in unfinished if i > current] + [i for i in unfinished if i <= current]
-    if remaining:
-        st.session_state[window_key] = remaining[0]
+with tab_rubric:
+    complete = df["annotation_state"].isin(ANNOTATION_STATES) & df["annotator_id"].ne("")
+    done = int(complete.sum())
+    st.write(f"**{annotator}** · Đã lưu **{done}/{len(df)}** cửa sổ theo từng người · Còn **{len(df) - done}**")
+    st.progress(done / len(df))
+    scope = str(selected)
+    window_key = f"window:{scope}"
+    pending_key = f"pending:{scope}"
+    unfinished = list(df.index[~complete])
+    if pending_key in st.session_state:
+        st.session_state[window_key] = st.session_state.pop(pending_key)
+    if window_key not in st.session_state or st.session_state[window_key] not in df.index:
+        pilot = [i for i in unfinished if "split" in df and df.at[i, "split"] in ("train", "val")]
+        st.session_state[window_key] = pilot[0] if pilot else (unfinished[0] if unfinished else 0)
 
-nav = st.columns(3)
-nav[0].button("← Cửa sổ trước", on_click=move_window, args=(-1,), disabled=st.session_state[window_key] == 0)
-nav[1].button("Cửa sổ tiếp →", on_click=move_window, args=(1,), disabled=st.session_state[window_key] == len(df) - 1)
-nav[2].button("Đến cửa sổ chưa gán", on_click=next_unfinished, disabled=not unfinished)
-index = st.selectbox("Cửa sổ", list(df.index), key=window_key, format_func=lambda i: f"{'✓' if complete.at[i] else '○'} {i + 1}. [{df.at[i, 'split'] if 'split' in df else ''}] {df.at[i, 'session_id']} | track {df.at[i, 'track_id']} | {float(df.at[i, 't_start_ms']) / 1000:g}–{float(df.at[i, 't_end_ms']) / 1000:g} s")
-row = df.loc[index]
-if "annotation_notice" in st.session_state:
-    st.success(st.session_state.pop("annotation_notice"))
-st.info(f"Chỉ gán cho track {row['track_id']} · {float(row['t_start_ms']) / 1000:g}–{float(row['t_end_ms']) / 1000:g} giây · Vùng {row.get('zone_id', 'UNKNOWN')}")
-video = Path(row.get("video_path", ""))
-if not video.is_absolute():
-    video = ROOT / video
-pose_path = ROOT / "data/poses" / f"{row['session_id']}_{row['camera_id']}_poses.csv"
-if not pose_path.is_file() and row.get("pose_overlay_path"):
-    pose_path = Path(row["pose_overlay_path"]).parent / "poses.csv"
-    if not pose_path.is_absolute():
-        pose_path = ROOT / pose_path
-if video.is_file() and pose_path.is_file():
-    try:
-        with st.spinner(f"Đang làm nổi bật người ID {row['track_id']} trong đúng đoạn video…"):
-            focused, focus_meta = render_annotation_preview(video, pose_path, row["track_id"],
-                float(row["t_start_ms"]), float(row["t_end_ms"]), ROOT / "data/annotations/.preview_cache")
-        st.subheader(f"Chỉ gán người trong khung VÀNG — ID {row['track_id']}")
-        st.caption("Bên trái: người cần gán sáng hơn và có khung vàng. Bên phải: phóng to cùng người đó. Khi không thấy đúng ID, clip báo không quan sát được; không theo người khác để đoán tiếp.")
-        st.video(str(focused), loop=True)
-    except (ValueError, OSError, RuntimeError) as exc:
-        st.warning(f"Chưa định vị được người cần gán: {exc}. Không gán mức tham gia khi chưa xác định đúng người.")
-else:
-    st.warning("Chưa có video/tọa độ để làm nổi bật đúng người. Không gán mức tham gia khi chưa xác định được người cần xem.")
-if st.checkbox("Xem thêm video gốc toàn cảnh để xác định nhiệm vụ (chỉ dùng local)") and video.is_file():
-    st.caption("Video ngữ cảnh chưa làm mờ. Nhãn vẫn chỉ áp dụng cho người và khoảng thời gian ghi phía trên.")
-    st.video(str(video), start_time=max(0, float(row["t_start_ms"]) / 1000 - 5))
+    def move_window(step):
+        st.session_state[window_key] = max(0, min(len(df) - 1, st.session_state[window_key] + step))
 
-st.subheader("Ghi bằng chứng trước khi chọn mức tham gia")
-st.caption("Chia đoạn thành 4 khoảng gần bằng nhau. Đánh dấu hành vi của đúng người trong từng khoảng; các lựa chọn này do bạn quan sát, không lấy từ mô hình.")
-try:
-    saved_evidence = json.loads(row.get("annotation_evidence", "") or "{}")
-except (TypeError, ValueError):
-    saved_evidence = {}
-stored_bins = saved_evidence.get("observations", [None] * 4)
-observations = []
-for part, column in enumerate(st.columns(4)):
-    t0 = float(row["t_start_ms"]) / 1000 + part * (float(row["t_end_ms"]) - float(row["t_start_ms"])) / 4000
-    t1 = float(row["t_start_ms"]) / 1000 + (part + 1) * (float(row["t_end_ms"]) - float(row["t_start_ms"])) / 4000
-    previous = stored_bins[part] if len(stored_bins) == 4 else None
-    observations.append(column.selectbox(f"Khoảng {part + 1}: {t0:.2f}–{t1:.2f} s", list(EVIDENCE_OPTIONS),
-        index=list(EVIDENCE_OPTIONS).index(previous) if previous in EVIDENCE_OPTIONS else None,
-        format_func=EVIDENCE_OPTIONS.get, key=f"evidence:{scope}:{row['window_id']}:{part}"))
-rubric_label, rubric_reason = evidence_label(observations)
-st.write(f"**Theo bảng tiêu chí thí điểm: {LABELS.get(rubric_label, 'Chưa đủ bằng chứng')}**. {rubric_reason}")
+    def next_unfinished():
+        current = st.session_state[window_key]
+        remaining = [i for i in unfinished if i > current] + [i for i in unfinished if i <= current]
+        if remaining:
+            st.session_state[window_key] = remaining[0]
 
-with st.form(f"annotation:{scope}:{row['window_id']}"):
-    cols = st.columns(2)
-    phase = cols[0].selectbox("Pha hoạt động thực tế", list(PHASES), index=list(PHASES).index(row["class_phase"]) if row["class_phase"] in PHASES else 0, format_func=PHASES.get)
-    phase_evidence = st.text_input("Bằng chứng xác định nhiệm vụ / pha hoạt động", value=row.get("phase_evidence", ""), help="Ví dụ: thấy giáo viên giảng trước bảng; đề bài yêu cầu làm cá nhân; hoạt động nhóm đã được xác minh. Nếu chưa biết, giữ Chưa xác định.")
-    state = cols[1].selectbox("Khả năng quan sát", list(STATES), index=list(STATES).index(row["annotation_state"]) if row["annotation_state"] in STATES else None, format_func=STATES.get)
-    label = st.selectbox("Mức tham gia quan sát được nếu VALID", list(LABELS), index=list(LABELS).index(row["participation_label"]) if row["participation_label"] in LABELS else None, format_func=LABELS.get, help="Chỉ lưu mức tham gia khi đủ bằng chứng và đã xác định pha.")
-    behavior = st.text_input("Hành vi quan sát được", value=row.get("atomic_behavior", ""), help="Ví dụ READING_WRITING; HAND_RAISED; PEER_ORIENTED. Dùng dấu ; khi có nhiều hành vi.")
-    confidence = st.slider("Độ tin cậy của người gán", 0.0, 1.0, float(row["annotation_confidence"]) if pd.notna(row["annotation_confidence"]) else 0.8, 0.05)
-    occlusions = ["none", "partial", "heavy"]
-    occlusion = st.selectbox("Mức che khuất", occlusions, index=occlusions.index(row["occlusion_level"]) if row["occlusion_level"] in occlusions else 0, format_func={"none": "Không", "partial": "Một phần", "heavy": "Nhiều"}.get)
-    notes = st.text_area("Ghi chú", value=row.get("notes", ""))
-    confirmed = st.checkbox("Tôi đã xem hết đoạn, xác định đúng người và xác nhận bằng chứng theo bảng tiêu chí")
-    save_next = st.form_submit_button("Lưu và đến cửa sổ chưa gán tiếp", type="primary")
-    save = st.form_submit_button("Lưu tại cửa sổ này")
-if save or save_next:
-    if state is None or (state == "VALID" and (label is None or phase == "UNKNOWN")):
-        st.error("Chọn khả năng quan sát. Với VALID, cần xác định pha thực tế và mức tham gia.")
-    elif state == "VALID" and (not confirmed or not behavior.strip() or not phase_evidence.strip()):
-        st.error("Cần ghi hành vi cụ thể, bằng chứng xác định nhiệm vụ và xác nhận đã xem đúng người trong toàn bộ đoạn.")
-    elif state == "VALID" and (rubric_label is None or label != rubric_label):
-        st.error(f"Bằng chứng chưa phù hợp với nhãn đã chọn. Theo bảng tiêu chí: {LABELS.get(rubric_label, 'Chưa đủ bằng chứng')}. {rubric_reason}")
+    nav = st.columns(3)
+    nav[0].button("← Cửa sổ trước", on_click=move_window, args=(-1,), disabled=st.session_state[window_key] == 0)
+    nav[1].button("Cửa sổ tiếp →", on_click=move_window, args=(1,), disabled=st.session_state[window_key] == len(df) - 1)
+    nav[2].button("Đến cửa sổ chưa gán", on_click=next_unfinished, disabled=not unfinished)
+    index = st.selectbox("Cửa sổ", list(df.index), key=window_key, format_func=lambda i: f"{'✓' if complete.at[i] else '○'} {i + 1}. [{df.at[i, 'split'] if 'split' in df else ''}] {df.at[i, 'session_id']} | track {df.at[i, 'track_id']} | {float(df.at[i, 't_start_ms']) / 1000:g}–{float(df.at[i, 't_end_ms']) / 1000:g} s")
+    row = df.loc[index]
+    if "annotation_notice" in st.session_state:
+        st.success(st.session_state.pop("annotation_notice"))
+    st.info(f"Chỉ gán cho track {row['track_id']} · {float(row['t_start_ms']) / 1000:g}–{float(row['t_end_ms']) / 1000:g} giây · Vùng {row.get('zone_id', 'UNKNOWN')}")
+    video = Path(row.get("video_path", ""))
+    if not video.is_absolute():
+        video = ROOT / video
+    pose_path = ROOT / "data/poses" / f"{row['session_id']}_{row['camera_id']}_poses.csv"
+    if not pose_path.is_file() and row.get("pose_overlay_path"):
+        pose_path = Path(row["pose_overlay_path"]).parent / "poses.csv"
+        if not pose_path.is_absolute():
+            pose_path = ROOT / pose_path
+    if video.is_file() and pose_path.is_file():
+        try:
+            with st.spinner(f"Đang làm nổi bật người ID {row['track_id']} trong đúng đoạn video…"):
+                focused, focus_meta = render_annotation_preview(video, pose_path, row["track_id"],
+                    float(row["t_start_ms"]), float(row["t_end_ms"]), ROOT / "data/annotations/.preview_cache")
+            st.subheader(f"Chỉ gán người trong khung VÀNG — ID {row['track_id']}")
+            st.caption("Bên trái: người cần gán sáng hơn và có khung vàng. Bên phải: phóng to cùng người đó. Khi không thấy đúng ID, clip báo không quan sát được; không theo người khác để đoán tiếp.")
+            st.video(str(focused), loop=True)
+        except (ValueError, OSError, RuntimeError) as exc:
+            st.warning(f"Chưa định vị được người cần gán: {exc}. Không gán mức tham gia khi chưa xác định đúng người.")
     else:
-        updates = {"class_phase": phase, "annotation_state": state, "participation_label": label if state == "VALID" else "",
-                   "label_source": "HUMAN" if state == "VALID" else "", "label_rule_version": "", "annotator_id": annotator,
-                   "atomic_behavior": behavior, "annotation_confidence": confidence, "occlusion_level": occlusion,
-                   "notes": notes, "annotation_guide_version": RUBRIC_VERSION, "phase_verified": phase != "UNKNOWN",
-                   "phase_evidence": phase_evidence.strip(),
-                   "annotation_evidence": json.dumps({"rubric_version": RUBRIC_VERSION, "observations": observations,
-                       "basis": "DIRECT_HUMAN_OBSERVATION", "confirmed": confirmed}, ensure_ascii=False),
-                   "phase_source": "HUMAN_WINDOW_REVIEW" if phase != "UNKNOWN" else "UNKNOWN"}
-        candidate = df.loc[[index]].copy()
-        for key, value in updates.items():
-            candidate.at[index, key] = value
-        valid, errors = validate_annotation_dataframe(candidate)
-        if not valid:
-            st.error("; ".join(errors))
-        else:
-            try:
-                saved = save_annotation_row(selected, row["window_id"], updates)
-            except (OSError, ValueError) as exc:
-                st.error(f"Chưa lưu được phiếu: {exc}")
-            else:
-                remaining = list(saved.index[~(saved["annotation_state"].isin(ANNOTATION_STATES) & saved["annotator_id"].ne(""))])
-                following = [i for i in remaining if i > index] + [i for i in remaining if i < index]
-                if save_next and following:
-                    st.session_state[pending_key] = following[0]
-                st.session_state["annotation_notice"] = f"Đã lưu nhãn của {person}." + (" Bạn đã hoàn tất phiếu." if not remaining else "")
-                st.rerun()
+        missing = []
+        if not video.is_file():
+            missing.append(f"Video: {video}")
+        if not pose_path.is_file():
+            missing.append(f"Pose CSV: {pose_path}")
+        st.warning("Không tìm thấy dữ liệu trên máy đang chạy Streamlit. Không gán mức tham gia khi chưa xác định được người cần xem. " + " | ".join(missing))
+    if st.checkbox("Xem thêm video gốc toàn cảnh để xác định nhiệm vụ (chỉ dùng local)") and video.is_file():
+        st.caption("Video ngữ cảnh chưa làm mờ. Nhãn vẫn chỉ áp dụng cho người và khoảng thời gian ghi phía trên.")
+        st.video(str(video), start_time=max(0, float(row["t_start_ms"]) / 1000 - 5))
 
-st.download_button("Tải CSV phiếu của tôi", selected.read_bytes(), file_name=f"{selected.parent.name}_{person}.csv", mime="text/csv")
-st.caption("Lưu vào CSV trên máy chủ đang chạy tool. Bấm tải CSV để giữ một bản riêng. Chuyển cửa sổ khi chưa lưu sẽ bỏ các thay đổi chưa gửi.")
+    st.subheader("Ghi bằng chứng trước khi chọn mức tham gia")
+    st.caption("Chia đoạn thành 4 khoảng gần bằng nhau. Đánh dấu hành vi của đúng người trong từng khoảng; các lựa chọn này do bạn quan sát, không lấy từ mô hình.")
+    try:
+        saved_evidence = json.loads(row.get("annotation_evidence", "") or "{}")
+    except (TypeError, ValueError):
+        saved_evidence = {}
+    stored_bins = saved_evidence.get("observations", [None] * 4)
+    observations = []
+    for part, column in enumerate(st.columns(4)):
+        t0 = float(row["t_start_ms"]) / 1000 + part * (float(row["t_end_ms"]) - float(row["t_start_ms"])) / 4000
+        t1 = float(row["t_start_ms"]) / 1000 + (part + 1) * (float(row["t_end_ms"]) - float(row["t_start_ms"])) / 4000
+        previous = stored_bins[part] if len(stored_bins) == 4 else None
+        observations.append(column.selectbox(f"Khoảng {part + 1}: {t0:.2f}–{t1:.2f} s", list(EVIDENCE_OPTIONS),
+            index=list(EVIDENCE_OPTIONS).index(previous) if previous in EVIDENCE_OPTIONS else None,
+            format_func=EVIDENCE_OPTIONS.get, key=f"evidence:{scope}:{row['window_id']}:{part}"))
+    rubric_label, rubric_reason = evidence_label(observations)
+    st.write(f"**Theo bảng tiêu chí thí điểm: {LABELS.get(rubric_label, 'Chưa đủ bằng chứng')}**. {rubric_reason}")
+
+    with st.form(f"annotation:{scope}:{row['window_id']}"):
+        cols = st.columns(2)
+        phase = cols[0].selectbox("Pha hoạt động thực tế", list(PHASES), index=list(PHASES).index(row["class_phase"]) if row["class_phase"] in PHASES else 0, format_func=PHASES.get)
+        phase_evidence = st.text_input("Bằng chứng xác định nhiệm vụ / pha hoạt động", value=row.get("phase_evidence", ""), help="Ví dụ: thấy giáo viên giảng trước bảng; đề bài yêu cầu làm cá nhân; hoạt động nhóm đã được xác minh. Nếu chưa biết, giữ Chưa xác định.")
+        state = cols[1].selectbox("Khả năng quan sát", list(STATES), index=list(STATES).index(row["annotation_state"]) if row["annotation_state"] in STATES else None, format_func=STATES.get)
+        label = st.selectbox("Mức tham gia quan sát được nếu VALID", list(LABELS), index=list(LABELS).index(row["participation_label"]) if row["participation_label"] in LABELS else None, format_func=LABELS.get, help="Chỉ lưu mức tham gia khi đủ bằng chứng và đã xác định pha.")
+        behavior = st.text_input("Hành vi quan sát được", value=row.get("atomic_behavior", ""), help="Ví dụ READING_WRITING; HAND_RAISED; PEER_ORIENTED. Dùng dấu ; khi có nhiều hành vi.")
+        confidence = st.slider("Độ tin cậy của người gán", 0.0, 1.0, float(row["annotation_confidence"]) if pd.notna(row["annotation_confidence"]) else 0.8, 0.05)
+        occlusions = ["none", "partial", "heavy"]
+        occlusion = st.selectbox("Mức che khuất", occlusions, index=occlusions.index(row["occlusion_level"]) if row["occlusion_level"] in occlusions else 0, format_func={"none": "Không", "partial": "Một phần", "heavy": "Nhiều"}.get)
+        notes = st.text_area("Ghi chú", value=row.get("notes", ""))
+        confirmed = st.checkbox("Tôi đã xem hết đoạn, xác định đúng người và xác nhận bằng chứng theo bảng tiêu chí")
+        save_next = st.form_submit_button("Lưu và đến cửa sổ chưa gán tiếp", type="primary")
+        save = st.form_submit_button("Lưu tại cửa sổ này")
+    if save or save_next:
+        if state is None or (state == "VALID" and (label is None or phase == "UNKNOWN")):
+            st.error("Chọn khả năng quan sát. Với VALID, cần xác định pha thực tế và mức tham gia.")
+        elif state == "VALID" and (not confirmed or not behavior.strip() or not phase_evidence.strip()):
+            st.error("Cần ghi hành vi cụ thể, bằng chứng xác định nhiệm vụ và xác nhận đã xem đúng người trong toàn bộ đoạn.")
+        elif state == "VALID" and (rubric_label is None or label != rubric_label):
+            st.error(f"Bằng chứng chưa phù hợp với nhãn đã chọn. Theo bảng tiêu chí: {LABELS.get(rubric_label, 'Chưa đủ bằng chứng')}. {rubric_reason}")
+        else:
+            updates = {"class_phase": phase, "annotation_state": state, "participation_label": label if state == "VALID" else "",
+                       "label_source": "HUMAN" if state == "VALID" else "", "label_rule_version": "", "annotator_id": annotator,
+                       "atomic_behavior": behavior, "annotation_confidence": confidence, "occlusion_level": occlusion,
+                       "notes": notes, "annotation_guide_version": RUBRIC_VERSION, "phase_verified": phase != "UNKNOWN",
+                       "phase_evidence": phase_evidence.strip(),
+                       "annotation_evidence": json.dumps({"rubric_version": RUBRIC_VERSION, "observations": observations,
+                           "basis": "DIRECT_HUMAN_OBSERVATION", "confirmed": confirmed}, ensure_ascii=False),
+                       "phase_source": "HUMAN_WINDOW_REVIEW" if phase != "UNKNOWN" else "UNKNOWN"}
+            candidate = df.loc[[index]].copy()
+            for key, value in updates.items():
+                candidate.at[index, key] = value
+            valid, errors = validate_annotation_dataframe(candidate)
+            if not valid:
+                st.error("; ".join(errors))
+            else:
+                try:
+                    saved = save_annotation_row(selected, row["window_id"], updates)
+                except (OSError, ValueError) as exc:
+                    st.error(f"Chưa lưu được phiếu: {exc}")
+                else:
+                    remaining = list(saved.index[~(saved["annotation_state"].isin(ANNOTATION_STATES) & saved["annotator_id"].ne(""))])
+                    following = [i for i in remaining if i > index] + [i for i in remaining if i < index]
+                    if save_next and following:
+                        st.session_state[pending_key] = following[0]
+                    st.session_state["annotation_notice"] = f"Đã lưu nhãn của {person}." + (" Bạn đã hoàn tất phiếu." if not remaining else "")
+                    st.rerun()
+
+    st.download_button("Tải CSV phiếu của tôi", selected.read_bytes(), file_name=f"{selected.parent.name}_{person}.csv", mime="text/csv")
+    st.caption("Lưu vào CSV trên máy chủ đang chạy tool. Bấm tải CSV để giữ một bản riêng. Chuyển cửa sổ khi chưa lưu sẽ bỏ các thay đổi chưa gửi.")
