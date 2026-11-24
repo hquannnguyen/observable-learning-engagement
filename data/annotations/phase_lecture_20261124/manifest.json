@@ -1,0 +1,29 @@
+{
+  "class_1": {
+    "source": "D:\\Downloads\\data\\annotations\\class_1_labels_final.csv",
+    "source_sha256": "cd424432d1003b5a7a6e29af39a227ebd8d84ddbc5de33a207610ddd5b16a506",
+    "output": "data\\annotations\\phase_lecture_20261124\\class_1_lecture.csv",
+    "output_sha256": "cd424432d1003b5a7a6e29af39a227ebd8d84ddbc5de33a207610ddd5b16a506",
+    "rows": 84,
+    "previous_phase_counts": {
+      "lecture": 84
+    },
+    "changed_rows": 0,
+    "phase_basis": "User confirmed lecture for both full annotation files on 2026-11-24",
+    "scope": "annotation intervals only; phase not independently verified outside labeled intervals"
+  },
+  "session_006": {
+    "source": "D:\\ThiGiacMayTinh\\cam_A_labels_final.csv",
+    "source_sha256": "f0aa106e26ffb8e9312debe0c0dddb4eca155f6553ac513c34a745b232509bef",
+    "output": "data\\annotations\\phase_lecture_20261124\\session_006_lecture.csv",
+    "output_sha256": "baba8d275feec73b3b3cf06a108239abb2710ba0f0bf45603f3967e3dda9d8e0",
+    "rows": 308,
+    "previous_phase_counts": {
+      "discussion": 307,
+      "lecture": 1
+    },
+    "changed_rows": 307,
+    "phase_basis": "User confirmed lecture for both full annotation files on 2026-11-24",
+    "scope": "annotation intervals only; phase not independently verified outside labeled intervals"
+  }
+}

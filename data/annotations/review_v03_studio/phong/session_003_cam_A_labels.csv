@@ -1,7 +1,7 @@
 window_id,session_id,camera_id,track_id,t_start_ms,t_end_ms,class_phase,atomic_behavior,participation_label,annotation_state,label_source,label_rule_version,annotation_guide_version,annotation_confidence,occlusion_level,zone_id,annotator_id,notes
-session_003_cam_A_trk817_w0007,session_003,cam_A,817,14002,17902,discussion,,,,,,v0.2,,,,,
-session_003_cam_A_trk003_w0024,session_003,cam_A,3,48005,51906,discussion,,,,,,v0.2,,,,,
-session_003_cam_A_trk584_w0026,session_003,cam_A,584,52006,55906,discussion,,,,,,v0.2,,,,,
+session_003_cam_A_trk817_w0007,session_003,cam_A,817,14002,17902,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.61,heavy,,ANN_PHONG,auto_vis_ratio=0.39
+session_003_cam_A_trk003_w0024,session_003,cam_A,3,48005,51906,lecture,BOARD_OR_INSTRUCTOR_FACING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.90,moderate,,ANN_PHONG,auto_vis_ratio=0.71
+session_003_cam_A_trk584_w0026,session_003,cam_A,584,52006,55906,lecture,READING_WRITING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.80,moderate,,ANN_PHONG,auto_vis_ratio=0.64
 session_003_cam_A_trk584_w0039,session_003,cam_A,584,78009,81909,discussion,,,,,,v0.2,,,,,
 session_003_cam_A_trk001_w0043,session_003,cam_A,1,86010,89910,discussion,,,,,,v0.2,,,,,
 session_003_cam_A_trk795_w0063,session_003,cam_A,795,126014,129914,discussion,,,,,,v0.2,,,,,

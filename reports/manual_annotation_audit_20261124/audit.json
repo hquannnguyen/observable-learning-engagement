@@ -1,0 +1,711 @@
+{
+  "class_1": {
+    "source": "D:\\Downloads\\data\\annotations\\class_1_labels_final.csv",
+    "sha256": "cd424432d1003b5a7a6e29af39a227ebd8d84ddbc5de33a207610ddd5b16a506",
+    "rows": 84,
+    "identity_values": [
+      {
+        "session_id": "raw",
+        "camera_id": "class_1"
+      }
+    ],
+    "pose_identity_values": [
+      {
+        "session_id": "class_1",
+        "camera_id": "cam_A"
+      }
+    ],
+    "tracks": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      14,
+      15
+    ],
+    "time_range_ms": [
+      0,
+      14900
+    ],
+    "duration_ms_counts": {
+      "4000": 84
+    },
+    "labels": {
+      "HIGH_OBSERVED_PARTICIPATION": 46,
+      "MODERATE_OBSERVED_PARTICIPATION": 25,
+      "LOW_OBSERVED_PARTICIPATION": 12,
+      "": 1
+    },
+    "states": {
+      "VALID": 83,
+      "OCCLUDED": 1
+    },
+    "sources": {
+      "HUMAN": 83,
+      "": 1
+    },
+    "phases": {
+      "lecture": 84
+    },
+    "guide_versions": {
+      "v0.2": 84
+    },
+    "annotators": {
+      "HUMAN_ANNOTATOR": 84
+    },
+    "confidence": {
+      "0.8": 53,
+      "0.7": 17,
+      "0.75": 8,
+      "0.54": 2,
+      "0.51": 1,
+      "0.56": 1,
+      "0.52": 1,
+      "0.9": 1
+    },
+    "contract_error_rows": 0,
+    "contract_error_examples": [],
+    "bad_times": 0,
+    "bad_confidence": 0,
+    "duplicate_keys": 0,
+    "missing_window_id": true,
+    "missing_pose_tracks": [],
+    "zero_pose_intervals": 0,
+    "under_20_pose_samples": 0,
+    "pose_samples_counts": {
+      "40": 75,
+      "39": 3,
+      "36": 2,
+      "30": 2,
+      "37": 1,
+      "27": 1
+    },
+    "exact_time_matches_after_identity_mapping": 0,
+    "near_time_matches_150ms_after_identity_mapping": 70,
+    "near_quality_states": {
+      "INVALID": 70
+    },
+    "same_interval_conflicting_phases": 0,
+    "same_interval_examples": [],
+    "tracks_with_multiple_zones": {
+      "1": 3,
+      "2": 2,
+      "3": 3,
+      "4": 2,
+      "5": 2,
+      "6": 2,
+      "7": 4,
+      "8": 2,
+      "9": 3,
+      "10": 2,
+      "11": 3,
+      "12": 3,
+      "14": 4,
+      "15": 3
+    },
+    "phase_by_start": {
+      "0": [
+        "lecture"
+      ],
+      "700": [
+        "lecture"
+      ],
+      "900": [
+        "lecture"
+      ],
+      "2000": [
+        "lecture"
+      ],
+      "2700": [
+        "lecture"
+      ],
+      "2900": [
+        "lecture"
+      ],
+      "4000": [
+        "lecture"
+      ],
+      "4700": [
+        "lecture"
+      ],
+      "4900": [
+        "lecture"
+      ],
+      "6000": [
+        "lecture"
+      ],
+      "6700": [
+        "lecture"
+      ],
+      "6900": [
+        "lecture"
+      ],
+      "8000": [
+        "lecture"
+      ],
+      "8700": [
+        "lecture"
+      ],
+      "8900": [
+        "lecture"
+      ],
+      "10000": [
+        "lecture"
+      ],
+      "10700": [
+        "lecture"
+      ],
+      "10900": [
+        "lecture"
+      ]
+    },
+    "pose_timestamp_range_ms": [
+      0.0,
+      14900.0
+    ]
+  },
+  "session_006": {
+    "source": "D:\\ThiGiacMayTinh\\cam_A_labels_final.csv",
+    "sha256": "f0aa106e26ffb8e9312debe0c0dddb4eca155f6553ac513c34a745b232509bef",
+    "rows": 308,
+    "identity_values": [
+      {
+        "session_id": "session_006",
+        "camera_id": "A"
+      }
+    ],
+    "pose_identity_values": [
+      {
+        "session_id": "session_006",
+        "camera_id": "cam_A"
+      }
+    ],
+    "tracks": [
+      2,
+      3,
+      1838,
+      2043,
+      2144,
+      2213,
+      2296,
+      2318,
+      2333,
+      2334,
+      2337,
+      2339,
+      2341,
+      2343,
+      2346,
+      2349,
+      2353,
+      2355,
+      2364,
+      2372,
+      2373,
+      2374
+    ],
+    "time_range_ms": [
+      0,
+      60000
+    ],
+    "duration_ms_counts": {
+      "4000": 308
+    },
+    "labels": {
+      "MODERATE_OBSERVED_PARTICIPATION": 195,
+      "": 60,
+      "LOW_OBSERVED_PARTICIPATION": 32,
+      "HIGH_OBSERVED_PARTICIPATION": 21
+    },
+    "states": {
+      "VALID": 248,
+      "OCCLUDED": 60
+    },
+    "sources": {
+      "HUMAN": 248,
+      "": 60
+    },
+    "phases": {
+      "discussion": 307,
+      "lecture": 1
+    },
+    "guide_versions": {
+      "v0.2": 308
+    },
+    "annotators": {
+      "HUMAN_ANNOTATOR": 308
+    },
+    "confidence": {
+      "0.7": 194,
+      "0.8": 35,
+      "0.85": 18,
+      "0.53": 11,
+      "0.9": 4,
+      "0.52": 4,
+      "0.56": 4,
+      "0.59": 4,
+      "0.71": 4,
+      "0.57": 3,
+      "0.55": 3,
+      "0.51": 3,
+      "0.54": 3,
+      "0.82": 3,
+      "0.68": 2,
+      "0.62": 2,
+      "0.69": 2,
+      "0.81": 2,
+      "0.5": 1,
+      "0.74": 1,
+      "0.6": 1,
+      "0.66": 1,
+      "0.76": 1,
+      "0.84": 1,
+      "0.58": 1
+    },
+    "contract_error_rows": 0,
+    "contract_error_examples": [],
+    "bad_times": 0,
+    "bad_confidence": 0,
+    "duplicate_keys": 0,
+    "missing_window_id": true,
+    "missing_pose_tracks": [],
+    "zero_pose_intervals": 0,
+    "under_20_pose_samples": 18,
+    "pose_samples_counts": {
+      "40": 235,
+      "26": 6,
+      "35": 5,
+      "31": 5,
+      "38": 4,
+      "25": 4,
+      "37": 4,
+      "36": 3,
+      "24": 3,
+      "29": 3,
+      "15": 3,
+      "34": 3,
+      "11": 3,
+      "16": 3,
+      "39": 3,
+      "32": 3,
+      "8": 2,
+      "20": 2,
+      "21": 2,
+      "28": 1,
+      "17": 1,
+      "23": 1,
+      "12": 1,
+      "18": 1,
+      "5": 1,
+      "6": 1,
+      "13": 1,
+      "19": 1,
+      "33": 1,
+      "22": 1,
+      "27": 1
+    },
+    "exact_time_matches_after_identity_mapping": 0,
+    "near_time_matches_150ms_after_identity_mapping": 197,
+    "near_quality_states": {
+      "VALID": 158,
+      "INVALID": 39
+    },
+    "same_interval_conflicting_phases": 1,
+    "same_interval_examples": [
+      [
+        0,
+        4000
+      ]
+    ],
+    "tracks_with_multiple_zones": {
+      "2": 2,
+      "3": 2,
+      "2043": 2,
+      "2144": 3,
+      "2213": 2,
+      "2296": 2,
+      "2318": 3,
+      "2333": 2,
+      "2337": 3
+    },
+    "phase_by_start": {
+      "0": [
+        "lecture",
+        "discussion"
+      ],
+      "100": [
+        "discussion"
+      ],
+      "2000": [
+        "discussion"
+      ],
+      "2100": [
+        "discussion"
+      ],
+      "4000": [
+        "discussion"
+      ],
+      "4100": [
+        "discussion"
+      ],
+      "6000": [
+        "discussion"
+      ],
+      "6100": [
+        "discussion"
+      ],
+      "8000": [
+        "discussion"
+      ],
+      "8100": [
+        "discussion"
+      ],
+      "9600": [
+        "discussion"
+      ],
+      "10000": [
+        "discussion"
+      ],
+      "10100": [
+        "discussion"
+      ],
+      "10900": [
+        "discussion"
+      ],
+      "11600": [
+        "discussion"
+      ],
+      "11900": [
+        "discussion"
+      ],
+      "12000": [
+        "discussion"
+      ],
+      "12100": [
+        "discussion"
+      ],
+      "12900": [
+        "discussion"
+      ],
+      "13600": [
+        "discussion"
+      ],
+      "13900": [
+        "discussion"
+      ],
+      "14000": [
+        "discussion"
+      ],
+      "14100": [
+        "discussion"
+      ],
+      "15600": [
+        "discussion"
+      ],
+      "15800": [
+        "discussion"
+      ],
+      "16000": [
+        "discussion"
+      ],
+      "16100": [
+        "discussion"
+      ],
+      "17600": [
+        "discussion"
+      ],
+      "17800": [
+        "discussion"
+      ],
+      "18000": [
+        "discussion"
+      ],
+      "18100": [
+        "discussion"
+      ],
+      "19800": [
+        "discussion"
+      ],
+      "20000": [
+        "discussion"
+      ],
+      "20100": [
+        "discussion"
+      ],
+      "21800": [
+        "discussion"
+      ],
+      "22000": [
+        "discussion"
+      ],
+      "22100": [
+        "discussion"
+      ],
+      "22800": [
+        "discussion"
+      ],
+      "23800": [
+        "discussion"
+      ],
+      "24000": [
+        "discussion"
+      ],
+      "24100": [
+        "discussion"
+      ],
+      "24800": [
+        "discussion"
+      ],
+      "25200": [
+        "discussion"
+      ],
+      "25800": [
+        "discussion"
+      ],
+      "26000": [
+        "discussion"
+      ],
+      "26100": [
+        "discussion"
+      ],
+      "26800": [
+        "discussion"
+      ],
+      "27200": [
+        "discussion"
+      ],
+      "27800": [
+        "discussion"
+      ],
+      "27900": [
+        "discussion"
+      ],
+      "28000": [
+        "discussion"
+      ],
+      "28100": [
+        "discussion"
+      ],
+      "28800": [
+        "discussion"
+      ],
+      "29200": [
+        "discussion"
+      ],
+      "29900": [
+        "discussion"
+      ],
+      "30000": [
+        "discussion"
+      ],
+      "30100": [
+        "discussion"
+      ],
+      "30800": [
+        "discussion"
+      ],
+      "31200": [
+        "discussion"
+      ],
+      "31900": [
+        "discussion"
+      ],
+      "32000": [
+        "discussion"
+      ],
+      "32100": [
+        "discussion"
+      ],
+      "32800": [
+        "discussion"
+      ],
+      "33200": [
+        "discussion"
+      ],
+      "33900": [
+        "discussion"
+      ],
+      "34000": [
+        "discussion"
+      ],
+      "34100": [
+        "discussion"
+      ],
+      "34400": [
+        "discussion"
+      ],
+      "34800": [
+        "discussion"
+      ],
+      "35200": [
+        "discussion"
+      ],
+      "35900": [
+        "discussion"
+      ],
+      "36000": [
+        "discussion"
+      ],
+      "36100": [
+        "discussion"
+      ],
+      "36400": [
+        "discussion"
+      ],
+      "36800": [
+        "discussion"
+      ],
+      "37200": [
+        "discussion"
+      ],
+      "37900": [
+        "discussion"
+      ],
+      "38000": [
+        "discussion"
+      ],
+      "38100": [
+        "discussion"
+      ],
+      "38400": [
+        "discussion"
+      ],
+      "38800": [
+        "discussion"
+      ],
+      "39200": [
+        "discussion"
+      ],
+      "39900": [
+        "discussion"
+      ],
+      "40000": [
+        "discussion"
+      ],
+      "40100": [
+        "discussion"
+      ],
+      "40400": [
+        "discussion"
+      ],
+      "40800": [
+        "discussion"
+      ],
+      "41900": [
+        "discussion"
+      ],
+      "42000": [
+        "discussion"
+      ],
+      "42100": [
+        "discussion"
+      ],
+      "42400": [
+        "discussion"
+      ],
+      "43900": [
+        "discussion"
+      ],
+      "44000": [
+        "discussion"
+      ],
+      "44100": [
+        "discussion"
+      ],
+      "44400": [
+        "discussion"
+      ],
+      "45900": [
+        "discussion"
+      ],
+      "46000": [
+        "discussion"
+      ],
+      "46100": [
+        "discussion"
+      ],
+      "46400": [
+        "discussion"
+      ],
+      "47900": [
+        "discussion"
+      ],
+      "48000": [
+        "discussion"
+      ],
+      "48100": [
+        "discussion"
+      ],
+      "48400": [
+        "discussion"
+      ],
+      "49900": [
+        "discussion"
+      ],
+      "50000": [
+        "discussion"
+      ],
+      "50100": [
+        "discussion"
+      ],
+      "50400": [
+        "discussion"
+      ],
+      "50500": [
+        "discussion"
+      ],
+      "51100": [
+        "discussion"
+      ],
+      "51900": [
+        "discussion"
+      ],
+      "52000": [
+        "discussion"
+      ],
+      "52100": [
+        "discussion"
+      ],
+      "52400": [
+        "discussion"
+      ],
+      "52700": [
+        "discussion"
+      ],
+      "53900": [
+        "discussion"
+      ],
+      "54000": [
+        "discussion"
+      ],
+      "54100": [
+        "discussion"
+      ],
+      "54400": [
+        "discussion"
+      ],
+      "54700": [
+        "discussion"
+      ],
+      "55900": [
+        "discussion"
+      ],
+      "56000": [
+        "discussion"
+      ]
+    },
+    "pose_timestamp_range_ms": [
+      0.0,
+      250400.0
+    ]
+  },
+  "class_1_files_identical": true
+}

@@ -1,0 +1,158 @@
+{
+  "audit_timestamp": "2026-11-24T11:15:00+07:00",
+  "session_006": {
+    "session_id": "session_006",
+    "total_rows": 308,
+    "exact_matches": 197,
+    "near_matches": 0,
+    "total_matched": 197,
+    "unmatched_occluded": 48,
+    "unmatched_sparse_pose": 13,
+    "unmatched_discontinuous": 50,
+    "sparse_valid_13_count": 13,
+    "sparse_valid_13_details": [
+      {
+        "row_idx": 246,
+        "track_id": 2339,
+        "t_start_ms": 13600,
+        "t_end_ms": 17600,
+        "original_label": "MODERATE_OBSERVED_PARTICIPATION",
+        "original_state": "VALID",
+        "pose_count": 16,
+        "auto_vis_ratio": "auto_vis_ratio=0.70"
+      },
+      {
+        "row_idx": 249,
+        "track_id": 2341,
+        "t_start_ms": 10900,
+        "t_end_ms": 14900,
+        "original_label": "LOW_OBSERVED_PARTICIPATION",
+        "original_state": "VALID",
+        "pose_count": 12,
+        "auto_vis_ratio": "auto_vis_ratio=0.57"
+      },
+      {
+        "row_idx": 251,
+        "track_id": 2343,
+        "t_start_ms": 11900,
+        "t_end_ms": 15900,
+        "original_label": "MODERATE_OBSERVED_PARTICIPATION",
+        "original_state": "VALID",
+        "pose_count": 15,
+        "auto_vis_ratio": "auto_vis_ratio=0.54"
+      },
+      {
+        "row_idx": 252,
+        "track_id": 2343,
+        "t_start_ms": 13900,
+        "t_end_ms": 17900,
+        "original_label": "MODERATE_OBSERVED_PARTICIPATION",
+        "original_state": "VALID",
+        "pose_count": 19,
+        "auto_vis_ratio": "auto_vis_ratio=0.51"
+      },
+      {
+        "row_idx": 262,
+        "track_id": 2349,
+        "t_start_ms": 26800,
+        "t_end_ms": 30800,
+        "original_label": "MODERATE_OBSERVED_PARTICIPATION",
+        "original_state": "VALID",
+        "pose_count": 5,
+        "auto_vis_ratio": "auto_vis_ratio=0.76"
+      },
+      {
+        "row_idx": 263,
+        "track_id": 2349,
+        "t_start_ms": 28800,
+        "t_end_ms": 32800,
+        "original_label": "MODERATE_OBSERVED_PARTICIPATION",
+        "original_state": "VALID",
+        "pose_count": 12,
+        "auto_vis_ratio": "auto_vis_ratio=0.76"
+      },
+      {
+        "row_idx": 264,
+        "track_id": 2349,
+        "t_start_ms": 30800,
+        "t_end_ms": 34800,
+        "original_label": "MODERATE_OBSERVED_PARTICIPATION",
+        "original_state": "VALID",
+        "pose_count": 16,
+        "auto_vis_ratio": "auto_vis_ratio=0.76"
+      },
+      {
+        "row_idx": 265,
+        "track_id": 2349,
+        "t_start_ms": 32800,
+        "t_end_ms": 36800,
+        "original_label": "MODERATE_OBSERVED_PARTICIPATION",
+        "original_state": "VALID",
+        "pose_count": 6,
+        "auto_vis_ratio": "auto_vis_ratio=0.76"
+      },
+      {
+        "row_idx": 266,
+        "track_id": 2349,
+        "t_start_ms": 34800,
+        "t_end_ms": 38800,
+        "original_label": "MODERATE_OBSERVED_PARTICIPATION",
+        "original_state": "VALID",
+        "pose_count": 14,
+        "auto_vis_ratio": "auto_vis_ratio=0.71"
+      },
+      {
+        "row_idx": 267,
+        "track_id": 2349,
+        "t_start_ms": 36800,
+        "t_end_ms": 40800,
+        "original_label": "MODERATE_OBSERVED_PARTICIPATION",
+        "original_state": "VALID",
+        "pose_count": 19,
+        "auto_vis_ratio": "auto_vis_ratio=0.71"
+      },
+      {
+        "row_idx": 268,
+        "track_id": 2349,
+        "t_start_ms": 38800,
+        "t_end_ms": 42800,
+        "original_label": "MODERATE_OBSERVED_PARTICIPATION",
+        "original_state": "VALID",
+        "pose_count": 16,
+        "auto_vis_ratio": "auto_vis_ratio=0.71"
+      },
+      {
+        "row_idx": 287,
+        "track_id": 2355,
+        "t_start_ms": 45900,
+        "t_end_ms": 49900,
+        "original_label": "HIGH_OBSERVED_PARTICIPATION",
+        "original_state": "VALID",
+        "pose_count": 12,
+        "auto_vis_ratio": "auto_vis_ratio=0.74"
+      },
+      {
+        "row_idx": 304,
+        "track_id": 2372,
+        "t_start_ms": 50500,
+        "t_end_ms": 54500,
+        "original_label": "MODERATE_OBSERVED_PARTICIPATION",
+        "original_state": "VALID",
+        "pose_count": 8,
+        "auto_vis_ratio": "auto_vis_ratio=0.71"
+      }
+    ]
+  },
+  "class_1": {
+    "session_id": "class_1",
+    "total_rows": 84,
+    "exact_or_near_matches": 70,
+    "unmatched": 14
+  },
+  "conclusions": {
+    "session_006_matches": "197 / 308 (197 exact, 0 near)",
+    "class_1_matches": "70 / 84",
+    "sparse_pose_13_action": "13 VALID windows with <20 pose frames require correction to OCCLUDED",
+    "phase_verification_rule": "Verified lecture applies strictly to 0-60s; 60-250s remains unverified legacy discussion"
+  }
+}

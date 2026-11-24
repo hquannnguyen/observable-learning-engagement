@@ -1,16 +1,29 @@
 {
   "session_id": "session_003",
   "date": "2026-10-18",
-  "camera_id": "A",
+  "camera_id": "cam_A",
   "fps": 30,
   "resolution": "1920x1080",
   "camera_view": "front_oblique",
   "participants": 8,
   "class_phase": [
     {
-      "name": "discussion",
+      "name": "lecture",
       "start_ms": 0,
-      "end_ms": 900000
+      "end_ms": 60000,
+      "verified": true,
+      "phase_source": "METADATA_VERIFIED",
+      "verified_by": "HUMAN_ANNOTATOR",
+      "verified_date": "2026-11-24",
+      "notes": "Human-verified lecture phase for first 60 seconds (0-60s) of recording on 2026-11-24."
+    },
+    {
+      "name": "discussion",
+      "start_ms": 60000,
+      "end_ms": 900000,
+      "verified": false,
+      "phase_source": "METADATA_UNVERIFIED",
+      "notes": "Unverified legacy declaration for remaining duration; not verified by human annotators."
     }
   ],
   "lighting_condition": "normal",

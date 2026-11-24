@@ -157,13 +157,21 @@ def show_status():
         if path_p.is_file():
             df_p = pd.read_csv(path_p, dtype=object, keep_default_na=False)
             n_p = len(df_p)
-            done_p = int((df_p["annotation_state"].isin(ANNOTATION_STATES) & df_p["participation_label"].ne("")).sum())
+            is_done_p = (
+                (df_p["annotation_state"].eq("VALID") & df_p["participation_label"].ne("")) |
+                (df_p["annotation_state"].isin(["OCCLUDED", "INVALID"]))
+            ) & df_p["label_source"].isin(["HUMAN", "ADJUDICATED"])
+            done_p = int(is_done_p.sum())
 
         n_t, done_t = 0, 0
         if path_t.is_file():
             df_t = pd.read_csv(path_t, dtype=object, keep_default_na=False)
             n_t = len(df_t)
-            done_t = int((df_t["annotation_state"].isin(ANNOTATION_STATES) & df_t["participation_label"].ne("")).sum())
+            is_done_t = (
+                (df_t["annotation_state"].eq("VALID") & df_t["participation_label"].ne("")) |
+                (df_t["annotation_state"].isin(["OCCLUDED", "INVALID"]))
+            ) & df_t["label_source"].isin(["HUMAN", "ADJUDICATED"])
+            done_t = int(is_done_t.sum())
 
         n_total = max(n_p, n_t)
         total_all += n_total
