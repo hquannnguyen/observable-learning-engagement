@@ -208,24 +208,465 @@ def render_studio_tab(person_name: str, annotator_full_name: str, master_csv_pat
         unsafe_allow_html=True,
     )
 
-    # Studio Steps Navigation
-    step = st.radio(
-        "Chuyển bước công việc:",
-        [
-            "BƯỚC 1: 📂 Chọn Video & Cắt Đoạn",
-            "BƯỚC 2: 👥 Gán & Duyệt Nhiều Sinh Viên",
-            "BƯỚC 3: 📊 Kiểm Định & Xuất File CSV",
-        ],
+    # Studio Mode Selector
+    mode_options = [
+        "🎯 Gán 600 Cửa Sổ Chuẩn (Review V0.3 - Khuyên Dùng)",
+        "👥 Duyệt Theo Mốc 4s Toàn Lớp (Theo Session / Cắt Đoạn)",
+    ]
+    studio_mode = st.radio(
+        "Lựa chọn chế độ làm việc Studio:",
+        mode_options,
         horizontal=True,
-        key="studio_step_radio",
+        key="studio_mode_radio",
     )
 
-    if step.startswith("BƯỚC 1"):
-        _render_step_1(person_name, annotator_full_name)
-    elif step.startswith("BƯỚC 2"):
-        _render_step_2(person_name, annotator_full_name, master_csv_path)
+    if studio_mode == mode_options[0]:
+        _render_600_windows_studio(person_name, annotator_full_name, master_csv_path)
     else:
-        _render_step_3(person_name, annotator_full_name, master_csv_path)
+        # 3-step session workflow
+        step = st.radio(
+            "Chuyển bước công việc:",
+            [
+                "BƯỚC 1: 📂 Chọn Video & Cắt Đoạn",
+                "BƯỚC 2: 👥 Gán & Duyệt Nhiều Sinh Viên",
+                "BƯỚC 3: 📊 Kiểm Định & Xuất File CSV",
+            ],
+            horizontal=True,
+            key="studio_step_radio",
+        )
+
+        if step.startswith("BƯỚC 1"):
+            _render_step_1(person_name, annotator_full_name)
+        elif step.startswith("BƯỚC 2"):
+            _render_step_2(person_name, annotator_full_name, master_csv_path)
+        else:
+            _render_step_3(person_name, annotator_full_name, master_csv_path)
+
+
+# ----------------------------------------------------------------------
+# CHẾ ĐỘ 1: GÁN TRỰC TIẾP 600 CỬA SỔ CHUẨN (REVIEW V0.3)
+# ----------------------------------------------------------------------
+def _render_600_windows_studio(person_name: str, annotator_full_name: str, master_csv_path: Path):
+    """Interactive Studio view for direct review of 600 sampled windows."""
+    st.subheader(f"🎯 GÁN NHÃN 600 CỬA SỔ CHUẨN — {annotator_full_name}")
+    st.caption("Xem video toàn cảnh lớp học và dải 5 ảnh crop diễn biến 4 giây của từng sinh viên. Bấm 1 nút để gán nhãn siêu tốc.")
+
+    # Determine 600-window file for this person
+    is_phong = "phong" in person_name.lower()
+    p_code = "b" if is_phong else "a"
+    p_dir = "phong" if is_phong else "tai"
+
+    cand_path = ROOT / f"data/annotations/review_v03_independent_20261124/annotator_{p_code}.csv"
+    if not cand_path.is_file():
+        cand_path = ROOT / f"data/annotations/review_v03/annotator_{p_dir}.csv"
+    if not cand_path.is_file() and master_csv_path.is_file():
+        cand_path = master_csv_path
+
+    if not cand_path.is_file():
+        st.error(f"Chưa tìm thấy file 600 cửa sổ tại {cand_path}")
+        return
+
+    df_600 = read_annotation_csv(cand_path)
+    total_600 = len(df_600)
+
+    # 1. Filters Row
+    f_col1, f_col2, f_col3 = st.columns([3, 4, 3])
+    filter_choice = f_col1.selectbox(
+        "Lọc danh sách cửa sổ:",
+        [
+            "Tất cả (600 cửa sổ)",
+            "Chưa gán nhãn (còn lại)",
+            "Đã gán nhãn",
+            "Tập TEST (300 mẫu · session_005, 006)",
+            "Tập VAL (100 mẫu · session_003, 004)",
+            "Tập TRAIN (200 mẫu · session_001, 002, classes)",
+            "Theo phiên học cụ thể...",
+        ],
+        key="filter_600_choice",
+    )
+
+    specific_session = None
+    if filter_choice == "Theo phiên học cụ thể...":
+        all_sessions = sorted(df_600["session_id"].dropna().unique().tolist())
+        specific_session = f_col2.selectbox("Chọn phiên học:", all_sessions, key="filter_600_sess")
+
+    # Apply filter mask
+    is_done_mask = (
+        (df_600["annotation_state"].eq("VALID") & df_600["participation_label"].ne("")) |
+        df_600["annotation_state"].isin(["OCCLUDED", "INVALID"])
+    )
+
+    if filter_choice == "Chưa gán nhãn (còn lại)":
+        filtered_indices = list(df_600.index[~is_done_mask])
+    elif filter_choice == "Đã gán nhãn":
+        filtered_indices = list(df_600.index[is_done_mask])
+    elif filter_choice.startswith("Tập TEST"):
+        filtered_indices = list(df_600.index[df_600["split"].astype(str).str.lower() == "test"])
+    elif filter_choice.startswith("Tập VAL"):
+        filtered_indices = list(df_600.index[df_600["split"].astype(str).str.lower() == "val"])
+    elif filter_choice.startswith("Tập TRAIN"):
+        filtered_indices = list(df_600.index[df_600["split"].astype(str).str.lower() == "train"])
+    elif specific_session is not None:
+        filtered_indices = list(df_600.index[df_600["session_id"] == specific_session])
+    else:
+        filtered_indices = list(df_600.index)
+
+    if not filtered_indices:
+        st.info("Không có cửa sổ nào phù hợp với bộ lọc đã chọn.")
+        return
+
+    # Filtered pos state
+    pos_key = "studio_600_cur_pos"
+    if pos_key not in st.session_state or st.session_state[pos_key] >= len(filtered_indices):
+        # Default to first unfinished in filtered
+        unfin = [p for p, i in enumerate(filtered_indices) if not is_done_mask.loc[i]]
+        st.session_state[pos_key] = unfin[0] if unfin else 0
+
+    cur_pos = st.session_state[pos_key]
+    cur_df_idx = filtered_indices[cur_pos]
+    cur_row = df_600.loc[cur_df_idx]
+
+    # 2. Navigation bar
+    n_col1, n_col2, n_col3, n_col4 = st.columns([1, 6, 1, 3])
+
+    if n_col1.button("⏮️ Trước", key="btn_600_prev", disabled=cur_pos == 0):
+        st.session_state[pos_key] = max(0, cur_pos - 1)
+        st.rerun()
+
+    # Dropdown of filtered items
+    def _format_window_opt(pos_i: int) -> str:
+        idx = filtered_indices[pos_i]
+        r = df_600.loc[idx]
+        done = "✓" if is_done_mask.loc[idx] else "○"
+        s = r.get("split", "")
+        sess = r.get("session_id", "")
+        trk = r.get("track_id", "")
+        t0 = float(r.get("t_start_ms", 0)) / 1000.0
+        t1 = float(r.get("t_end_ms", 0)) / 1000.0
+        lbl = r.get("participation_label") or r.get("annotation_state") or "Chưa gán"
+        return f"{done} #{idx + 1}/600 [{s}] {sess} | Track #{trk} ({t0:g}s-{t1:g}s) ➔ {lbl}"
+
+    window_options = list(range(len(filtered_indices)))
+    chosen_pos = n_col2.selectbox(
+        "Cửa sổ đang chọn:",
+        window_options,
+        index=cur_pos,
+        format_func=_format_window_opt,
+        label_visibility="collapsed",
+        key="select_600_window_box",
+    )
+    if chosen_pos != cur_pos:
+        st.session_state[pos_key] = chosen_pos
+        st.rerun()
+
+    if n_col3.button("Tiếp ⏭️", key="btn_600_next", disabled=cur_pos == len(filtered_indices) - 1):
+        st.session_state[pos_key] = min(len(filtered_indices) - 1, cur_pos + 1)
+        st.rerun()
+
+    # Next unfinished button
+    unfin_after = [p for p, i in enumerate(filtered_indices) if p > cur_pos and not is_done_mask.loc[i]]
+    unfin_any = [p for p, i in enumerate(filtered_indices) if not is_done_mask.loc[i]]
+    if n_col4.button("⏩ Đến cửa sổ chưa gán", key="btn_600_unfin", disabled=not unfin_any):
+        st.session_state[pos_key] = unfin_after[0] if unfin_after else unfin_any[0]
+        st.rerun()
+
+    # Toggles bar
+    t_c1, t_c2, t_c3 = st.columns(3)
+    show_kpts_600 = t_c1.checkbox("Khung xương", value=True, key="opt_600_kpts")
+    bo_che_mat_600 = t_c2.checkbox(
+        "Bỏ che mặt (Xem rõ mặt)",
+        value=True,
+        key="opt_600_no_blur",
+        help="Mặc định: Xem rõ 100% mắt, nét mặt và hướng đầu sinh viên.",
+    )
+    blur_face_600 = not bo_che_mat_600
+    auto_jump_600 = t_c3.checkbox("Tự nhảy cửa sổ kế", value=True, key="opt_600_auto_jump")
+
+    # 3. Resolve Video & Pose Path
+    session_id = str(cur_row["session_id"])
+    camera_id = str(cur_row.get("camera_id", "cam_A"))
+    track_id = str(cur_row["track_id"])
+    t_start_ms = float(cur_row["t_start_ms"])
+    t_end_ms = float(cur_row["t_end_ms"])
+
+    v_str = str(cur_row.get("video_path", ""))
+    v_path = Path(v_str) if Path(v_str).is_file() else ROOT / v_str
+    if not v_path.is_file():
+        v_path = ROOT / "data/raw" / session_id / "cam_A.mp4"
+    if not v_path.is_file():
+        v_path = ROOT / "data/raw" / f"{session_id}.mp4"
+
+    p_path = ROOT / "data/poses" / f"{session_id}_{camera_id}_poses.csv"
+
+    df_pose = load_pose_dataframe(str(p_path)) if p_path.is_file() else pd.DataFrame()
+
+    # 4. Two-Column Workspace
+    left_col, right_col = st.columns([6, 5])
+
+    # ---------------- LEFT COLUMN: CLASSROOM VIEW & 5-KEYFRAME STRIP ----------------
+    with left_col:
+        st.markdown(
+            f"##### 🏫 Toàn cảnh lớp học: **{session_id}** • Track **#{track_id}** ({t_start_ms/1000:g}s ➔ {t_end_ms/1000:g}s)"
+        )
+        st.caption(
+            "Chú thích khung màu: 🟢 CAO • 🟡 VỪA • 🔴 THẤP • ⚪ BỊ CHE • 🔲 **Viền trắng dày là SV đang gán** | "
+            + ("🟢 **BỎ CHE MẶT** (Nhìn rõ nét khuôn mặt)" if bo_che_mat_600 else "🛡️ **Đang làm mờ mặt**")
+        )
+
+        mid_t_ms = (t_start_ms + t_end_ms) / 2.0
+        frame_rgb = extract_frame_at_ms(v_path, mid_t_ms)
+
+        if frame_rgb is not None:
+            sub_detections = pd.DataFrame()
+            if not df_pose.empty:
+                diffs = (df_pose["timestamp_ms"] - mid_t_ms).abs()
+                sub_detections = df_pose[diffs <= 350.0]
+
+            track_map = {track_id: (str(cur_row["participation_label"]), str(cur_row["annotation_state"]))}
+            annotated_scene = render_classroom_scene(
+                frame_rgb,
+                sub_detections,
+                selected_track_id=track_id,
+                labels_by_track=track_map,
+                show_skeleton=show_kpts_600,
+                blur_face=blur_face_600,
+            )
+            st.image(annotated_scene, use_column_width=True)
+        else:
+            st.warning(f"Chưa mở được video: {v_path}")
+
+        # 5-Keyframe Progression Strip
+        st.markdown(
+            f"##### 🎞️ 5 khung hình diễn biến 4 giây của SV đang chọn: Track #{track_id} (+0.0s ➔ +4.0s)"
+        )
+        strip_frames = render_progression_strip(
+            v_path,
+            df_pose,
+            track_id,
+            t_start_ms,
+            t_end_ms,
+            show_skeleton=show_kpts_600,
+            blur_face=blur_face_600,
+        )
+        strip_cols = st.columns(5)
+        for idx_kpt, (lbl_kpt, img_kpt) in enumerate(strip_frames):
+            strip_cols[idx_kpt].image(img_kpt, caption=lbl_kpt, use_column_width=True)
+
+        st.info(
+            f"👤 **Thông số Track #{track_id}:** Vùng ghế: **{cur_row.get('zone_id', 'M-C')}** • Pha học: **{cur_row.get('class_phase', 'lecture')}** • Tập: **{cur_row.get('split', '').upper()}**\n\n"
+            f"📝 Ghi chú: {cur_row.get('notes', '')}"
+        )
+
+    # ---------------- RIGHT COLUMN: FAST 1-CLICK LABELING ----------------
+    with right_col:
+        # Progress Bar
+        done_600 = int(is_done_mask.sum())
+        pct_done = done_600 / max(1, total_600) * 100.0
+        st.markdown(
+            f"📊 **Tiến độ 600 cửa sổ:** **{done_600}/{total_600}** ({pct_done:.1f}%) hoàn thành | Còn **{total_600 - done_600}** cửa sổ"
+        )
+        st.progress(done_600 / max(1, total_600))
+
+        cur_p_lbl = str(cur_row.get("participation_label", ""))
+        cur_st_val = str(cur_row.get("annotation_state", "VALID"))
+        disp_status = cur_p_lbl if cur_st_val == "VALID" and cur_p_lbl else cur_st_val
+        st.markdown(
+            f"##### 👤 Cửa sổ #{cur_df_idx + 1}/600: Track #{track_id} ({session_id}) ➔ **{disp_status or 'Chưa gán'}**"
+        )
+
+        # 4 BIG LABEL BUTTONS
+        l_col1, l_col2 = st.columns(2)
+        l_col3, l_col4 = st.columns(2)
+
+        btn_cao_600 = l_col1.button("🟢 [Phím 1] CAO (HIGH)", key="b600_high", use_container_width=True)
+        btn_vua_600 = l_col2.button("🟡 [Phím 2] VỪA (MODERATE)", key="b600_mod", use_container_width=True)
+        btn_thap_600 = l_col3.button("🔴 [Phím 3] THẤP (LOW)", key="b600_low", use_container_width=True)
+        btn_che_600 = l_col4.button("⚪ [Phím 4] BỊ CHE (OCCLUDED)", key="b600_occ", use_container_width=True)
+
+        selected_btn = None
+        if btn_cao_600:
+            selected_btn = (HIGH, "VALID")
+        elif btn_vua_600:
+            selected_btn = (MODERATE, "VALID")
+        elif btn_thap_600:
+            selected_btn = (LOW, "VALID")
+        elif btn_che_600:
+            selected_btn = ("", "OCCLUDED")
+
+        # 8 Behavior Checkboxes
+        st.caption("Hành vi quan sát được (Tích chọn 1 hoặc nhiều):")
+        current_beh_str = str(cur_row.get("atomic_behavior", ""))
+        existing_behs = [b.strip() for b in current_beh_str.split(";") if b.strip()]
+
+        bh_col1, bh_col2 = st.columns(2)
+        selected_behs = []
+        for i, (b_name, b_code) in enumerate(BEHAVIOR_CHOICES):
+            target_c = bh_col1 if i % 2 == 0 else bh_col2
+            is_chk = target_c.checkbox(
+                b_name,
+                value=(b_code in existing_behs or b_name in existing_behs),
+                key=f"chk_600_{cur_row['window_id']}_{b_code}",
+            )
+            if is_chk:
+                selected_behs.append(b_code)
+
+        # Context Dropdowns
+        st.caption("Ngữ cảnh & Vị trí:")
+        m_c1, m_c2 = st.columns(2)
+        state_opts = ["VALID", "OCCLUDED", "TRANSITION", "INVALID"]
+        s_val = cur_st_val if cur_st_val in state_opts else "VALID"
+        new_st_600 = m_c1.selectbox("Trạng thái:", state_opts, index=state_opts.index(s_val), key="sb_600_state")
+
+        phase_opts = ["lecture", "individual_work", "discussion", "UNKNOWN"]
+        p_val = cur_row.get("class_phase", "lecture")
+        new_phase_600 = m_c2.selectbox("Pha học:", phase_opts, index=phase_opts.index(p_val) if p_val in phase_opts else 0, key="sb_600_phase")
+
+        m_c3, m_c4 = st.columns(2)
+        zone_opts = ["F-L", "F-C", "F-R", "M-L", "M-C", "M-R", "B-L", "B-C", "B-R", "FRONT", "MIDDLE", "BACK"]
+        z_val = cur_row.get("zone_id", "M-C")
+        new_zone_600 = m_c3.selectbox("Vùng ghế:", zone_opts, index=zone_opts.index(z_val) if z_val in zone_opts else 4, key="sb_600_zone")
+
+        occ_opts = ["none", "partial", "heavy"]
+        o_val = cur_row.get("occlusion_level", "none")
+        new_occ_600 = m_c4.selectbox("Che khuất:", occ_opts, index=occ_opts.index(o_val) if o_val in occ_opts else 0, key="sb_600_occ")
+
+        new_notes_600 = st.text_input("Ghi chú:", value=str(cur_row.get("notes", "")), key="txt_600_notes")
+
+        # Save & Navigation
+        save_btn_600 = st.button("💾 Lưu Cửa Sổ Này & Sang Cửa Sổ Kế (Enter)", type="secondary", use_container_width=True)
+
+        if selected_btn is not None or save_btn_600:
+            target_lbl, target_st = selected_btn if selected_btn else (cur_p_lbl, new_st_600)
+            if target_st == "OCCLUDED":
+                target_lbl = ""
+
+            _save_600_window(
+                df_600=df_600,
+                row_idx=cur_df_idx,
+                target_label=target_lbl,
+                target_state=target_st,
+                behaviors="; ".join(selected_behs),
+                phase=new_phase_600,
+                zone=new_zone_600,
+                occlusion=new_occ_600,
+                notes=new_notes_600,
+                annotator_id=annotator_full_name,
+                primary_file_path=cand_path,
+                person_name=person_name,
+            )
+
+            # Auto advance to next unfinished window
+            if auto_jump_600 or save_btn_600:
+                rem_unfin = [p for p, i in enumerate(filtered_indices) if p > cur_pos and not is_done_mask.loc[i]]
+                if rem_unfin:
+                    st.session_state[pos_key] = rem_unfin[0]
+                elif cur_pos + 1 < len(filtered_indices):
+                    st.session_state[pos_key] = cur_pos + 1
+            st.rerun()
+
+        # Batch apply to same track in this session
+        if st.button("⚡ Áp Dụng Cho Cùng Track Này Trong Session", use_container_width=True):
+            _apply_track_to_same_session(
+                df_600,
+                session_id,
+                track_id,
+                cur_p_lbl,
+                cur_st_val,
+                annotator_full_name,
+                cand_path,
+                person_name,
+            )
+            st.success(f"Đã áp dụng nhãn cho Track #{track_id} trong {session_id}!")
+            st.rerun()
+
+        # Download button for 600 CSV
+        st.divider()
+        st.download_button(
+            label=f"📥 Tải File CSV 600 Cửa Sổ ({cand_path.name})",
+            data=cand_path.read_bytes(),
+            file_name=cand_path.name,
+            mime="text/csv",
+            use_container_width=True,
+        )
+
+
+def _save_600_window(
+    df_600: pd.DataFrame,
+    row_idx: int,
+    target_label: str,
+    target_state: str,
+    behaviors: str,
+    phase: str,
+    zone: str,
+    occlusion: str,
+    notes: str,
+    annotator_id: str,
+    primary_file_path: Path,
+    person_name: str,
+):
+    """Save an updated window in 600 review dataset and sync across all review CSVs."""
+    is_phong = "phong" in person_name.lower()
+    p_code = "b" if is_phong else "a"
+    p_dir = "phong" if is_phong else "tai"
+
+    df_600.at[row_idx, "annotation_state"] = target_state
+    df_600.at[row_idx, "participation_label"] = target_label if target_state == "VALID" else ""
+    df_600.at[row_idx, "label_source"] = "HUMAN" if target_state == "VALID" else ""
+    df_600.at[row_idx, "label_rule_version"] = ""
+    df_600.at[row_idx, "annotator_id"] = annotator_id
+    df_600.at[row_idx, "atomic_behavior"] = behaviors
+    df_600.at[row_idx, "class_phase"] = phase
+    df_600.at[row_idx, "zone_id"] = zone
+    df_600.at[row_idx, "occlusion_level"] = occlusion
+    df_600.at[row_idx, "notes"] = notes
+    df_600.at[row_idx, "annotation_guide_version"] = "v0.3-studio"
+    df_600.at[row_idx, "annotation_confidence"] = 0.8
+    df_600.at[row_idx, "phase_verified"] = phase != "UNKNOWN"
+    df_600.at[row_idx, "phase_source"] = "HUMAN_WINDOW_REVIEW" if phase != "UNKNOWN" else "UNKNOWN"
+
+    row_data = df_600.loc[row_idx].to_dict()
+    win_id = df_600.at[row_idx, "window_id"]
+    sess_id = df_600.at[row_idx, "session_id"]
+
+    # 1. Save primary file
+    primary_file_path.parent.mkdir(parents=True, exist_ok=True)
+    df_600.to_csv(primary_file_path, index=False, encoding="utf-8")
+
+    # 2. Sync to review_v03/annotator_<phong|tai>.csv
+    master_path = ROOT / f"data/annotations/review_v03/annotator_{p_dir}.csv"
+    if master_path.is_file() and master_path != primary_file_path:
+        _sync_row_to_master(master_path, win_id, row_data)
+
+    # 3. Sync to review_v03_independent_20261124/annotator_<b|a>.csv
+    indep_path = ROOT / f"data/annotations/review_v03_independent_20261124/annotator_{p_code}.csv"
+    if indep_path.is_file() and indep_path != primary_file_path:
+        _sync_row_to_master(indep_path, win_id, row_data)
+
+    # 4. Sync to session studio review file
+    studio_sess_path = ROOT / "data/annotations/review_v03_studio" / p_dir / f"{sess_id}_cam_A_labels.csv"
+    if studio_sess_path.is_file():
+        _sync_row_to_master(studio_sess_path, win_id, row_data)
+
+    # 5. Sync to main session annotations if matching
+    main_ann_path = ROOT / "data/annotations" / f"{sess_id}_cam_A_annotations.csv"
+    if main_ann_path.is_file():
+        _sync_row_to_master(main_ann_path, win_id, row_data)
+
+
+def _apply_track_to_same_session(
+    df_600: pd.DataFrame, session_id: str, track_id: str, label: str, state: str,
+    annotator_id: str, primary_file_path: Path, person_name: str
+):
+    """Apply label to all windows of this track within the same session."""
+    mask = (df_600["session_id"] == session_id) & (df_600["track_id"].astype(str) == str(track_id))
+    for idx in df_600[mask].index:
+        df_600.at[idx, "participation_label"] = label if state == "VALID" else ""
+        df_600.at[idx, "annotation_state"] = state
+        df_600.at[idx, "label_source"] = "HUMAN" if state == "VALID" else ""
+        df_600.at[idx, "annotator_id"] = annotator_id
+        df_600.at[idx, "annotation_confidence"] = 0.8
+    primary_file_path.parent.mkdir(parents=True, exist_ok=True)
+    df_600.to_csv(primary_file_path, index=False, encoding="utf-8")
 
 
 # ----------------------------------------------------------------------
