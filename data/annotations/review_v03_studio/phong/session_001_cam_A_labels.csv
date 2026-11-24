@@ -1,10 +1,10 @@
 window_id,session_id,camera_id,track_id,t_start_ms,t_end_ms,class_phase,atomic_behavior,participation_label,annotation_state,label_source,label_rule_version,annotation_guide_version,annotation_confidence,occlusion_level,zone_id,annotator_id,notes
-session_001_cam_A_trk001_w0009,session_001,cam_A,1,18202,22102,lecture,,,,,,v0.2,,,,,
-session_001_cam_A_trk003_w0013,session_001,cam_A,3,26203,30103,lecture,,,,,,v0.2,,,,,
-session_001_cam_A_trk023_w0009,session_001,cam_A,23,29903,33804,lecture,,,,,,v0.2,,,,,
-session_001_cam_A_trk029_w0008,session_001,cam_A,29,33604,37504,lecture,,,,,,v0.2,,,,,
-session_001_cam_A_trk001_w0024,session_001,cam_A,1,48205,52106,lecture,,,,,,v0.2,,,,,
-session_001_cam_A_trk005_w0025,session_001,cam_A,5,50206,54106,lecture,,,,,,v0.2,,,,,
+session_001_cam_A_trk001_w0009,session_001,cam_A,1,18202,22102,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.80,moderate,,ANN_PHONG,auto_vis_ratio=0.71
+session_001_cam_A_trk003_w0013,session_001,cam_A,3,26203,30103,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.80,moderate,,ANN_PHONG,auto_vis_ratio=0.71
+session_001_cam_A_trk023_w0009,session_001,cam_A,23,29903,33804,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.80,moderate,,ANN_PHONG,auto_vis_ratio=0.68
+session_001_cam_A_trk029_w0008,session_001,cam_A,29,33604,37504,lecture,BOARD_OR_INSTRUCTOR_FACING,MODERATE_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.70,moderate,,ANN_PHONG,auto_vis_ratio=0.60
+session_001_cam_A_trk001_w0024,session_001,cam_A,1,48205,52106,lecture,BOARD_OR_INSTRUCTOR_FACING,HIGH_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.80,moderate,,ANN_PHONG,auto_vis_ratio=0.70
+session_001_cam_A_trk005_w0025,session_001,cam_A,5,50206,54106,lecture,HEAD_DOWN,LOW_OBSERVED_PARTICIPATION,VALID,HUMAN,,v0.2,0.80,none,,ANN_PHONG,auto_vis_ratio=0.76
 session_001_cam_A_trk006_w0031,session_001,cam_A,6,62207,66107,lecture,,,,,,v0.2,,,,,
 session_001_cam_A_trk001_w0035,session_001,cam_A,1,70208,74108,lecture,,,,,,v0.2,,,,,
 session_001_cam_A_trk021_w0036,session_001,cam_A,21,78509,82409,lecture,,,,,,v0.2,,,,,
