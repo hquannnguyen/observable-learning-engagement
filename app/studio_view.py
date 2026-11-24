@@ -178,6 +178,18 @@ def get_default_label_path(annotator_key: str, session_id: str) -> Path:
     return studio_path
 
 
+def show_image(image, caption=None, target=None):
+    """Display image safely across all Streamlit versions without deprecation warnings."""
+    ctx = target if target is not None else st
+    try:
+        ctx.image(image, caption=caption, width="stretch")
+    except (TypeError, ValueError):
+        try:
+            ctx.image(image, caption=caption, use_container_width=True)
+        except Exception:
+            ctx.image(image, caption=caption)
+
+
 def render_studio_tab(person_name: str, annotator_full_name: str, master_csv_path: Path):
     """Render the full Tien Studio V2 workflow."""
     st.markdown(
@@ -316,22 +328,30 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
         return
 
     # Filtered pos state
-    pos_key = "studio_600_cur_pos"
-    if pos_key not in st.session_state or st.session_state[pos_key] >= len(filtered_indices):
-        # Default to first unfinished in filtered
+    box_key = "select_600_window_pos"
+    if box_key not in st.session_state or st.session_state[box_key] >= len(filtered_indices):
         unfin = [p for p, i in enumerate(filtered_indices) if not is_done_mask.loc[i]]
-        st.session_state[pos_key] = unfin[0] if unfin else 0
+        st.session_state[box_key] = unfin[0] if unfin else 0
 
-    cur_pos = st.session_state[pos_key]
+    def move_600(step: int):
+        st.session_state[box_key] = max(0, min(len(filtered_indices) - 1, st.session_state[box_key] + step))
+
+    def next_unfin_600():
+        cur = st.session_state[box_key]
+        rem = [p for p, i in enumerate(filtered_indices) if p > cur and not is_done_mask.loc[i]]
+        if not rem:
+            rem = [p for p, i in enumerate(filtered_indices) if not is_done_mask.loc[i]]
+        if rem:
+            st.session_state[box_key] = rem[0]
+
+    cur_pos = st.session_state[box_key]
     cur_df_idx = filtered_indices[cur_pos]
     cur_row = df_600.loc[cur_df_idx]
 
     # 2. Navigation bar
     n_col1, n_col2, n_col3, n_col4 = st.columns([1, 6, 1, 3])
 
-    if n_col1.button("⏮️ Trước", key="btn_600_prev", disabled=cur_pos == 0):
-        st.session_state[pos_key] = max(0, cur_pos - 1)
-        st.rerun()
+    n_col1.button("⏮️ Trước", key="btn_600_prev", on_click=move_600, args=(-1,), disabled=cur_pos == 0)
 
     # Dropdown of filtered items
     def _format_window_opt(pos_i: int) -> str:
@@ -347,28 +367,19 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
         return f"{done} #{idx + 1}/600 [{s}] {sess} | Track #{trk} ({t0:g}s-{t1:g}s) ➔ {lbl}"
 
     window_options = list(range(len(filtered_indices)))
-    chosen_pos = n_col2.selectbox(
+    n_col2.selectbox(
         "Cửa sổ đang chọn:",
         window_options,
-        index=cur_pos,
         format_func=_format_window_opt,
         label_visibility="collapsed",
-        key="select_600_window_box",
+        key=box_key,
     )
-    if chosen_pos != cur_pos:
-        st.session_state[pos_key] = chosen_pos
-        st.rerun()
 
-    if n_col3.button("Tiếp ⏭️", key="btn_600_next", disabled=cur_pos == len(filtered_indices) - 1):
-        st.session_state[pos_key] = min(len(filtered_indices) - 1, cur_pos + 1)
-        st.rerun()
+    n_col3.button("Tiếp ⏭️", key="btn_600_next", on_click=move_600, args=(1,), disabled=cur_pos == len(filtered_indices) - 1)
 
     # Next unfinished button
-    unfin_after = [p for p, i in enumerate(filtered_indices) if p > cur_pos and not is_done_mask.loc[i]]
-    unfin_any = [p for p, i in enumerate(filtered_indices) if not is_done_mask.loc[i]]
-    if n_col4.button("⏩ Đến cửa sổ chưa gán", key="btn_600_unfin", disabled=not unfin_any):
-        st.session_state[pos_key] = unfin_after[0] if unfin_after else unfin_any[0]
-        st.rerun()
+    unfin_any = any(not is_done_mask.loc[i] for i in filtered_indices)
+    n_col4.button("⏩ Đến cửa sổ chưa gán", key="btn_600_unfin", on_click=next_unfin_600, disabled=not unfin_any)
 
     # Toggles bar
     t_c1, t_c2, t_c3 = st.columns(3)
@@ -431,7 +442,7 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
                 show_skeleton=show_kpts_600,
                 blur_face=blur_face_600,
             )
-            st.image(annotated_scene, use_column_width=True)
+            show_image(annotated_scene)
         else:
             st.warning(f"Chưa mở được video: {v_path}")
 
@@ -450,7 +461,7 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
         )
         strip_cols = st.columns(5)
         for idx_kpt, (lbl_kpt, img_kpt) in enumerate(strip_frames):
-            strip_cols[idx_kpt].image(img_kpt, caption=lbl_kpt, use_column_width=True)
+            show_image(img_kpt, caption=lbl_kpt, target=strip_cols[idx_kpt])
 
         st.info(
             f"👤 **Thông số Track #{track_id}:** Vùng ghế: **{cur_row.get('zone_id', 'M-C')}** • Pha học: **{cur_row.get('class_phase', 'lecture')}** • Tập: **{cur_row.get('split', '').upper()}**\n\n"
@@ -557,11 +568,12 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
 
             # Auto advance to next unfinished window
             if auto_jump_600 or save_btn_600:
-                rem_unfin = [p for p, i in enumerate(filtered_indices) if p > cur_pos and not is_done_mask.loc[i]]
+                cur = st.session_state[box_key]
+                rem_unfin = [p for p, i in enumerate(filtered_indices) if p > cur and not is_done_mask.loc[i]]
                 if rem_unfin:
-                    st.session_state[pos_key] = rem_unfin[0]
-                elif cur_pos + 1 < len(filtered_indices):
-                    st.session_state[pos_key] = cur_pos + 1
+                    st.session_state[box_key] = rem_unfin[0]
+                elif cur + 1 < len(filtered_indices):
+                    st.session_state[box_key] = cur + 1
             st.rerun()
 
         # Batch apply to same track in this session
@@ -739,14 +751,14 @@ def _render_step_1(person_name: str, annotator_full_name: str):
                 # Add text overlay
                 f_s_drawn = f_start.copy()
                 cv2.putText(f_s_drawn, f"DIEM BAT DAU: {start_s:.1f}s", (30, 60), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (50, 220, 50), 3)
-                p_col1.image(f_s_drawn, caption=f"Khung hình bắt đầu: {start_s:.1f}s", use_column_width=True)
+                show_image(f_s_drawn, caption=f"Khung hình bắt đầu: {start_s:.1f}s", target=p_col1)
             else:
                 p_col1.warning("Chưa đọc được khung hình bắt đầu.")
 
             if f_end is not None:
                 f_e_drawn = f_end.copy()
                 cv2.putText(f_e_drawn, f"DIEM KET THUC: {end_s:.1f}s", (30, 60), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (240, 200, 30), 3)
-                p_col2.image(f_e_drawn, caption=f"Khung hình kết thúc: {end_s:.1f}s", use_column_width=True)
+                show_image(f_e_drawn, caption=f"Khung hình kết thúc: {end_s:.1f}s", target=p_col2)
             else:
                 p_col2.warning("Chưa đọc được khung hình kết thúc.")
 
@@ -849,11 +861,19 @@ def _render_step_2(person_name: str, annotator_full_name: str, master_csv_path: 
     total_slices = len(time_slices)
 
     # State for slice index
-    slice_idx_key = "studio_slice_idx"
-    if slice_idx_key not in st.session_state or st.session_state[slice_idx_key] >= total_slices:
-        st.session_state[slice_idx_key] = 0
+    slice_box_key = "select_slice_box"
+    if slice_box_key not in st.session_state or st.session_state[slice_box_key] >= total_slices:
+        st.session_state[slice_box_key] = 0
 
-    cur_slice_idx = st.session_state[slice_idx_key]
+    student_box_key = "select_student_box"
+    if student_box_key not in st.session_state:
+        st.session_state[student_box_key] = 0
+
+    def move_slice(step: int):
+        st.session_state[slice_box_key] = max(0, min(total_slices - 1, st.session_state[slice_box_key] + step))
+        st.session_state[student_box_key] = 0
+
+    cur_slice_idx = st.session_state[slice_box_key]
     cur_t_start = int(time_slices.loc[cur_slice_idx, "t_start_ms"])
     cur_t_end = int(time_slices.loc[cur_slice_idx, "t_end_ms"])
 
@@ -863,12 +883,10 @@ def _render_step_2(person_name: str, annotator_full_name: str, master_csv_path: 
     slice_indices = list(slice_df.index)
     total_students_slice = len(slice_indices)
 
-    # State for student index within slice
-    student_idx_key = "studio_student_idx_in_slice"
-    if student_idx_key not in st.session_state or st.session_state[student_idx_key] >= total_students_slice:
-        st.session_state[student_idx_key] = 0
+    if st.session_state[student_box_key] >= total_students_slice:
+        st.session_state[student_box_key] = 0
 
-    cur_student_pos = st.session_state[student_idx_key]
+    cur_student_pos = st.session_state[student_box_key]
     if total_students_slice > 0:
         cur_row_idx = slice_indices[cur_student_pos]
         cur_row = df_lbl.loc[cur_row_idx]
@@ -882,10 +900,7 @@ def _render_step_2(person_name: str, annotator_full_name: str, master_csv_path: 
     top_c1, top_c2, top_c3, top_c4, top_c5 = st.columns([1, 4, 1, 4, 2])
 
     # Slice prev/next
-    if top_c1.button("⏮️ Trước", key="btn_slice_prev", disabled=cur_slice_idx == 0):
-        st.session_state[slice_idx_key] = max(0, cur_slice_idx - 1)
-        st.session_state[student_idx_key] = 0
-        st.rerun()
+    top_c1.button("⏮️ Trước", key="btn_slice_prev", on_click=move_slice, args=(-1,), disabled=cur_slice_idx == 0)
 
     slice_labels = []
     for s_i, s_row in time_slices.iterrows():
@@ -896,23 +911,15 @@ def _render_step_2(person_name: str, annotator_full_name: str, master_csv_path: 
         status_tag = "[✓ Xong]" if done_s == len(sub_s) else f"[{done_s}/{len(sub_s)}]"
         slice_labels.append(f"Mốc #{s_i + 1}/{total_slices} ({t0_s:g}s-{t1_s:g}s) • {len(sub_s)} SV {status_tag}")
 
-    chosen_slice_label = top_c2.selectbox(
+    top_c2.selectbox(
         "Mốc 4s:",
-        slice_labels,
-        index=cur_slice_idx,
+        list(range(total_slices)),
+        format_func=lambda idx: slice_labels[idx],
         label_visibility="collapsed",
-        key="select_slice_box",
+        key=slice_box_key,
     )
-    new_slice_idx = slice_labels.index(chosen_slice_label)
-    if new_slice_idx != cur_slice_idx:
-        st.session_state[slice_idx_key] = new_slice_idx
-        st.session_state[student_idx_key] = 0
-        st.rerun()
 
-    if top_c3.button("Tiếp ⏭️", key="btn_slice_next", disabled=cur_slice_idx == total_slices - 1):
-        st.session_state[slice_idx_key] = min(total_slices - 1, cur_slice_idx + 1)
-        st.session_state[student_idx_key] = 0
-        st.rerun()
+    top_c3.button("Tiếp ⏭️", key="btn_slice_next", on_click=move_slice, args=(1,), disabled=cur_slice_idx == total_slices - 1)
 
     # Student dropdown in slice
     student_labels = []
@@ -925,17 +932,13 @@ def _render_step_2(person_name: str, annotator_full_name: str, master_csv_path: 
         student_labels.append(f"{is_d} SV #{pos_i + 1}: Track #{t_id} ({zone}) -> {p_lbl or 'Chưa duyệt'}")
 
     if student_labels:
-        chosen_student_label = top_c4.selectbox(
+        top_c4.selectbox(
             "SV:",
-            student_labels,
-            index=cur_student_pos,
+            list(range(len(student_labels))),
+            format_func=lambda idx: student_labels[idx],
             label_visibility="collapsed",
-            key="select_student_box",
+            key=student_box_key,
         )
-        new_student_pos = student_labels.index(chosen_student_label)
-        if new_student_pos != cur_student_pos:
-            st.session_state[student_idx_key] = new_student_pos
-            st.rerun()
 
     # View options
     show_kpts = top_c5.checkbox("Khung xương", value=True, key="opt_show_kpts")
@@ -985,7 +988,7 @@ def _render_step_2(person_name: str, annotator_full_name: str, master_csv_path: 
                 show_skeleton=show_kpts,
                 blur_face=blur_face,
             )
-            st.image(annotated_scene, use_column_width=True)
+            show_image(annotated_scene)
         else:
             st.warning("Chưa mở được video hoặc frame tại mốc này.")
 
@@ -1006,7 +1009,7 @@ def _render_step_2(person_name: str, annotator_full_name: str, master_csv_path: 
             )
             strip_cols = st.columns(5)
             for idx_kpt, (lbl_kpt, img_kpt) in enumerate(strip_frames):
-                strip_cols[idx_kpt].image(img_kpt, caption=lbl_kpt, use_column_width=True)
+                show_image(img_kpt, caption=lbl_kpt, target=strip_cols[idx_kpt])
 
         # Overview statistics line
         c_high = int((slice_df["participation_label"] == HIGH).sum())
@@ -1154,12 +1157,12 @@ def _render_step_2(person_name: str, annotator_full_name: str, master_csv_path: 
                 # Auto jump to next student if enabled
                 if auto_jump or save_clicked:
                     if cur_student_pos + 1 < total_students_slice:
-                        st.session_state[student_idx_key] = cur_student_pos + 1
+                        st.session_state[student_box_key] = cur_student_pos + 1
                     else:
                         # Advance to next slice if available
                         if cur_slice_idx + 1 < total_slices:
-                            st.session_state[slice_idx_key] = cur_slice_idx + 1
-                            st.session_state[student_idx_key] = 0
+                            st.session_state[slice_box_key] = cur_slice_idx + 1
+                            st.session_state[student_box_key] = 0
                 st.rerun()
 
             # Fast forward across whole 60s for this track
