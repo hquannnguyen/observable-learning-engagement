@@ -45,14 +45,19 @@ def blur_head_roi(
 
     # Estimate head box from face keypoints if available (points 0..4)
     face_kpts = keypoints[:5]
-    valid_face = face_kpts[face_kpts[:, 2] > 0.2]
+    valid_face = face_kpts[
+        np.isfinite(face_kpts[:, 0])
+        & np.isfinite(face_kpts[:, 1])
+        & np.isfinite(face_kpts[:, 2])
+        & (face_kpts[:, 2] > 0.2)
+    ]
 
     if len(valid_face) >= 2:
         hx1 = max(0, int(np.min(valid_face[:, 0]) - 15))
         hy1 = max(0, int(np.min(valid_face[:, 1]) - 15))
         hx2 = min(w, int(np.max(valid_face[:, 0]) + 15))
         hy2 = min(h, int(np.max(valid_face[:, 1]) + 15))
-    else:
+    elif np.all(np.isfinite([x1, y1, x2, y3])):
         # Fallback: top 25% of bounding box
         box_w = x2 - x1
         box_h = y3 - y1
@@ -60,6 +65,8 @@ def blur_head_roi(
         hy1 = max(0, int(y1))
         hx2 = min(w, int(x2 - 0.15 * box_w))
         hy2 = min(h, int(y1 + 0.28 * box_h))
+    else:
+        return image
 
     if hx2 > hx1 + 4 and hy2 > hy1 + 4:
         head_roi = image[hy1:hy2, hx1:hx2]
@@ -81,7 +88,14 @@ def draw_skeleton(
     for pt1_idx, pt2_idx in SKELETON_PAIRS:
         x1, y1, c1 = keypoints[pt1_idx]
         x2, y2, c2 = keypoints[pt2_idx]
-        if c1 >= conf_threshold and c2 >= conf_threshold:
+        if (
+            np.isfinite(x1)
+            and np.isfinite(y1)
+            and np.isfinite(x2)
+            and np.isfinite(y2)
+            and c1 >= conf_threshold
+            and c2 >= conf_threshold
+        ):
             cv2.line(
                 image,
                 (int(round(x1)), int(round(y1))),
@@ -94,7 +108,7 @@ def draw_skeleton(
     # Draw joint points
     for idx in range(len(keypoints)):
         x, y, c = keypoints[idx]
-        if c >= conf_threshold:
+        if np.isfinite(x) and np.isfinite(y) and c >= conf_threshold:
             cv2.circle(image, (int(round(x)), int(round(y))), 4, (255, 255, 255), -1, cv2.LINE_AA)
             cv2.circle(image, (int(round(x)), int(round(y))), 2, color, -1, cv2.LINE_AA)
 
