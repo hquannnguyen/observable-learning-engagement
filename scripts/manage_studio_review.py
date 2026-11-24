@@ -110,7 +110,19 @@ def export_sessions():
             split = SESSION_SPLIT_MAP.get(s, "train")
             logger.info("  [%s] %s (%s): %d windows -> %s", person.upper(), s, split.upper(), len(sub_df), out_path.name)
 
-        # 2. Group class_1..class_5 (7 windows total in train)
+        # 2. Individual class_1..class_5 files matching each video & pose
+        for c in ["class_1", "class_2", "class_3", "class_4", "class_5"]:
+            c_df = df[df["session_id"] == c].copy()
+            if not c_df.empty:
+                for col in CANONICAL_COLUMNS:
+                    if col not in c_df.columns:
+                        c_df[col] = ""
+                c_df = c_df[CANONICAL_COLUMNS]
+                out_c = sub_dir / f"{c}_cam_A_labels.csv"
+                c_df.to_csv(out_c, index=False, encoding="utf-8")
+                logger.info("  [%s] %s (TRAIN): %d windows -> %s", person.upper(), c, len(c_df), out_c.name)
+
+        # Also keep combined classes_train_labels.csv for backward compatibility
         class_df = df[df["session_id"].str.startswith("class_")].copy()
         if not class_df.empty:
             for col in CANONICAL_COLUMNS:
@@ -119,7 +131,6 @@ def export_sessions():
             class_df = class_df[CANONICAL_COLUMNS]
             out_class = sub_dir / "classes_train_labels.csv"
             class_df.to_csv(out_class, index=False, encoding="utf-8")
-            logger.info("  [%s] class_1..5 (TRAIN): %d windows -> %s", person.upper(), len(class_df), out_class.name)
 
     logger.info("Export completed! All session CSVs are ready for AnnotationStudio.")
 

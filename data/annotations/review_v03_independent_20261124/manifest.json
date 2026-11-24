@@ -1,0 +1,7 @@
+{
+  "source_template": "data\\annotations\\review_v03\\annotation_template.csv",
+  "source_sha256": "3e2eb3525a4442bffee3e9ceb1c6e3ea629bbb345593761a381c59bc6779cd70",
+  "annotator_a": "Tài",
+  "annotator_b": "Phong",
+  "purpose": "Phiếu trống độc lập; nhãn cũ giữ nguyên để đối chiếu; review_v03 vẫn là nguồn danh sách cửa sổ."
+}

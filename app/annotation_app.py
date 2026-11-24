@@ -20,6 +20,7 @@ PEOPLE = {
     "Quân": ("Nguyễn Hữu Quân", "annotator_a.csv"),
 }
 DATASET_NAMES = {
+    "review_v03_independent_20261124": "600 cửa sổ · phiếu độc lập Phong và Tài",
     "review_v03": "Bộ gán nhãn v0.3 (600 cửa sổ YOLO11)",
     "human_review_v0_2": "Dataset cũ · bộ gán nhãn chính",
     "external_review_20261109": "Hai video mới · đánh giá bổ sung",
@@ -61,7 +62,7 @@ with st.expander("Cơ sở gán nhãn: hành vi nào phù hợp với từng ho�
 
 person = st.radio("Bạn là người gán nào?", list(PEOPLE), index=None, horizontal=True)
 if person is None:
-    st.info("Chọn Quân hoặc Phong để mở phiếu của bạn.")
+    st.info("Chọn Phong hoặc Tài để mở phiếu của bạn.")
     st.stop()
 annotator, filename = PEOPLE[person]
 forms = sorted((ROOT / "data/annotations").glob(f"**/{filename}"), key=lambda p: (p.parent.name != "human_review_v0_2", str(p)))
