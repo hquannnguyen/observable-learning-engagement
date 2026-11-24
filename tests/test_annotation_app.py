@@ -41,6 +41,10 @@ def updates(name="Nguyễn Hữu Quân", **extra):
 
 def app_for(root):
     source = (ROOT / "app/annotation_app.py").read_text(encoding="utf-8")
+    # These tests exercise the rubric form against isolated CSVs. Studio has
+    # its own ROOT and must not read real participant data during this fixture.
+    source = source.replace("from app.studio_view import render_studio_tab",
+                            "def render_studio_tab(*args, **kwargs): pass")
     source = source.replace("ROOT = Path(__file__).resolve().parents[1]", f"ROOT = Path({str(root)!r})")
     return AppTest.from_string(source, default_timeout=30).run()
 

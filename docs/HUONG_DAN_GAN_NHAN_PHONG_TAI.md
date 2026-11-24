@@ -112,3 +112,13 @@ python scripts/manage_studio_review.py --merge
 # 3. Đo lường chỉ số đồng thuận Cohen's Kappa giữa Phong và Tài
 python scripts/dataset_qa.py --annotator-a data/annotations/review_v03/annotator_tai.csv --annotator-b data/annotations/review_v03/annotator_phong.csv --min-kappa 0.70
 ```
+
+## 6. Chế độ Studio 600 sau cập nhật
+
+Chọn tab Studio và chế độ **Gán 600 Cửa Sổ Chuẩn**. Phiếu 600 của Phong/Tài được lưu riêng, không tự đồng bộ qua phiếu master hoặc Studio cũ. Trước khi lưu VALID, xem clip cả cửa sổ, xác nhận đúng người, chọn hành vi, xác định phase kèm căn cứ và bốn khoảng bằng chứng phù hợp mức được chọn. Có thể dùng ảnh tĩnh để hỗ trợ, không thay thế clip. Nếu bị che hoặc lỗi track, chọn trạng thái phù hợp và ghi lý do. Theo yêu cầu người dùng, bỏ che mặt mặc định trong Studio 600; bỏ chọn checkbox để bật làm mờ lại. Các nút là nút bấm chuột, không công bố phím tắt. Không gán hàng loạt cho toàn track. Khuyến nghị mỗi người chỉ mở một phiên ứng dụng cho phiếu của mình để tránh hai lần lưu đồng thời.
+
+Các chế độ Studio theo session khác vẫn là luồng cũ và chưa được kiểm định lại theo quy trình 600 ở đây. Nhãn cũ và phần đồng bộ giữa các phiếu phải rà soát riêng; không chạy các script cũ để ghi đè dữ liệu.
+
+### Thay đổi thao tác Studio theo yêu cầu người dùng
+
+Chế độ Studio 600 đã bỏ bốn ô bằng chứng theo khoảng và điều kiện suy ra nhãn từ bốn khoảng. Người gán đánh giá toàn cửa sổ theo `docs/annotation_guide.md` v0.2. Vẫn cần clip, hành vi, căn cứ pha và xác nhận đã xem để lưu VALID. Nhãn mới ghi `annotation_guide_version=v0.2`, phương pháp `WHOLE_WINDOW_HUMAN_REVIEW`; nhãn cũ giữ nguyên phiên bản, cần rà soát nếu gộp với v0.3-pilot. Tab rubric riêng vẫn là tiêu chí thí điểm bốn khoảng. Nội dung này thay thế yêu cầu bốn khoảng của chế độ Studio ở các phần trên.

@@ -12,7 +12,7 @@ EDITABLE_FIELDS = {
     "participation_label", "label_source", "label_rule_version", "annotator_id",
     "atomic_behavior", "annotation_confidence", "occlusion_level", "notes",
     "annotation_guide_version",
-    "annotation_evidence", "phase_evidence",
+    "annotation_evidence", "phase_evidence", "zone_id",
 }
 
 

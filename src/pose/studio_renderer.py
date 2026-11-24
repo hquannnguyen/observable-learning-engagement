@@ -90,6 +90,8 @@ def render_classroom_scene(
     show_skeleton: bool = True,
     blur_face: bool = False,
     conf_threshold: float = 0.30,
+    *,
+    show_all_skeletons: bool = True,
 ) -> np.ndarray:
     """Render full classroom scene with colored bounding boxes and skeleton overlays.
     
@@ -99,6 +101,7 @@ def render_classroom_scene(
         selected_track_id: ID of the student currently selected.
         labels_by_track: Map of track_id -> (participation_label, annotation_state).
         show_skeleton: Whether to draw skeleton bones and keypoints.
+        show_all_skeletons: Also draw skeletons for non-selected tracks when enabled.
         blur_face: Whether to apply privacy blurring to heads.
         conf_threshold: Minimum confidence for drawing keypoints.
         
@@ -125,7 +128,7 @@ def render_classroom_scene(
         label, state = labels_by_track.get(t_id, ("", "VALID"))
         color = get_label_color(label, state)
         _draw_student_box_and_skeleton(
-            canvas, row, color, is_selected=False, show_skeleton=show_skeleton,
+            canvas, row, color, is_selected=False, show_skeleton=show_skeleton and show_all_skeletons,
             blur_face=blur_face, conf_threshold=conf_threshold, label=label,
         )
 
