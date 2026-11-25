@@ -86,3 +86,7 @@ tests/.tmp/
 .pytest_cache/
 .pytest_temp/
 /data/annotations/relabel_reviews/
+
+# Desktop annotation tool build artifacts
+dist_desktop/
+build_desktop/
