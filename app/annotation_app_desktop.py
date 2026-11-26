@@ -583,12 +583,15 @@ def load_suggestions_map(path: Path) -> Dict[str, Dict[str, Any]]:
 class AnnotationAppController:
     """State + persistence manager mirroring `app/annotation_app.py` behaviour."""
 
+    ZONE_MEMORY_PATH = ROOT / "data" / "annotations" / "track_zone_memory.json"
+
     def __init__(self, root: Path = ROOT):
         self.root = Path(root)
         self.pose_cache: Dict[Path, pd.DataFrame] = {}
         self.suggestions_cache: Dict[Path, Dict[str, Dict[str, Any]]] = {}
         self.media_cache: "OrderedDict[Tuple[str, bool, bool], Tuple[List[np.ndarray], List[Tuple[str, np.ndarray]], str]]" = OrderedDict()
         self.track_zone_memory: Dict[str, str] = {}
+        self._zone_file_cache: Optional[Dict[str, str]] = None
 
         self.person_short: str = ""
         self.person_full: str = ""
@@ -673,19 +676,54 @@ class AnnotationAppController:
             return None
         return int(self.filtered_indices[self.cur_pos])
 
+    # -- persistent zone memory (survives restarts, shared across datasets) --
+
+    @staticmethod
+    def zone_key(session_id: str, camera_id: str, track_id: Any) -> str:
+        return f"{session_id}:{camera_id}:{track_id}"
+
+    def _load_zone_file(self) -> Dict[str, str]:
+        if self._zone_file_cache is None:
+            try:
+                text = self.ZONE_MEMORY_PATH.read_text(encoding="utf-8")
+                data = json.loads(text)
+                self._zone_file_cache = {str(k): str(v) for k, v in data.items()} if isinstance(data, dict) else {}
+            except (OSError, ValueError):
+                self._zone_file_cache = {}
+        return self._zone_file_cache
+
+    def _save_zone_file(self, key: str, zone: str) -> None:
+        store = self._load_zone_file()
+        store[key] = zone
+        try:
+            tmp = self.ZONE_MEMORY_PATH.with_suffix(".tmp")
+            tmp.write_text(json.dumps(store, ensure_ascii=False, indent=1), encoding="utf-8")
+            tmp.replace(self.ZONE_MEMORY_PATH)
+        except OSError:
+            logger.warning("Khong luu duoc bo nho vung ghe: %s", self.ZONE_MEMORY_PATH)
+
     def remembered_zone_for_row(self, row: pd.Series) -> str:
         stored = str(row.get("zone_id", "")).strip()
         if stored:
             return stored
         if self.dataset_path is None:
             return ""
-        key = f"{self.dataset_path.resolve()}:{row['session_id']}:{row.get('camera_id', 'cam_A')}:{row['track_id']}"
+        session_id = str(row["session_id"])
+        camera_id = str(row.get("camera_id", "cam_A") or "cam_A")
+        track_id = str(row["track_id"])
+        key = self.zone_key(session_id, camera_id, track_id)
+        # 1) remembered within this app session
         if key in self.track_zone_memory:
             return self.track_zone_memory[key]
+        # 2) persistent memory file — survives restarts, works across datasets
+        persistent = self._load_zone_file().get(key, "")
+        if persistent:
+            return persistent
+        # 3) same track already labelled inside the current phiếu
         same = self.df[
-            self.df["session_id"].astype(str).eq(str(row["session_id"]))
-            & self.df["camera_id"].astype(str).eq(str(row.get("camera_id", "cam_A")))
-            & self.df["track_id"].astype(str).eq(str(row["track_id"]))
+            self.df["session_id"].astype(str).eq(session_id)
+            & self.df["camera_id"].astype(str).eq(camera_id)
+            & self.df["track_id"].astype(str).eq(track_id)
         ]
         zones = same["zone_id"].fillna("").astype(str).str.strip()
         uniq = zones[zones.ne("")].unique()
@@ -769,8 +807,9 @@ class AnnotationAppController:
             saved_ids.append(str(self.df.at[f_idx, "window_id"]))
 
         if zone:
-            key = f"{self.dataset_path.resolve()}:{row['session_id']}:{row.get('camera_id', 'cam_A')}:{row['track_id']}"
+            key = self.zone_key(str(row["session_id"]), str(row.get("camera_id", "cam_A") or "cam_A"), row["track_id"])
             self.track_zone_memory[key] = zone
+            self._save_zone_file(key, zone)
 
         self.df = read_annotation_csv(self.dataset_path)
         return saved_ids
