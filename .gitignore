@@ -90,3 +90,12 @@ tests/.tmp/
 # Desktop annotation tool build artifacts
 dist_desktop/
 build_desktop/
+AnnotationStudio_Desktop.exe
+
+# Generated feature variants, demo/bundle media, and backup annotation files
+/data/features_v02_yolo11_weak_r2/
+/data/features_v02_yolo11_weak_r2_lecture/
+/data/annotations/**/ai_bundles/images/
+/data/annotations/**/ai_bundles/web_llm_batches/
+/reports/demo_test/**/*.mp4
+*.bak_*
