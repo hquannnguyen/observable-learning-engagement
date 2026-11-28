@@ -1,8 +1,9 @@
 """Person-specific review clips from existing tracks; no engagement predictions."""
 import hashlib
 import json
+import shutil
 import subprocess
-import tempfile
+import uuid
 from pathlib import Path
 
 import cv2
@@ -116,43 +117,45 @@ def render_annotation_preview(video_path, pose_path, track_id, start_ms, end_ms,
     start_frame = round(float(start_ms) * native_fps / 1000)
     cap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
     current_frame, rendered, matched = start_frame, 0, 0
+    work = cache_dir / f".work_{uuid.uuid4().hex[:12]}"
     try:
-        with tempfile.TemporaryDirectory(dir=cache_dir) as work:
-            raw = Path(work) / "raw.mp4"
-            writer = cv2.VideoWriter(str(raw), cv2.VideoWriter_fourcc(*"mp4v"), 10, (1280, 592))
-            if not writer.isOpened():
-                raise ValueError("Không tạo được clip xem người cần gán.")
-            try:
-                for timestamp in np.arange(float(start_ms), float(end_ms) + .01, 100):
-                    desired = round(timestamp * native_fps / 1000)
-                    while current_frame < desired:
-                        if not cap.grab():
-                            break
-                        current_frame += 1
-                    ok, frame = cap.read()
-                    current_frame += 1
-                    if not ok:
+        work.mkdir(parents=True, exist_ok=True)
+        raw = work / "raw.mp4"
+        writer = cv2.VideoWriter(str(raw), cv2.VideoWriter_fourcc(*"mp4v"), 10, (1280, 592))
+        if not writer.isOpened():
+            raise ValueError("Không tạo được clip xem người cần gán.")
+        try:
+            for timestamp in np.arange(float(start_ms), float(end_ms) + .01, 100):
+                desired = round(timestamp * native_fps / 1000)
+                while current_frame < desired:
+                    if not cap.grab():
                         break
-                    boxes = nearest_frame_boxes(poses, timestamp)
-                    result, found = compose_target_frame(frame, boxes, track_id, crop, timestamp, anonymize, skeleton)
-                    writer.write(result)
-                    matched += int(found)
-                    rendered += 1
-            finally:
-                writer.release()
-            expected_frames = len(np.arange(float(start_ms), float(end_ms) + .01, 100))
-            if not matched or rendered != expected_frames:
-                raise ValueError("Video không phủ đủ khoảng cần gán hoặc không tìm thấy đúng track.")
-            encoded = Path(work) / "encoded.mp4"
-            try:
-                subprocess.run([ffmpeg_executable(), "-y", "-loglevel", "error", "-i", str(raw), "-an", "-c:v", "libx264",
-                    "-preset", "ultrafast", "-crf", "22", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(encoded)],
-                    check=True, capture_output=True)
-            except subprocess.SubprocessError as exc:
-                raise RuntimeError("Không chuyển được clip sang H.264.") from exc
-            encoded.replace(output)
+                    current_frame += 1
+                ok, frame = cap.read()
+                current_frame += 1
+                if not ok:
+                    break
+                boxes = nearest_frame_boxes(poses, timestamp)
+                result, found = compose_target_frame(frame, boxes, track_id, crop, timestamp, anonymize, skeleton)
+                writer.write(result)
+                matched += int(found)
+                rendered += 1
+        finally:
+            writer.release()
+        expected_frames = len(np.arange(float(start_ms), float(end_ms) + .01, 100))
+        if not matched or rendered != expected_frames:
+            raise ValueError("Video không phủ đủ khoảng cần gán hoặc không tìm thấy đúng track.")
+        encoded = work / "encoded.mp4"
+        try:
+            subprocess.run([ffmpeg_executable(), "-y", "-loglevel", "error", "-i", str(raw), "-an", "-c:v", "libx264",
+                "-preset", "ultrafast", "-crf", "22", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(encoded)],
+                check=True, capture_output=True)
+        except subprocess.SubprocessError as exc:
+            raise RuntimeError("Không chuyển được clip sang H.264.") from exc
+        encoded.replace(output)
     finally:
         cap.release()
+        shutil.rmtree(work, ignore_errors=True)
     audit = {"track_id":str(track_id), "t_start_ms":float(start_ms), "t_end_ms":float(end_ms),
              "frames":rendered, "target_visible_frames":matched, "source":str(video_path), "poses":str(pose_path), "anonymize":anonymize}
     audit_path.write_text(json.dumps(audit, indent=2))

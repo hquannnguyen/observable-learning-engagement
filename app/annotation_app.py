@@ -1,6 +1,7 @@
 """Independent human annotation for Quân and Phong. No model labels are shown."""
 import sys
 import json
+import tempfile
 from pathlib import Path
 
 import pandas as pd
@@ -22,6 +23,9 @@ PEOPLE = {
 }
 DATASET_NAMES = {
     "review_v03_independent_20261124": "600 cửa sổ · phiếu độc lập Phong và Tài",
+    "train_full_ai_assist": "Tập TRAIN đầy đủ (9.888 cửa sổ · class_1..5, session_001..002)",
+    "val_full_ai_assist": "Tập VAL đầy đủ (8.617 cửa sổ · session_003..004)",
+    "test_full_ai_assist": "Tập TEST đầy đủ (4.889 cửa sổ · session_005..006)",
     "review_v03": "Bộ gán nhãn v0.3 (600 cửa sổ YOLO11)",
     "human_review_v0_2": "Dataset cũ · bộ gán nhãn chính",
     "external_review_20261109": "Hai video mới · đánh giá bổ sung",
@@ -66,8 +70,15 @@ if person is None:
     st.info("Chọn Phong hoặc Tài để mở phiếu của bạn.")
     st.stop()
 annotator, filename = PEOPLE[person]
-priority = {"review_v03_independent_20261124": 0, "human_review_v0_2": 1}
-forms = sorted((ROOT / "data/annotations").glob(f"**/{filename}"), key=lambda p: (priority.get(p.parent.name, 2), str(p)))
+priority = {
+    "review_v03_independent_20261124": 0,
+    "train_full_ai_assist": 1,
+    "val_full_ai_assist": 2,
+    "test_full_ai_assist": 3,
+    "human_review_v0_2": 4,
+    "external_review_20261109": 5,
+}
+forms = sorted((ROOT / "data/annotations").glob(f"**/{filename}"), key=lambda p: (priority.get(p.parent.name, 6), str(p)))
 if not forms:
     st.info("Chưa có phiếu. Chuẩn bị bộ review bằng scripts/prepare_inference_annotations.py.")
     st.stop()
@@ -139,12 +150,14 @@ with tab_rubric:
             pose_path = ROOT / pose_path
     if video.is_file() and pose_path.is_file():
         try:
+            cache_dir = Path(tempfile.gettempdir()) / "cvf25prj10_annotation_preview"
             with st.spinner(f"Đang làm nổi bật người ID {row['track_id']} trong đúng đoạn video…"):
                 focused, focus_meta = render_annotation_preview(video, pose_path, row["track_id"],
-                    float(row["t_start_ms"]), float(row["t_end_ms"]), ROOT / "data/annotations/.preview_cache")
+                    float(row["t_start_ms"]), float(row["t_end_ms"]), cache_dir)
+                clip_bytes = focused.read_bytes()
             st.subheader(f"Chỉ gán người trong khung VÀNG — ID {row['track_id']}")
             st.caption("Bên trái: người cần gán sáng hơn và có khung vàng. Bên phải: phóng to cùng người đó. Khi không thấy đúng ID, clip báo không quan sát được; không theo người khác để đoán tiếp.")
-            st.video(str(focused), loop=True)
+            st.video(clip_bytes, format="video/mp4", loop=True)
         except (ValueError, OSError, RuntimeError) as exc:
             st.warning(f"Chưa định vị được người cần gán: {exc}. Không gán mức tham gia khi chưa xác định đúng người.")
     else:

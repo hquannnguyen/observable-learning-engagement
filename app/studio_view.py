@@ -36,6 +36,14 @@ from src.pose.studio_renderer import (
     render_classroom_scene,
     render_progression_strip,
 )
+from src.pose.ai_bundle import (
+    build_web_llm_prompt,
+    build_window_contact_sheet,
+    load_suggestions_map,
+    parse_and_validate_suggestions,
+    propose_local_suggestion,
+    save_suggestions_map,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -225,6 +233,7 @@ def render_studio_tab(person_name: str, annotator_full_name: str, master_csv_pat
     # Studio Mode Selector
     mode_options = [
         "🎯 Gán 600 Cửa Sổ Chuẩn (Review V0.3 - Khuyên Dùng)",
+        "🗂️ Gán Nhãn Tập Đầy Đủ (Train / Val / Test — Khác Bộ 600)",
         "👥 Duyệt Theo Mốc 4s Toàn Lớp (Theo Session / Cắt Đoạn)",
     ]
     studio_mode = st.radio(
@@ -236,6 +245,8 @@ def render_studio_tab(person_name: str, annotator_full_name: str, master_csv_pat
 
     if studio_mode == mode_options[0]:
         _render_600_windows_studio(person_name, annotator_full_name, master_csv_path)
+    elif studio_mode == mode_options[1]:
+        _render_full_datasets_studio(person_name, annotator_full_name, master_csv_path)
     else:
         # 3-step session workflow
         step = st.radio(
@@ -258,57 +269,151 @@ def render_studio_tab(person_name: str, annotator_full_name: str, master_csv_pat
 
 
 # ----------------------------------------------------------------------
-# CHẾ ĐỘ 1: GÁN TRỰC TIẾP 600 CỬA SỔ CHUẨN (REVIEW V0.3)
+# CHẾ ĐỘ 1 & 2: GÁN TRỰC TIẾP 600 CỬA SỔ CHUẨN HOẶC TẬP ĐẦY ĐỦ (TRAIN / VAL / TEST)
 # ----------------------------------------------------------------------
 def _render_600_windows_studio(person_name: str, annotator_full_name: str, master_csv_path: Path):
     """Interactive Studio view for direct review of 600 sampled windows."""
-    st.subheader(f"🎯 GÁN NHÃN 600 CỬA SỔ CHUẨN — {annotator_full_name}")
-    st.caption("Xem clip đầy đủ, xác minh đúng track và ghi bằng chứng cho từng cửa sổ.")
-
-    # Determine 600-window file for this person
-    is_phong = "phong" in person_name.lower()
-    p_code = "b" if is_phong else "a"
-    p_dir = "phong" if is_phong else "tai"
-
-    cand_path = ROOT / f"data/annotations/review_v03_independent_20261124/annotator_{p_code}.csv"
     if person_name not in ("Phong", "Tài"):
         st.info("Bộ 600 dùng phiếu riêng của Phong và Tài. Hãy chọn đúng người gán.")
         return
+    p_code = "b" if "phong" in person_name.lower() else "a"
+    cand_path = ROOT / f"data/annotations/review_v03_independent_20261124/annotator_{p_code}.csv"
+    _render_window_dataset_studio(
+        person_name,
+        annotator_full_name,
+        master_csv_path,
+        cand_path=cand_path,
+        key_prefix="600",
+        section_title=f"🎯 GÁN NHÃN 600 CỬA SỔ CHUẨN — {annotator_full_name}",
+    )
+
+
+def _render_full_datasets_studio(person_name: str, annotator_full_name: str, master_csv_path: Path):
+    """Interactive Studio view for full train / val / test splits and other annotation sets."""
+    if person_name not in ("Phong", "Tài"):
+        st.info("Chế độ gán tập đầy đủ dùng phiếu riêng của Phong và Tài. Hãy chọn đúng người gán.")
+        return
+    p_code = "b" if "phong" in person_name.lower() else "a"
+    catalog = [
+        ("train_full_ai_assist", "🚂 Tập TRAIN đầy đủ (9.888 cửa sổ · class_1..5, session_001..002)"),
+        ("val_full_ai_assist", "🧪 Tập VAL đầy đủ (8.617 cửa sổ · session_003..004)"),
+        ("test_full_ai_assist", "🎯 Tập TEST đầy đủ (4.889 cửa sổ · session_005..006)"),
+        ("external_review_20261109", "🆕 Hai video mới mở rộng (130 cửa sổ · external_review)"),
+        ("human_review_v0_2", "📦 Bộ gán nhãn chính v0.2 (600 cửa sổ cũ)"),
+        ("review_v03", "📋 Bộ gán nhãn v0.3 gốc (600 cửa sổ YOLO11)"),
+    ]
+    choices: List[Tuple[Path, str]] = []
+    seen_paths = set()
+    for dir_name, label in catalog:
+        p = ROOT / "data/annotations" / dir_name / f"annotator_{p_code}.csv"
+        if p.is_file():
+            choices.append((p, label))
+            seen_paths.add(p.resolve())
+    if (
+        master_csv_path.is_file()
+        and master_csv_path.parent.name != "review_v03_independent_20261124"
+        and master_csv_path.resolve() not in seen_paths
+    ):
+        choices.append((master_csv_path, f"📄 Phiếu đang chọn ({master_csv_path.parent.name}/{master_csv_path.name})"))
+
+    if not choices:
+        st.warning("Chưa tìm thấy phiếu tập train/val/test đầy đủ. Hãy chạy `python scripts/prepare_full_split_annotations.py`.")
+        return
+
+    default_idx = 0
+    if master_csv_path.is_file():
+        for idx_c, (c_path, _) in enumerate(choices):
+            if c_path.resolve() == master_csv_path.resolve():
+                default_idx = idx_c
+                break
+
+    selected_idx = st.selectbox(
+        "Chọn tập dữ liệu đầy đủ / bộ khác cần gán:",
+        list(range(len(choices))),
+        index=default_idx,
+        format_func=lambda idx_c: choices[int(idx_c)][1] if isinstance(idx_c, (int, np.integer)) else str(idx_c),
+        key=f"full_ds_picker:{person_name}",
+    )
+    if not isinstance(selected_idx, (int, np.integer)):
+        selected_idx = int(selected_idx) if str(selected_idx).isdigit() else default_idx
+    cand_path, cand_label = choices[int(selected_idx)]
+    _render_window_dataset_studio(
+        person_name,
+        annotator_full_name,
+        master_csv_path,
+        cand_path=cand_path,
+        key_prefix=f"full_{cand_path.parent.name}",
+        section_title=f"🗂️ GÁN NHÃN TẬP ĐẦY ĐỦ — {annotator_full_name}",
+        subtitle=cand_label,
+    )
+
+
+def _render_window_dataset_studio(
+    person_name: str,
+    annotator_full_name: str,
+    master_csv_path: Path,
+    *,
+    cand_path: Path,
+    key_prefix: str,
+    section_title: str,
+    subtitle: str = "",
+):
+    """Shared interactive window-by-window Studio reviewer for 600-window or full train/val/test CSVs."""
+    st.subheader(section_title)
+    if subtitle:
+        st.caption(f"{subtitle} · Xem clip đầy đủ, xác minh đúng track và ghi bằng chứng cho từng cửa sổ.")
+    else:
+        st.caption("Xem clip đầy đủ, xác minh đúng track và ghi bằng chứng cho từng cửa sổ.")
 
     if not cand_path.is_file():
-        st.error(f"Chưa tìm thấy file 600 cửa sổ tại {cand_path}")
+        st.error(f"Chưa tìm thấy file cửa sổ tại {cand_path}")
         return
 
     df_600 = read_annotation_csv(cand_path)
     total_600 = len(df_600)
 
-    # 1. Filters Row
-    f_col1, f_col2, f_col3 = st.columns([3, 4, 3])
-    filter_choice = f_col1.selectbox(
-        "Lọc danh sách cửa sổ:",
-        [
-            "Tất cả (600 cửa sổ)",
-            "Chưa gán nhãn (còn lại)",
-            "Đã gán nhãn",
-            "Tập TEST (300 mẫu · session_005, 006)",
-            "Tập VAL (100 mẫu · session_003, 004)",
-            "Tập TRAIN (200 mẫu · session_001, 002, classes)",
-            "Theo phiên học cụ thể...",
-        ],
-        key="filter_600_choice",
-    )
-
-    specific_session = None
-    if filter_choice == "Theo phiên học cụ thể...":
-        all_sessions = sorted(df_600["session_id"].dropna().unique().tolist())
-        specific_session = f_col2.selectbox("Chọn phiên học:", all_sessions, key="filter_600_sess")
-
-    # Apply filter mask
+    # Compute completed mask
     is_done_mask = (
         (df_600["annotation_state"].eq("VALID") & df_600["participation_label"].ne("")) |
         df_600["annotation_state"].isin(["OCCLUDED", "INVALID"])
     )
 
+    # Auto-save progress alert
+    done_count = int(is_done_mask.sum())
+    if done_count > 0 and done_count < total_600:
+        st.success(
+            f"💾 **Tự động lưu tiến độ vào ổ cứng:** Đã lưu **{done_count}/{total_600}** cửa sổ trên máy (`{cand_path.name}`). "
+            f"Bạn có thể yên tâm tắt máy/nghỉ ngơi bất kỳ lúc nào, hôm sau mở lại tool sẽ **tự động mở tiếp từ cửa sổ chưa gán** kế tiếp!"
+        )
+    elif done_count == total_600:
+        st.success(f"🎉 **Đã hoàn thành xuất sắc toàn bộ {total_600}/{total_600} cửa sổ!**")
+
+    # 1. Filters Row
+    f_col1, f_col2, f_col3 = st.columns([3, 4, 3])
+    split_counts = df_600["split"].astype(str).str.lower().value_counts().to_dict() if "split" in df_600.columns else {}
+    all_label = f"Tất cả ({total_600} cửa sổ)"
+    filter_opts = [all_label, "Chưa gán nhãn (còn lại)", "Đã gán nhãn"]
+    if len(split_counts) > 1:
+        if split_counts.get("test", 0) > 0:
+            filter_opts.append(f"Tập TEST ({split_counts['test']} mẫu · session_005, 006)" if total_600 == 600 else f"Tập TEST ({split_counts['test']} mẫu)")
+        if split_counts.get("val", 0) > 0:
+            filter_opts.append(f"Tập VAL ({split_counts['val']} mẫu · session_003, 004)" if total_600 == 600 else f"Tập VAL ({split_counts['val']} mẫu)")
+        if split_counts.get("train", 0) > 0:
+            filter_opts.append(f"Tập TRAIN ({split_counts['train']} mẫu · session_001, 002, classes)" if total_600 == 600 else f"Tập TRAIN ({split_counts['train']} mẫu)")
+    filter_opts.append("Theo phiên học cụ thể...")
+
+    filter_choice = f_col1.selectbox(
+        "Lọc danh sách cửa sổ:",
+        filter_opts,
+        key=f"filter_{key_prefix}_choice",
+    )
+
+    specific_session = None
+    if filter_choice == "Theo phiên học cụ thể...":
+        all_sessions = sorted(df_600["session_id"].dropna().unique().tolist())
+        specific_session = f_col2.selectbox("Chọn phiên học:", all_sessions, key=f"filter_{key_prefix}_sess")
+
+    # Apply filter mask
     if filter_choice == "Chưa gán nhãn (còn lại)":
         filtered_indices = list(df_600.index[~is_done_mask])
     elif filter_choice == "Đã gán nhãn":
@@ -328,23 +433,37 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
         st.info("Không có cửa sổ nào phù hợp với bộ lọc đã chọn.")
         return
 
-    # Filtered pos state
-    box_key = "select_600_window_pos"
-    pending_key = f"studio_pending_window:{person_name}"
+    # Filtered pos state (coerce safely if stale browser/widget state stored a string)
+    box_key = f"select_{key_prefix}_window_pos"
+    pending_key = "studio_pending_window:" + (person_name if key_prefix == "600" else f"{key_prefix}:{person_name}")
     if pending_key in st.session_state:
         pending_id = st.session_state.pop(pending_key)
         positions = [p for p, i in enumerate(filtered_indices) if str(df_600.at[i, "window_id"]) == pending_id]
         st.session_state[box_key] = positions[0] if positions else 0
-    if box_key not in st.session_state or st.session_state[box_key] >= len(filtered_indices):
+
+    def _safe_pos(val) -> Optional[int]:
+        if isinstance(val, bool):
+            return None
+        if isinstance(val, (int, np.integer)):
+            return int(val)
+        if isinstance(val, str) and val.strip().lstrip("-").isdigit():
+            return int(val.strip())
+        return None
+
+    parsed_pos = _safe_pos(st.session_state.get(box_key))
+    if parsed_pos is None or parsed_pos < 0 or parsed_pos >= len(filtered_indices):
         unfin = [p for p, i in enumerate(filtered_indices) if not is_done_mask.loc[i]]
         st.session_state[box_key] = unfin[0] if unfin else 0
+    elif st.session_state.get(box_key) != parsed_pos:
+        st.session_state[box_key] = parsed_pos
 
     def move_600(step: int):
-        st.session_state[box_key] = max(0, min(len(filtered_indices) - 1, st.session_state[box_key] + step))
+        cur_p = _safe_pos(st.session_state.get(box_key)) or 0
+        st.session_state[box_key] = max(0, min(len(filtered_indices) - 1, cur_p + step))
 
     def next_unfin_600():
-        cur = st.session_state[box_key]
-        rem = [p for p, i in enumerate(filtered_indices) if p > cur and not is_done_mask.loc[i]]
+        cur_p = _safe_pos(st.session_state.get(box_key)) or 0
+        rem = [p for p, i in enumerate(filtered_indices) if p > cur_p and not is_done_mask.loc[i]]
         if not rem:
             rem = [p for p, i in enumerate(filtered_indices) if not is_done_mask.loc[i]]
         if rem:
@@ -357,48 +476,57 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
     # 2. Navigation bar
     n_col1, n_col2, n_col3, n_col4 = st.columns([1, 6, 1, 3])
 
-    n_col1.button("⏮️ Trước", key="btn_600_prev", on_click=move_600, args=(-1,), disabled=cur_pos == 0)
+    n_col1.button("⏮️ Trước", key=f"btn_{key_prefix}_prev", on_click=move_600, args=(-1,), disabled=cur_pos == 0)
 
-    # Dropdown of filtered items
-    def _format_window_opt(pos_i: int) -> str:
-        idx = filtered_indices[pos_i]
-        r = df_600.loc[idx]
-        done = "✓" if is_done_mask.loc[idx] else "○"
-        s = r.get("split", "")
-        sess = r.get("session_id", "")
-        trk = r.get("track_id", "")
-        t0 = float(r.get("t_start_ms", 0)) / 1000.0
-        t1 = float(r.get("t_end_ms", 0)) / 1000.0
-        lbl = r.get("participation_label") or r.get("annotation_state") or "Chưa gán"
-        return f"{done} #{idx + 1}/600 [{s}] {sess} | Track #{trk} ({t0:g}s-{t1:g}s) ➔ {lbl}"
+    # Precompute dropdown labels in milliseconds even for 9,888-window splits.
+    sub_df = df_600.loc[filtered_indices]
+    splits_col = sub_df["split"] if "split" in sub_df.columns else [""] * len(filtered_indices)
+    opt_labels = [
+        f"{'✓' if is_done_mask.at[idx] else '○'} #{idx + 1}/{total_600} [{s}] {sess} | Track #{trk} ({float(t0 or 0) / 1000:g}s-{float(t1 or 0) / 1000:g}s) ➔ {lbl or st_v or 'Chưa gán'}"
+        for idx, s, sess, trk, t0, t1, lbl, st_v in zip(
+            filtered_indices,
+            splits_col,
+            sub_df["session_id"],
+            sub_df["track_id"],
+            sub_df["t_start_ms"],
+            sub_df["t_end_ms"],
+            sub_df["participation_label"],
+            sub_df["annotation_state"],
+        )
+    ]
 
     window_options = list(range(len(filtered_indices)))
     n_col2.selectbox(
         "Cửa sổ đang chọn:",
         window_options,
-        format_func=_format_window_opt,
+        format_func=lambda pos_i: opt_labels[int(pos_i)] if isinstance(pos_i, (int, np.integer)) or str(pos_i).isdigit() else str(pos_i),
         label_visibility="collapsed",
         key=box_key,
     )
 
-    n_col3.button("Tiếp ⏭️", key="btn_600_next", on_click=move_600, args=(1,), disabled=cur_pos == len(filtered_indices) - 1)
+    n_col3.button("Tiếp ⏭️", key=f"btn_{key_prefix}_next", on_click=move_600, args=(1,), disabled=cur_pos == len(filtered_indices) - 1)
 
     # Next unfinished button
     unfin_any = any(not is_done_mask.loc[i] for i in filtered_indices)
-    n_col4.button("⏩ Đến cửa sổ chưa gán", key="btn_600_unfin", on_click=next_unfin_600, disabled=not unfin_any)
+    n_col4.button("⏩ Đến cửa sổ chưa gán", key=f"btn_{key_prefix}_unfin", on_click=next_unfin_600, disabled=not unfin_any)
 
     # Toggles bar
     t_c1, t_c2, t_c3, t_c4 = st.columns(4)
-    show_kpts_600 = t_c1.checkbox("Khung xương SV", value=True, key="opt_600_kpts", help="Vẽ khung xương vàng cho sinh viên đang chọn")
-    show_all_kpts_600 = t_c2.checkbox("Xương cả lớp", value=False, key="opt_600_all_kpts", help="Mặc định tắt: chỉ vẽ khung xương cho SV đang chọn để tránh rối mắt và đè khung xương")
+    show_kpts_600 = t_c1.checkbox("Khung xương SV", value=True, key=f"opt_{key_prefix}_kpts", help="Vẽ khung xương vàng cho sinh viên đang chọn")
+    show_all_kpts_600 = t_c2.checkbox("Xương cả lớp", value=False, key=f"opt_{key_prefix}_all_kpts", help="Mặc định tắt: chỉ vẽ khung xương cho SV đang chọn để tránh rối mắt và đè khung xương")
     bo_che_mat_600 = t_c3.checkbox(
         "Bỏ che mặt trong phiên gán nhãn riêng tư",
         value=True,
-        key="opt_600_no_blur_default_on",
+        key=f"opt_{key_prefix}_no_blur_default_on",
         help="Chỉ bật khi được phép xem video gốc riêng tư.",
     )
     blur_face_600 = not bo_che_mat_600
-    auto_jump_600 = t_c4.checkbox("Tự nhảy cửa sổ kế", value=True, key="opt_600_auto_jump")
+    auto_jump_600 = t_c4.checkbox("Tự nhảy cửa sổ kế", value=True, key=f"opt_{key_prefix}_auto_jump")
+    ai_assisted_600 = st.checkbox(
+        "🤖 Hiển thị gợi ý AI hỗ trợ (Cách 1 Local + Cách 2 ChatGPT/Gemini — tắt nếu đang chấm mù)",
+        value=True,
+        key=f"opt_{key_prefix}_ai_assisted",
+    )
 
     # 3. Resolve Video & Pose Path
     session_id = str(cur_row["session_id"])
@@ -418,6 +546,78 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
 
     df_pose = load_pose_dataframe(str(p_path)) if p_path.is_file() else pd.DataFrame()
     preview_ready = False
+    suggestions_path = cand_path.parent / "ai_bundles" / "ai_suggestions.json"
+    suggestions_map = load_suggestions_map(suggestions_path) if ai_assisted_600 else {}
+    if ai_assisted_600:
+        suggestions_map.update(load_suggestions_map(cand_path.parent / "ai_bundles" / "codex_suggestions.json"))
+    cur_wid = str(cur_row["window_id"])
+    cur_suggestion = suggestions_map.get(cur_wid) if ai_assisted_600 else None
+
+    if ai_assisted_600:
+        st.caption(f"Đang đọc {len(suggestions_map)} gợi ý từ ai_suggestions.csv + codex_suggestions.csv trong {suggestions_path.parent}. Gợi ý chưa phải nhãn đã duyệt.")
+        with st.expander("🧩 Cách 1 + Cách 2: Tạo gói ảnh / gợi ý AI cho cửa sổ này & nhập JSON từ ChatGPT Plus / Gemini Pro"):
+            c_ai1, c_ai2 = st.columns(2)
+            if c_ai1.button("⚡ Chạy AI Local đề xuất cho cửa sổ này", key=f"btn_ai_local:{key_prefix}:{cur_wid}", use_container_width=True):
+                if df_pose.empty or not v_path.is_file():
+                    st.error("Thiếu video hoặc pose CSV để chạy AI Local.")
+                else:
+                    local_sug = propose_local_suggestion(
+                        cur_row.to_dict(),
+                        df_pose,
+                        video_path=v_path,
+                        class_phase="lecture",
+                        model_id="local-weak-v0.2",
+                    )
+                    save_suggestions_map(suggestions_path, [local_sug])
+                    st.success("Đã tạo gợi ý AI Local (chưa lưu vào phiếu HUMAN).")
+                    st.rerun()
+
+            if c_ai2.button("🖼️ Tạo ảnh ghép + Prompt (ChatGPT Plus / Gemini Pro)", key=f"btn_ai_sheet:{key_prefix}:{cur_wid}", use_container_width=True):
+                if df_pose.empty or not v_path.is_file():
+                    st.error("Thiếu video hoặc pose CSV để xuất ảnh ghép.")
+                else:
+                    sheet_path = cand_path.parent / "ai_bundles" / "images" / f"{cur_wid}.jpg"
+                    _, b_meta = build_window_contact_sheet(
+                        v_path,
+                        df_pose,
+                        cur_row.to_dict(),
+                        output_path=sheet_path,
+                        class_phase="lecture",
+                        phase_verified=True,
+                        show_skeleton=show_kpts_600,
+                        blur_face=blur_face_600,
+                    )
+                    st.session_state[f"ai_sheet_meta:{key_prefix}:{cur_wid}"] = b_meta
+                    st.success(f"Đã xuất ảnh ghép: {sheet_path.name}")
+
+            sheet_meta = st.session_state.get(f"ai_sheet_meta:{key_prefix}:{cur_wid}")
+            sheet_file = cand_path.parent / "ai_bundles" / "images" / f"{cur_wid}.jpg"
+            if sheet_meta and sheet_file.is_file():
+                st.download_button(
+                    "📥 Tải ảnh ghép (.jpg) để kéo vào ChatGPT Plus / Gemini Pro",
+                    data=sheet_file.read_bytes(),
+                    file_name=sheet_file.name,
+                    mime="image/jpeg",
+                    key=f"dl_sheet:{key_prefix}:{cur_wid}",
+                )
+                st.code(build_web_llm_prompt([sheet_meta]), language="text")
+
+            pasted_json = st.text_area(
+                "Dán JSON kết quả từ ChatGPT Plus / Gemini Pro (tự tách khỏi ```json):",
+                key=f"txt_ai_import:{key_prefix}:{person_name}",
+                height=110,
+            )
+            if st.button("📥 Nhập JSON đề xuất vào hàng chờ duyệt", key=f"btn_ai_import:{key_prefix}:{person_name}"):
+                if not pasted_json.strip():
+                    st.warning("Hãy dán nội dung JSON trước.")
+                else:
+                    try:
+                        imported_recs = parse_and_validate_suggestions(pasted_json, suggestion_source="VISION_LLM_IMPORT")
+                        save_suggestions_map(suggestions_path, imported_recs)
+                        st.success(f"Đã nhập {len(imported_recs)} đề xuất (chỉ làm gợi ý, chưa lưu HUMAN).")
+                        st.rerun()
+                    except (ValueError, json.JSONDecodeError) as exc:
+                        st.error(f"JSON không hợp lệ: {exc}")
 
     # 4. Two-Column Workspace
     left_col, right_col = st.columns([6, 5])
@@ -498,7 +698,7 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
         done_600 = int(is_done_mask.sum())
         pct_done = done_600 / max(1, total_600) * 100.0
         st.markdown(
-            f"📊 **Tiến độ 600 cửa sổ:** **{done_600}/{total_600}** ({pct_done:.1f}%) hoàn thành | Còn **{total_600 - done_600}** cửa sổ"
+            f"📊 **Tiến độ {total_600} cửa sổ:** **{done_600}/{total_600}** ({pct_done:.1f}%) hoàn thành | Còn **{total_600 - done_600}** cửa sổ"
         )
         st.progress(done_600 / max(1, total_600))
 
@@ -506,17 +706,86 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
         cur_st_val = str(cur_row.get("annotation_state", "VALID"))
         disp_status = cur_p_lbl if cur_st_val == "VALID" and cur_p_lbl else cur_st_val
         st.markdown(
-            f"##### 👤 Cửa sổ #{cur_df_idx + 1}/600: Track #{track_id} ({session_id}) ➔ **{disp_status or 'Chưa gán'}**"
+            f"##### 👤 Cửa sổ #{cur_df_idx + 1}/{total_600}: Track #{track_id} ({session_id}) ➔ **{disp_status or 'Chưa gán'}**"
         )
 
         # Callback updates state before rendering, so the selected button stays highlighted.
-        wk = f"{person_name}:{cur_row['window_id']}"
+        wk = f"{person_name}:{cur_row['window_id']}" if key_prefix == "600" else f"{key_prefix}:{person_name}:{cur_row['window_id']}"
         draft_key = f"studio_draft_label:{wk}"
-        state_key = f"sb_600_state:{wk}"
+        state_key = f"sb_{key_prefix}_state:{wk}"
         draft_label = st.session_state.get(draft_key, cur_p_lbl)
         draft_state = st.session_state.get(state_key, cur_st_val)
 
+        if cur_suggestion is not None:
+            sug_lbl_map = {HIGH: "🟢 CAO (HIGH)", MODERATE: "🟡 VỪA (MODERATE)", LOW: "🔴 THẤP (LOW)", "": "—"}
+            sug_state = cur_suggestion.get("suggested_state", "VALID")
+            sug_lbl = cur_suggestion.get("suggested_label", "")
+            sug_behs = cur_suggestion.get("suggested_behaviors", [])
+            sug_conf = float(cur_suggestion.get("confidence", 0.0))
+            sug_src = cur_suggestion.get("suggestion_source", "AI")
+            sug_rat = cur_suggestion.get("rationale", "")
+            sug_rej = cur_suggestion.get("rejection_reason", "")
+
+            with st.container(border=True):
+                st.markdown(
+                    f"**🤖 Đề xuất AI ({sug_src})** · Trạng thái: **`{sug_state}`** · "
+                    f"Nhãn: **{sug_lbl_map.get(sug_lbl, sug_lbl)}** · Tin cậy: `{sug_conf:.2f}`"
+                )
+                st.caption(f"**Hành vi đề xuất:** {', '.join(sug_behs) if sug_behs else 'Không có'}")
+                if sug_rat:
+                    st.caption(f"**Căn cứ:** {sug_rat}")
+                if sug_rej:
+                    st.warning(f"**Lý do từ chối / Cảnh báo:** {sug_rej}")
+
+                def _apply_ai_to_draft():
+                    st.session_state[draft_key] = sug_lbl
+                    st.session_state[state_key] = sug_state
+                    for _, b_code in BEHAVIOR_CHOICES:
+                        st.session_state[f"chk_{key_prefix}_{cur_row['window_id']}_{b_code}"] = b_code in sug_behs
+                    if cur_suggestion.get("suggested_phase") in ("lecture", "individual_work", "discussion"):
+                        st.session_state[f"sb_{key_prefix}_phase_lecture_default:{wk}"] = cur_suggestion["suggested_phase"]
+                    if cur_suggestion.get("suggested_occlusion") in ("none", "partial", "heavy"):
+                        st.session_state[f"sb_{key_prefix}_occ:{wk}"] = cur_suggestion["suggested_occlusion"]
+                    if cur_suggestion.get("suggested_phase_evidence"):
+                        st.session_state[f"phase_evidence:{person_name}:{wk}"] = cur_suggestion["suggested_phase_evidence"]
+                    if sug_rat:
+                        st.session_state[f"txt_{key_prefix}_notes:{wk}"] = sug_rat[:240]
+                    st.session_state[f"ai_used:{wk}"] = sug_src
+
+                ai_btn_c1, ai_btn_c2 = st.columns(2)
+                ai_btn_c1.button(
+                    "📝 Điền gợi ý để sửa",
+                    key=f"btn_apply_ai:{wk}",
+                    on_click=_apply_ai_to_draft,
+                    use_container_width=True,
+                )
+                ai_btn_c2.caption("Sửa các lựa chọn bên dưới nếu cần, rồi bấm Duyệt & lưu ở cuối phiếu.")
+                st.session_state[f"ai_seen:{wk}"] = dict(cur_suggestion)
+                if not str(cur_row.get("annotator_id", "")).strip() and draft_key not in st.session_state:
+                    _apply_ai_to_draft()
+                    st.session_state[f"ai_auto_applied:{wk}"] = True
+                    draft_label = st.session_state[draft_key]
+                    draft_state = st.session_state[state_key]
+        elif not ai_assisted_600:
+            st.session_state.pop(f"ai_seen:{wk}", None)
+            st.session_state.pop(f"ai_used:{wk}", None)
+            if st.session_state.pop(f"ai_auto_applied:{wk}", False):
+                for key_to_clear in (
+                    draft_key,
+                    state_key,
+                    f"sb_{key_prefix}_phase_lecture_default:{wk}",
+                    f"sb_{key_prefix}_occ:{wk}",
+                    f"phase_evidence:{person_name}:{wk}",
+                    f"txt_{key_prefix}_notes:{wk}",
+                ):
+                    st.session_state.pop(key_to_clear, None)
+                for _, b_code in BEHAVIOR_CHOICES:
+                    st.session_state.pop(f"chk_{key_prefix}_{cur_row['window_id']}_{b_code}", None)
+                draft_label = cur_p_lbl
+                draft_state = cur_st_val
+
         def choose_label(label, state):
+            st.session_state.pop(f"ai_auto_applied:{wk}", None)
             st.session_state[draft_key] = label
             st.session_state[state_key] = state
 
@@ -553,7 +822,7 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
             is_chk = target_c.checkbox(
                 b_name,
                 value=(b_code in existing_behs or b_name in existing_behs),
-                key=f"chk_600_{cur_row['window_id']}_{b_code}",
+                key=f"chk_{key_prefix}_{cur_row['window_id']}_{b_code}",
             )
             if is_chk:
                 selected_behs.append(b_code)
@@ -563,7 +832,7 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
         m_c1, m_c2 = st.columns(2)
         state_opts = ["VALID", "OCCLUDED", "TRANSITION", "INVALID"]
         s_val = cur_st_val if cur_st_val in state_opts else "VALID"
-        new_st_600 = m_c1.selectbox("Trạng thái:", state_opts, index=state_opts.index(s_val), key=f"sb_600_state:{wk}")
+        new_st_600 = m_c1.selectbox("Trạng thái:", state_opts, index=state_opts.index(s_val), key=f"sb_{key_prefix}_state:{wk}")
 
         phase_opts = ["lecture", "individual_work", "discussion", "UNKNOWN"]
         # Unreviewed rows contain legacy metadata, not an annotator choice.
@@ -572,7 +841,7 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
         p_val = cur_row.get("class_phase", "lecture") if reviewed else "lecture"
         new_phase_600 = m_c2.selectbox("Pha học:", phase_opts,
             index=phase_opts.index(p_val) if p_val in phase_opts and p_val != "UNKNOWN" else 0,
-            key=f"sb_600_phase_lecture_default:{wk}")
+            key=f"sb_{key_prefix}_phase_lecture_default:{wk}")
 
         m_c3, m_c4 = st.columns(2)
         zone_opts = ["F-L", "F-C", "F-R", "M-L", "M-C", "M-R", "B-L", "B-C", "B-R", "FRONT", "MIDDLE", "BACK"]
@@ -592,7 +861,7 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
                 remembered_zone = unique_zones[0]
         stored_zone = str(cur_row.get("zone_id", "")).strip()
         z_val = stored_zone or remembered_zone
-        zone_key = f"sb_600_zone_v2:{wk}"
+        zone_key = f"sb_{key_prefix}_zone_v2:{wk}"
         if not stored_zone and remembered_zone and zone_key not in st.session_state:
             st.session_state[zone_key] = remembered_zone
         def remember_zone():
@@ -603,9 +872,9 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
 
         occ_opts = ["none", "partial", "heavy"]
         o_val = cur_row.get("occlusion_level", "none")
-        new_occ_600 = m_c4.selectbox("Che khuất:", occ_opts, index=occ_opts.index(o_val) if o_val in occ_opts else 0, key=f"sb_600_occ:{wk}")
+        new_occ_600 = m_c4.selectbox("Che khuất:", occ_opts, index=occ_opts.index(o_val) if o_val in occ_opts else 0, key=f"sb_{key_prefix}_occ:{wk}")
 
-        new_notes_600 = st.text_input("Ghi chú:", value=str(cur_row.get("notes", "")), key=f"txt_600_notes:{wk}")
+        new_notes_600 = st.text_input("Ghi chú:", value=str(cur_row.get("notes", "")), key=f"txt_{key_prefix}_notes:{wk}")
         phase_changed = new_phase_600 != str(cur_row.get("class_phase", "UNKNOWN"))
         context_summary.info(
             f"👤 **Thông số Track #{track_id}:** Vùng ghế: **{new_zone_600 or 'Chưa xác định'}** "
@@ -631,50 +900,65 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
         confirmed = st.checkbox("Tôi đã xem toàn bộ clip, xác định đúng người và bằng chứng", key=f"studio_confirm:{wk}")
 
         # Save & Navigation
-        save_btn_600 = st.button("💾 Lưu cửa sổ này", type="secondary", use_container_width=True)
+        assisted_review = st.session_state.get(f"ai_seen:{wk}")
+        save_btn_600 = st.button(
+            "✅ Duyệt lựa chọn hiện tại → Lưu HUMAN & Tiếp" if assisted_review else "💾 Lưu cửa sổ này",
+            type="primary" if assisted_review else "secondary",
+            width="stretch",
+            key=f"btn_save_{key_prefix}:{wk}",
+            help="Bấm duyệt xác nhận bạn đã xem clip, kiểm tra và chịu trách nhiệm về lựa chọn hiện tại.",
+        )
+        if save_btn_600 and assisted_review:
+            confirmed = True
+
+        def _validate_submission(t_lbl: str, t_st: str, is_confirmed: bool) -> List[str]:
+            if t_st not in ("VALID", "OCCLUDED", "INVALID", "TRANSITION"):
+                return ["Chọn trạng thái hợp lệ."]
+            if t_st == "VALID":
+                probs = []
+                if not preview_ready: probs.append("Chưa mở được clip đúng người.")
+                if not is_confirmed: probs.append("Chưa xác nhận đã xem toàn bộ clip.")
+                if not selected_behs: probs.append("Chưa chọn hành vi quan sát.")
+                if new_phase_600 == "UNKNOWN" or not phase_evidence.strip(): probs.append("Chưa xác định pha và căn cứ.")
+                if t_lbl not in CANONICAL_TRAINING_LABELS: probs.append("Chưa chọn mức tham gia bằng nút CAO/VỪA/THẤP.")
+                return probs
+            return []
 
         if save_btn_600:
             target_lbl, target_st = draft_label, new_st_600
             if target_st == "OCCLUDED":
                 target_lbl = ""
 
-            if target_st == "VALID" and (not preview_ready or not confirmed or not selected_behs or new_phase_600 == "UNKNOWN" or not phase_evidence.strip() or target_lbl not in CANONICAL_TRAINING_LABELS):
-                problems = []
-                if not preview_ready: problems.append("Chưa mở được clip đúng người.")
-                if not confirmed: problems.append("Chưa xác nhận đã xem toàn bộ clip.")
-                if not selected_behs: problems.append("Chưa chọn hành vi quan sát.")
-                if new_phase_600 == "UNKNOWN" or not phase_evidence.strip(): problems.append("Chưa xác định pha và căn cứ.")
-                if not target_lbl: problems.append("Chưa chọn mức tham gia bằng nút CAO/VỪA/THẤP.")
+            problems = _validate_submission(target_lbl, target_st, confirmed)
+            if problems:
                 st.error("Chưa lưu: " + " ".join(problems))
-                return
-
-            if target_st not in ("VALID", "OCCLUDED", "INVALID", "TRANSITION"):
-                st.error("Chọn trạng thái hợp lệ.")
                 return
 
             try:
                 _save_600_window(
-                df_600=df_600,
-                row_idx=cur_df_idx,
-                target_label=target_lbl,
-                target_state=target_st,
-                behaviors="; ".join(selected_behs),
-                phase=new_phase_600,
-                zone=new_zone_600,
-                occlusion=new_occ_600,
-                notes=new_notes_600,
-                annotator_id=annotator_full_name,
-                primary_file_path=cand_path,
-                person_name=person_name,
-                phase_evidence=phase_evidence,
-                confirmed=confirmed,
+                    df_600=df_600,
+                    row_idx=cur_df_idx,
+                    target_label=target_lbl,
+                    target_state=target_st,
+                    behaviors="; ".join(selected_behs),
+                    phase=new_phase_600,
+                    zone=new_zone_600,
+                    occlusion=new_occ_600,
+                    notes=new_notes_600,
+                    annotator_id=annotator_full_name,
+                    primary_file_path=cand_path,
+                    person_name=person_name,
+                    phase_evidence=phase_evidence,
+                    confirmed=confirmed,
+                    ai_suggestion_source=(assisted_review or {}).get("suggestion_source", ""),
+                    ai_suggestion=assisted_review,
                 )
             except (ValueError, OSError) as exc:
                 st.error(f"Không lưu được nhãn: {exc}")
                 return
 
             # Auto advance to next unfinished window
-            if auto_jump_600:
+            if auto_jump_600 or assisted_review:
                 cur = st.session_state[box_key]
                 rem_unfin = [p for p, i in enumerate(filtered_indices) if p > cur and not is_done_mask.loc[i]]
                 if not rem_unfin:
@@ -683,29 +967,210 @@ def _render_600_windows_studio(person_name: str, annotator_full_name: str, maste
                     st.session_state[pending_key] = str(df_600.at[filtered_indices[rem_unfin[0]], "window_id"])
             st.rerun()
 
-        # Batch apply to same track in this session
-        st.caption("Mỗi cửa sổ được xem và lưu riêng; không tự áp dụng nhãn cho toàn bộ track.")
+        # Fast 15-second track propagation ONLY on full train split (never 600 blind set or val/test).
+        is_train_row = str(cur_row.get("split", "")).lower() == "train"
+        future_15s_indices = (
+            find_next_track_window_indices(df_600, cur_df_idx, is_done_mask, max_span_ms=15000.0)
+            if key_prefix != "600" and is_train_row
+            else []
+        )
+        if future_15s_indices:
+            span_end_ms = max(float(df_600.at[i, "t_end_ms"]) for i in future_15s_indices)
+            total_span_cnt = 1 + len(future_15s_indices)
+            with st.container(border=True):
+                st.markdown("**⏱️ Gán nhanh ~15s cùng sinh viên (chỉ áp dụng tập TRAIN)**")
+                st.caption(
+                    f"Nếu **Track #{track_id}** giữ nguyên hoạt động từ **{t_start_ms/1000:g}s ➔ {span_end_ms/1000:g}s**, "
+                    f"có thể áp dụng cùng nhãn này cho cửa sổ hiện tại + **{len(future_15s_indices)}** cửa sổ chưa gán kế tiếp."
+                )
+                if st.checkbox("🎞️ Xem nhanh 5 ảnh suốt 15s trước khi gán", key=f"chk_15s_prev_{key_prefix}:{wk}"):
+                    span_strip = render_progression_strip(
+                        v_path, df_pose, track_id, t_start_ms, span_end_ms,
+                        show_skeleton=show_kpts_600, blur_face=blur_face_600,
+                    ) if not df_pose.empty and {"track_id", "timestamp_ms"} <= set(df_pose.columns) else []
+                    if span_strip:
+                        sp_cols = st.columns(len(span_strip))
+                        for idx_sp, (lbl_sp, img_sp) in enumerate(span_strip):
+                            show_image(img_sp, caption=lbl_sp, target=sp_cols[idx_sp])
+                    else:
+                        st.warning("Chưa tạo được dải ảnh 15s cho track này.")
 
-        # Download button for 600 CSV
+                save_15s_btn = st.button(
+                    f"⚡ Lưu & Gán nhanh {total_span_cnt} cửa sổ (~15s)",
+                    key=f"btn_save_15s_{key_prefix}:{wk}",
+                    use_container_width=True,
+                )
+                if save_15s_btn:
+                    eff_confirmed = bool(confirmed or assisted_review)
+                    target_lbl, target_st = draft_label, new_st_600
+                    if target_st == "OCCLUDED":
+                        target_lbl = ""
+                    problems = _validate_submission(target_lbl, target_st, eff_confirmed)
+                    if problems:
+                        st.error("Chưa lưu 15s: " + " ".join(problems))
+                        return
+                    try:
+                        saved_ids = _save_train_15s_span(
+                            df_600=df_600,
+                            cur_row_idx=cur_df_idx,
+                            future_indices=future_15s_indices,
+                            target_label=target_lbl,
+                            target_state=target_st,
+                            behaviors="; ".join(selected_behs),
+                            phase=new_phase_600,
+                            zone=new_zone_600,
+                            occlusion=new_occ_600,
+                            notes=new_notes_600,
+                            annotator_id=annotator_full_name,
+                            primary_file_path=cand_path,
+                            person_name=person_name,
+                            phase_evidence=phase_evidence,
+                            confirmed=eff_confirmed,
+                            ai_suggestion_source=(assisted_review or {}).get("suggestion_source", ""),
+                            ai_suggestion=assisted_review,
+                        )
+                    except (ValueError, OSError) as exc:
+                        st.error(f"Không lưu được nhóm 15s: {exc}")
+                        return
+
+                    saved_set = set(saved_ids)
+                    cur = st.session_state[box_key]
+                    rem_unfin = [
+                        p for p, i in enumerate(filtered_indices)
+                        if p > cur and not is_done_mask.loc[i] and str(df_600.at[i, "window_id"]) not in saved_set
+                    ]
+                    if not rem_unfin:
+                        rem_unfin = [
+                            p for p, i in enumerate(filtered_indices)
+                            if not is_done_mask.loc[i] and str(df_600.at[i, "window_id"]) not in saved_set
+                        ]
+                    if rem_unfin:
+                        st.session_state[pending_key] = str(df_600.at[filtered_indices[rem_unfin[0]], "window_id"])
+                    st.rerun()
+
+        # Batch apply caption
+        if key_prefix == "600":
+            st.caption("Mỗi cửa sổ được xem và lưu riêng; không tự áp dụng nhãn cho toàn bộ track.")
+        else:
+            st.caption("Tập TRAIN hỗ trợ gán nhanh tối đa ~15s cùng Track khi hoạt động giống nhau; tập VAL/TEST vẫn duyệt từng cửa sổ.")
+
+        # Download button
         st.divider()
         st.download_button(
-            label=f"📥 Tải File CSV 600 Cửa Sổ ({cand_path.name})",
+            label=f"📥 Tải File CSV ({total_600} Cửa Sổ · {cand_path.name})",
             data=cand_path.read_bytes(),
             file_name=cand_path.name,
             mime="text/csv",
+            key=f"dl_csv_{key_prefix}:{cand_path.name}",
             use_container_width=True,
         )
+
+
+def find_next_track_window_indices(
+    df_rows: pd.DataFrame,
+    row_idx: int,
+    is_done_mask: pd.Series,
+    *,
+    max_span_ms: float = 15000.0,
+) -> List[int]:
+    """Find unfinished TRAIN windows of the same track within [cur_t0, cur_t0 + max_span_ms]."""
+    cur = df_rows.loc[row_idx]
+    if str(cur.get("split", "")).lower() != "train":
+        return []
+    cur_sess = str(cur["session_id"])
+    cur_cam = str(cur.get("camera_id", "cam_A"))
+    cur_trk = str(cur["track_id"])
+    cur_t0 = float(cur["t_start_ms"])
+    t0_num = pd.to_numeric(df_rows["t_start_ms"], errors="coerce")
+    t1_num = pd.to_numeric(df_rows["t_end_ms"], errors="coerce")
+    match = (
+        (df_rows.index != row_idx)
+        & (~is_done_mask)
+        & df_rows["split"].astype(str).str.lower().eq("train")
+        & df_rows["session_id"].astype(str).eq(cur_sess)
+        & df_rows["camera_id"].astype(str).eq(cur_cam)
+        & df_rows["track_id"].astype(str).eq(cur_trk)
+        & (t0_num >= cur_t0)
+        & (t1_num <= cur_t0 + float(max_span_ms) + 1e-6)
+    )
+    sub = df_rows[match].assign(_t0=t0_num[match]).sort_values("_t0")
+    return [int(i) for i in sub.index]
+
+
+def _save_train_15s_span(
+    df_600,
+    cur_row_idx,
+    future_indices: List[int],
+    target_label,
+    target_state,
+    behaviors,
+    phase,
+    zone,
+    occlusion,
+    notes,
+    annotator_id,
+    primary_file_path,
+    person_name,
+    phase_evidence,
+    confirmed,
+    ai_suggestion_source: str = "",
+    ai_suggestion=None,
+) -> List[str]:
+    """Save the current train window plus consecutive ~15s windows of the same track."""
+    cur_wid = str(df_600.at[cur_row_idx, "window_id"])
+    saved_ids: List[str] = []
+    _save_600_window(
+        df_600=df_600, row_idx=cur_row_idx, target_label=target_label, target_state=target_state,
+        behaviors=behaviors, phase=phase, zone=zone, occlusion=occlusion, notes=notes,
+        annotator_id=annotator_id, primary_file_path=primary_file_path, person_name=person_name,
+        phase_evidence=phase_evidence, confirmed=confirmed,
+        ai_suggestion_source=ai_suggestion_source, ai_suggestion=ai_suggestion,
+    )
+    saved_ids.append(cur_wid)
+    for f_idx in future_indices:
+        _save_600_window(
+            df_600=df_600, row_idx=f_idx, target_label=target_label, target_state=target_state,
+            behaviors=behaviors, phase=phase, zone=zone, occlusion=occlusion, notes=notes,
+            annotator_id=annotator_id, primary_file_path=primary_file_path, person_name=person_name,
+            phase_evidence=phase_evidence, confirmed=confirmed,
+            ai_suggestion_source=ai_suggestion_source, ai_suggestion=ai_suggestion,
+            span_source_window_id=cur_wid, span_seconds=15.0,
+        )
+        saved_ids.append(str(df_600.at[f_idx, "window_id"]))
+    return saved_ids
 
 
 def _save_600_window(
     df_600, row_idx, target_label, target_state, behaviors, phase, zone,
     occlusion, notes, annotator_id, primary_file_path, person_name,
-    phase_evidence, confirmed,
+    phase_evidence, confirmed, ai_suggestion_source: str = "", ai_suggestion=None,
+    span_source_window_id: str = "", span_seconds: float = 0.0,
 ):
-    """Save only this window in the current annotator's independent CSV."""
+    """Save one window (or audited 15s train span) in the current annotator's independent CSV."""
     if target_state == "VALID":
         if phase == "UNKNOWN" or not phase_evidence.strip() or not behaviors.strip() or not confirmed or target_label not in CANONICAL_TRAINING_LABELS:
             raise ValueError("Chưa đủ bằng chứng để lưu nhãn VALID.")
+    evidence_payload = {
+        "guide_version": "v0.2",
+        "method": "WHOLE_WINDOW_HUMAN_REVIEW",
+        "basis": "DIRECT_HUMAN_OBSERVATION",
+        "confirmed": confirmed,
+    }
+    if ai_suggestion_source:
+        evidence_payload["ai_suggestion_source"] = ai_suggestion_source
+        evidence_payload["method"] = "AI_ASSISTED_HUMAN_REVIEW"
+        evidence_payload["blind_review"] = False
+        evidence_payload["ai_suggestion"] = ai_suggestion
+        evidence_payload["decision"] = "ACCEPTED" if ai_suggestion and (
+            target_state == ai_suggestion.get("suggested_state")
+            and (target_label if target_state == "VALID" else "") == ai_suggestion.get("suggested_label", "")
+            and set(b.strip() for b in behaviors.split(";") if b.strip()) == set(ai_suggestion.get("suggested_behaviors", []))
+            and phase == ai_suggestion.get("suggested_phase")
+        ) else "EDITED"
+    if span_source_window_id:
+        evidence_payload["method"] = "TRACK_15S_PROPAGATED_HUMAN_REVIEW"
+        evidence_payload["propagated_from_window_id"] = span_source_window_id
+        evidence_payload["span_seconds"] = float(span_seconds)
     updates = {
         "annotation_state": target_state,
         "participation_label": target_label if target_state == "VALID" else "",
@@ -717,9 +1182,7 @@ def _save_600_window(
         "phase_verified": bool(phase != "UNKNOWN" and phase_evidence.strip()),
         "phase_source": "HUMAN_WINDOW_REVIEW" if phase != "UNKNOWN" and phase_evidence.strip() else "UNKNOWN",
         "phase_evidence": phase_evidence.strip(),
-        "annotation_evidence": json.dumps({"guide_version": "v0.2",
-            "method": "WHOLE_WINDOW_HUMAN_REVIEW", "basis": "DIRECT_HUMAN_OBSERVATION",
-            "confirmed": confirmed}, ensure_ascii=False),
+        "annotation_evidence": json.dumps(evidence_payload, ensure_ascii=False),
     }
     save_annotation_row(primary_file_path, str(df_600.at[row_idx, "window_id"]), updates,
                         fill_track_zone=True)
@@ -907,7 +1370,15 @@ def _render_step_2(person_name: str, annotator_full_name: str, master_csv_path: 
     # State for slice index
     slice_box_key = "select_slice_box"
     if slice_box_key not in st.session_state or st.session_state[slice_box_key] >= total_slices:
-        st.session_state[slice_box_key] = 0
+        # Auto-resume at the first unfinished slice
+        first_unfin_s = 0
+        for s_i, s_row in time_slices.iterrows():
+            sub_s = df_lbl[(df_lbl["t_start_ms"].astype(int) == s_row["t_start_ms"]) & (df_lbl["t_end_ms"].astype(int) == s_row["t_end_ms"])]
+            done_s = int(((sub_s["annotation_state"] == "VALID") & sub_s["participation_label"].ne("")) | (sub_s["annotation_state"].isin(["OCCLUDED", "INVALID"]))).sum()
+            if done_s < len(sub_s):
+                first_unfin_s = s_i
+                break
+        st.session_state[slice_box_key] = first_unfin_s
 
     student_box_key = "select_student_box"
     if student_box_key not in st.session_state:
@@ -928,7 +1399,15 @@ def _render_step_2(person_name: str, annotator_full_name: str, master_csv_path: 
     total_students_slice = len(slice_indices)
 
     if st.session_state[student_box_key] >= total_students_slice:
-        st.session_state[student_box_key] = 0
+        # Auto-resume at first unfinished student in this slice
+        first_unfin_std = 0
+        for pos_i, r_idx in enumerate(slice_indices):
+            r = df_lbl.loc[r_idx]
+            is_d = (r["annotation_state"] == "VALID" and r["participation_label"]) or r["annotation_state"] in ("OCCLUDED", "INVALID")
+            if not is_d:
+                first_unfin_std = pos_i
+                break
+        st.session_state[student_box_key] = first_unfin_std
 
     cur_student_pos = st.session_state[student_box_key]
     if total_students_slice > 0:
@@ -1161,13 +1640,37 @@ def _render_step_2(person_name: str, annotator_full_name: str, master_csv_path: 
             new_state = m_col1.selectbox("Trạng thái:", state_options, index=state_options.index(cur_state_val), key="sb_state")
 
             phases = ["lecture", "individual_work", "discussion", "UNKNOWN"]
-            cur_phase_val = cur_row.get("class_phase", "lecture")
+            cur_phase_val = cur_row.get("class_phase")
+            if not cur_phase_val or str(cur_phase_val).strip() in ("", "nan", "UNKNOWN"):
+                cur_phase_val = "lecture"
             new_phase = m_col2.selectbox("Pha học:", phases, index=phases.index(cur_phase_val) if cur_phase_val in phases else 0, key="sb_phase")
 
             m_col3, m_col4 = st.columns(2)
             zones = ["F-L", "F-C", "F-R", "M-L", "M-C", "M-R", "B-L", "B-C", "B-R", "FRONT", "MIDDLE", "BACK"]
-            cur_zone_val = cur_row.get("zone_id", "M-C")
+
+            # Track-zone memory for Step 2
+            sess_trk_key = f"{cur_row.get('session_id', '')}:{cur_track_id}"
+            remembered_zone = st.session_state.get("track_zone_map", {}).get(sess_trk_key, "")
+            if not remembered_zone:
+                same_trk_rows = df_lbl[df_lbl["track_id"].astype(str) == str(cur_track_id)]
+                valid_zones = same_trk_rows["zone_id"].dropna().loc[lambda z: z.astype(str).str.strip().ne("")]
+                if not valid_zones.empty:
+                    remembered_zone = str(valid_zones.iloc[-1]).strip()
+                    if "track_zone_map" not in st.session_state:
+                        st.session_state["track_zone_map"] = {}
+                    st.session_state["track_zone_map"][sess_trk_key] = remembered_zone
+
+            cur_zone_val = str(cur_row.get("zone_id", "")).strip()
+            if (not cur_zone_val or cur_zone_val in ("nan", "")) and remembered_zone:
+                cur_zone_val = remembered_zone
+            if not cur_zone_val or cur_zone_val in ("nan", ""):
+                cur_zone_val = "M-C"
+
             new_zone = m_col3.selectbox("Vùng ghế:", zones, index=zones.index(cur_zone_val) if cur_zone_val in zones else 4, key="sb_zone")
+            if new_zone:
+                if "track_zone_map" not in st.session_state:
+                    st.session_state["track_zone_map"] = {}
+                st.session_state["track_zone_map"][sess_trk_key] = new_zone
 
             occlusions = ["none", "partial", "heavy"]
             cur_occ_val = cur_row.get("occlusion_level", "none")
@@ -1257,6 +1760,23 @@ def _save_student_label(
     # Write to local session CSV
     label_file_path.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(label_file_path, index=False, encoding="utf-8")
+
+    # Update track-zone memory
+    if zone:
+        try:
+            import streamlit as st
+            if "track_zone_map" not in st.session_state:
+                st.session_state["track_zone_map"] = {}
+            sess_id = str(df.at[row_idx, "session_id"]) if "session_id" in df.columns else ""
+            trk_id = str(df.at[row_idx, "track_id"]) if "track_id" in df.columns else ""
+            if sess_id and trk_id:
+                st.session_state["track_zone_map"][f"{sess_id}:{trk_id}"] = zone
+                same_trk = (df["session_id"].astype(str) == sess_id) & (df["track_id"].astype(str) == trk_id)
+                empty_z = same_trk & (df["zone_id"].isna() | df["zone_id"].astype(str).str.strip().eq(""))
+                if empty_z.any():
+                    df.loc[empty_z, "zone_id"] = zone
+        except Exception:
+            pass
 
     # Sync to master review CSV if window_id matches
     if master_csv_path.is_file():
@@ -1391,3 +1911,4 @@ def _render_step_3(person_name: str, annotator_full_name: str, master_csv_path: 
                     synced_count += 1
             master_df.to_csv(master_csv_path, index=False, encoding="utf-8")
             st.success(f"Đã đồng bộ {synced_count} cửa sổ vào file tổng {master_csv_path.name} thành công!")
+
