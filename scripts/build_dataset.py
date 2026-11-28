@@ -38,7 +38,11 @@ from src.preprocessing.features import (
     FEATURE_SCHEMA_VERSION,
     FEATURE_SCHEMA_VERSION_V2,
 )
-from src.preprocessing.weak_labels import assign_weak_labels_to_windows
+from src.preprocessing.weak_labels import (
+    SUPPORTED_WEAK_RULE_VERSIONS,
+    WEAK_RULE_VERSION,
+    assign_weak_labels_to_windows,
+)
 from src.preprocessing.windows import build_track_windows
 
 logging.basicConfig(
@@ -287,6 +291,18 @@ def main() -> None:
         default="configs/baseline.yaml",
         help="Config used for quality thresholds (min_visible_ratio, min_mean_keypoint_confidence).",
     )
+    parser.add_argument(
+        "--weak-rule-version",
+        choices=SUPPORTED_WEAK_RULE_VERSIONS,
+        default=None,
+        help="Weak supervision rule version ('weak-v0.1' or 'weak-v0.2').",
+    )
+    parser.add_argument(
+        "--override-phase",
+        choices=("lecture", "individual_work", "discussion"),
+        default=None,
+        help="Override class_phase across all sessions when confirmed for the full dataset.",
+    )
     args = parser.parse_args()
 
     with open(args.config, "r", encoding="utf-8") as fh:
@@ -298,6 +314,8 @@ def main() -> None:
     stride_seconds = args.stride_seconds or float(cfg.get("sequence", {}).get("stride_seconds", 2))
     dataset_version = args.dataset_version or cfg.get("data", {}).get("dataset_version", "v0.1")
     split_version = cfg.get("data", {}).get("split_version", "split-v0.1")
+    weak_rule_version = args.weak_rule_version or cfg.get("data", {}).get("weak_rule_version", WEAK_RULE_VERSION)
+    override_phase = args.override_phase or cfg.get("data", {}).get("override_phase")
 
     human_stats: Optional[Dict[str, int]] = None
     poses_dir = Path(args.poses_dir)
@@ -355,6 +373,11 @@ def main() -> None:
     if combined_df.duplicated(keys).any():
         raise ValueError("Duplicate pose observations; keep one canonical pose file per recording/camera")
     combined_df, context_audit = attach_session_context(combined_df, Path(args.raw_dir), allow_unverified=args.allow_unverified_phases)
+    if override_phase is not None:
+        combined_df["class_phase"] = override_phase
+        combined_df["phase_source"] = "USER_CONFIRMED_OVERRIDE"
+        combined_df["phase_verified"] = True
+        logger.info("Overriding class_phase for all rows -> %s (USER_CONFIRMED_OVERRIDE)", override_phase)
     session_ids = combined_df["session_id"].unique().tolist()
 
     frozen = load_frozen_splits(splits_dir)
@@ -392,6 +415,8 @@ def main() -> None:
         "split_source": split_source,
         "split_files_sha256": split_hashes,
         "label_mode": args.labels,
+        "weak_rule_version": weak_rule_version if args.labels != "human" else None,
+        "override_phase": override_phase,
         "train_sessions": train_sess,
         "val_sessions": val_sess,
         "test_sessions": test_sess,
@@ -429,7 +454,11 @@ def main() -> None:
     if args.labels == "human":
         records = all_window_records
     else:
-        records = assign_weak_labels_to_windows(all_window_records, all_tensors)
+        records = assign_weak_labels_to_windows(
+            all_window_records,
+            all_tensors,
+            rule_version=weak_rule_version,
+        )
 
     windows_df = pd.DataFrame(records)
     windows_df["_row_idx"] = np.arange(len(windows_df))
@@ -516,6 +545,8 @@ def main() -> None:
         "split_source": split_source,
         "split_files_sha256": split_hashes,
         "label_mode": args.labels,
+        "weak_rule_version": weak_rule_version if args.labels != "human" else None,
+        "override_phase": override_phase,
         "human_label_stats": human_stats,
         "feature_schema_version": feature_schema_version,
         "total_windows": int(len(windows_df)),

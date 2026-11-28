@@ -188,3 +188,48 @@ def test_inference_passes_pose_config_and_uses_sample_rate(tmp_path, monkeypatch
     assert len(pd.read_csv(out / "poses.csv")) == len(track)
     assert json.loads((out / "inference_meta.json").read_text())["poses"] == str(out / "poses.csv")
     assert json.loads((out / "position_report.json").read_text())["status"] == "HUMAN_REVIEW_REQUIRED"
+
+
+def test_weak_v02_rules_provenance_and_behavior():
+    from src.contracts.labels import HIGH, LOW, MODERATE
+    from src.preprocessing.weak_labels import apply_weak_label_rules
+
+    base_rec = {"class_phase": "lecture", "quality_state": "VALID"}
+    # Neutral upright posture with realistic YOLO11m jitter -> MODERATE (unlike v0.1 HIGH)
+    tensor_mod = np.zeros((40, 94), dtype=np.float32)
+    tensor_mod[:, 69] = 0.22
+    tensor_mod[:, 70] = -0.25
+    tensor_mod[:, 74] = 0.05
+    lbl, rule = apply_weak_label_rules(base_rec, tensor_mod, rule_version="weak-v0.2")
+    assert lbl == MODERATE
+    assert rule == "v2_moderate_lecture"
+
+    # Clear attentive forward posture in lecture -> HIGH
+    tensor_high = np.zeros((40, 94), dtype=np.float32)
+    tensor_high[:, 69] = 0.08
+    tensor_high[:, 70] = -0.32
+    tensor_high[:, 74] = 0.06
+    lbl, rule = apply_weak_label_rules(base_rec, tensor_high, rule_version="weak-v0.2")
+    assert lbl == HIGH
+    assert rule == "v2_attentive_lecture"
+
+    # Deep slumped head in individual_work with low wrist motion -> LOW
+    tensor_low = np.zeros((40, 94), dtype=np.float32)
+    tensor_low[:, 70] = 0.10
+    tensor_low[:, 52:56] = 0.02
+    lbl, rule = apply_weak_label_rules({"class_phase": "individual_work", "quality_state": "VALID"}, tensor_low, rule_version="weak-v0.2")
+    assert lbl == LOW
+    assert rule == "v2_head_down_individual"
+
+    # Active reading/writing in individual_work -> HIGH
+    tensor_write = np.zeros((40, 94), dtype=np.float32)
+    tensor_write[:, 69] = 0.10
+    tensor_write[:, 70] = -0.05
+    tensor_write[:, 52:56] = 0.20
+    labelled = assign_weak_labels_to_windows([{"class_phase": "individual_work", "quality_state": "VALID"}], tensor_write[None, ...], rule_version="weak-v0.2")
+    assert labelled[0]["participation_label"] == HIGH
+    assert labelled[0]["label_source"] == "WEAK_RULE"
+    assert labelled[0]["label_rule_version"] == "weak-v0.2"
+
+    with pytest.raises(ValueError, match="Unsupported weak rule version"):
+        apply_weak_label_rules(base_rec, tensor_mod, rule_version="weak-v99")
