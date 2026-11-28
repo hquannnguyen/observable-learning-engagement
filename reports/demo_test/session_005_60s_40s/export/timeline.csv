@@ -1,0 +1,2 @@
+session_id,minute_index,minute_start_ms,n_windows,n_high,n_moderate,n_low,n_uncertain,pct_high,pct_moderate,pct_low,pct_uncertain,mean_visible_ratio,mean_pose_confidence
+session_005,1,60000,172,57,63,5,47,0.3314,0.3663,0.0291,0.2733,0.6451,0.5817

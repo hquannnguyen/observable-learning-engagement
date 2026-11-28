@@ -1,0 +1,30 @@
+{
+  "session_id": "session_006",
+  "checkpoint": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\models\\checkpoints\\20261126-110817-tcn-adjudicated-v03-600.pt",
+  "model_type": "TCN",
+  "start_s": 60.0,
+  "duration_s": 40.0,
+  "blur_face": false,
+  "min_probability": 0.4,
+  "temperature": 2.3320870399475098,
+  "total_windows": 153,
+  "accepted_windows": 109,
+  "uncertain_windows": 44,
+  "coverage": 0.7124,
+  "label_counts": {
+    "MODERATE_OBSERVED_PARTICIPATION": 66,
+    "UNCERTAIN": 44,
+    "HIGH_OBSERVED_PARTICIPATION": 40,
+    "LOW_OBSERVED_PARTICIPATION": 3
+  },
+  "ground_truth_eval": {
+    "matched_gt_windows": 9,
+    "gt_accepted_windows": 7,
+    "gt_raw_macro_f1": 0.3333,
+    "gt_raw_accuracy": 0.4444,
+    "gt_accepted_macro_f1": 0.4127,
+    "gt_accepted_accuracy": 0.5714
+  },
+  "video_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\demo_test\\session_006_60s_40s\\demo_overlay.mp4",
+  "elapsed_s": 28.76
+}
