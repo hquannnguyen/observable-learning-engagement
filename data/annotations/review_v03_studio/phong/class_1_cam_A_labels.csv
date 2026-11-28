@@ -1,3 +1,0 @@
-window_id,session_id,camera_id,track_id,t_start_ms,t_end_ms,class_phase,atomic_behavior,participation_label,annotation_state,label_source,label_rule_version,annotation_guide_version,annotation_confidence,occlusion_level,zone_id,annotator_id,notes
-class_1_cam_A_trk001_w0003,class_1,cam_A,1,6000,9900,UNKNOWN,,,,,,v0.2,,,,,
-class_1_cam_A_trk015_w0005,class_1,cam_A,15,10900,14800,UNKNOWN,,,,,,v0.2,,,,,

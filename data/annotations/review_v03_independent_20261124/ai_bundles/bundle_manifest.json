@@ -1,0 +1,3902 @@
+[
+  {
+    "window_id": "class_1_cam_A_trk001_w0003",
+    "session_id": "class_1",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "class_1_cam_A_trk015_w0005",
+    "session_id": "class_1",
+    "camera_id": "cam_A",
+    "track_id": "15",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "class_2_cam_A_trk001_w0001",
+    "session_id": "class_2",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "class_3_cam_A_trk011_w0000",
+    "session_id": "class_3",
+    "camera_id": "cam_A",
+    "track_id": "11",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "class_3_cam_A_trk012_w0001",
+    "session_id": "class_3",
+    "camera_id": "cam_A",
+    "track_id": "12",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "class_4_cam_A_trk008_w0001",
+    "session_id": "class_4",
+    "camera_id": "cam_A",
+    "track_id": "8",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "class_5_cam_A_trk005_w0004",
+    "session_id": "class_5",
+    "camera_id": "cam_A",
+    "track_id": "5",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk001_w0009",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk003_w0013",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk023_w0009",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "23",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk029_w0008",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "29",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk001_w0024",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk005_w0025",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "5",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk006_w0031",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk001_w0035",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk021_w0036",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "21",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk004_w0046",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk007_w0058",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk003_w0059",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk001_w0067",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk108_w0000",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "108",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk112_w0002",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "112",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk006_w0078",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk108_w0012",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "108",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk069_w0039",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "69",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk069_w0042",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "69",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk005_w0093",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "5",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk112_w0036",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "112",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk005_w0114",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "5",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk002_w0120",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk005_w0123",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "5",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk069_w0081",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "69",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk002_w0129",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk001_w0135",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk006_w0144",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk007_w0145",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk159_w0032",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "159",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk179_w0015",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "179",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk191_w0000",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "191",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk006_w0157",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk006_w0162",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk167_w0034",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "167",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk004_w0168",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk004_w0172",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk004_w0173",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk003_w0173",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk167_w0058",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "167",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk191_w0038",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "191",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk007_w0196",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk167_w0069",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "167",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk006_w0204",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk006_w0220",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk222_w0032",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "222",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk004_w0222",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk001_w0226",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk004_w0228",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk002_w0230",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk001_w0233",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk021_w0227",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "21",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk007_w0235",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk002_w0236",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk286_w0003",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "286",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk222_w0059",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "222",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk112_w0175",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "112",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk274_w0025",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "274",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk021_w0251",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "21",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk274_w0039",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "274",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk002_w0274",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk007_w0280",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk021_w0275",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "21",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk286_w0048",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "286",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk323_w0009",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "323",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk001_w0289",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk006_w0290",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk002_w0294",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk286_w0062",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "286",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk319_w0025",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "319",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk021_w0299",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "21",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk001_w0320",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk001_w0324",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk323_w0052",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "323",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk348_w0004",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "348",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk006_w0340",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk003_w0348",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk007_w0371",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk323_w0094",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "323",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk361_w0036",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "361",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk001_w0377",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk001_w0378",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk004_w0385",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk007_w0388",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk415_w0008",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "415",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk003_w0394",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk323_w0119",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "323",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk002_w0400",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk004_w0405",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk415_w0028",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "415",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk007_w0416",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk006_w0417",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk428_w0010",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "428",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk380_w0077",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "380",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk007_w0433",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk006_w0433",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk436_w0004",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "436",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_001_cam_A_trk002_w0440",
+    "session_id": "session_001",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk003_w0012",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk435_w0020",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "435",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk007_w0023",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk432_w0029",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "432",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk004_w0039",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk466_w0014",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "466",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk432_w0050",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "432",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk466_w0021",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "466",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk432_w0056",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "432",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk007_w0059",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk432_w0062",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "432",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk274_w0063",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "274",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk003_w0064",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk274_w0065",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "274",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk432_w0067",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "432",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk003_w0072",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk004_w0074",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk505_w0008",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "505",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk505_w0011",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "505",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk007_w0088",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk372_w0088",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "372",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk002_w0089",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk002_w0094",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk432_w0094",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "432",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk006_w0097",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk006_w0099",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk505_w0030",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "505",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk002_w0111",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk517_w0022",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "517",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk432_w0115",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "432",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk006_w0131",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk002_w0132",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk517_w0044",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "517",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk505_w0059",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "505",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk274_w0140",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "274",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk505_w0068",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "505",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk002_w0145",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk001_w0147",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk003_w0158",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk002_w0163",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk001_w0168",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk006_w0170",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk004_w0171",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk006_w0173",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk006_w0176",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk001_w0190",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk004_w0191",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk591_w0003",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "591",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk004_w0194",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk006_w0204",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk007_w0205",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk505_w0133",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "505",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk006_w0212",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "6",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk604_w0020",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "604",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk505_w0145",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "505",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk001_w0232",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk274_w0232",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "274",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk589_w0050",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "589",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk007_w0240",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk584_w0062",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "584",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk007_w0243",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk007_w0247",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk589_w0064",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "589",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk002_w0251",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk617_w0033",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "617",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk604_w0057",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "604",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk584_w0077",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "584",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk007_w0261",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk505_w0188",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "505",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk002_w0282",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk617_w0064",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "617",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk002_w0286",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk004_w0299",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk007_w0301",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "7",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk721_w0014",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "721",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk003_w0306",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk002_w0324",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk584_w0151",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "584",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk003_w0367",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk001_w0368",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk765_w0042",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "765",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk003_w0374",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk804_w0009",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "804",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk004_w0381",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk002_w0387",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk001_w0389",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk804_w0023",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "804",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk584_w0224",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "584",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk804_w0035",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "804",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk003_w0407",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk765_w0078",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "765",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk001_w0411",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk804_w0043",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "804",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk001_w0419",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_002_cam_A_trk003_w0421",
+    "session_id": "session_002",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk817_w0007",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "817",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk003_w0024",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk584_w0026",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "584",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk584_w0039",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "584",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk001_w0043",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk795_w0063",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "795",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk584_w0079",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "584",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk795_w0086",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "795",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk004_w0087",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk765_w0089",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "765",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk004_w0092",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk940_w0025",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "940",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk004_w0166",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk866_w0176",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "866",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk866_w0178",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "866",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk795_w0190",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "795",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk001_w0196",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk584_w0210",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "584",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk993_w0101",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "993",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk584_w0256",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "584",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk004_w0260",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk004_w0264",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk002_w0270",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk004_w0272",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk001_w0275",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk795_w0282",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "795",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk001_w0284",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk003_w0307",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk993_w0184",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "993",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk993_w0187",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "993",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk584_w0338",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "584",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk795_w0339",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "795",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk817_w0344",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "817",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk1154_w0047",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "1154",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk004_w0363",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk1154_w0058",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "1154",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk817_w0365",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "817",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk004_w0370",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk993_w0224",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "993",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk817_w0370",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "817",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk584_w0374",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "584",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk817_w0380",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "817",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk1208_w0023",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "1208",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk1224_w0004",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "1224",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk001_w0399",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk765_w0405",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "765",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk1223_w0013",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "1223",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk1217_w0031",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "1217",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk003_w0419",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk001_w0437",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk003_w0438",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk002_w0440",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk003_w0442",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_003_cam_A_trk1225_w0048",
+    "session_id": "session_003",
+    "camera_id": "cam_A",
+    "track_id": "1225",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk817_w0001",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "817",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk765_w0003",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "765",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1245_w0009",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1245",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1245_w0012",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1245",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1293_w0003",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1293",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1255_w0029",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1255",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk004_w0030",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1223_w0034",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1223",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk004_w0035",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk004_w0052",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk001_w0067",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk004_w0068",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1223_w0073",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1223",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk993_w0073",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "993",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk002_w0075",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1245_w0091",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1245",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1279_w0087",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1279",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk001_w0109",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk004_w0115",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk003_w0149",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk002_w0166",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1438_w0002",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1438",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1438_w0007",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1438",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk002_w0181",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1245_w0189",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1245",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1422_w0037",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1422",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1422_w0048",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1422",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk002_w0211",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk002_w0212",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "2",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk004_w0216",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk001_w0217",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1471_w0022",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1471",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk004_w0227",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "4",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1302_w0218",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1302",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk001_w0286",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk001_w0350",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk001_w0367",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk001_w0382",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1545_w0126",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1545",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1716_w0036",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1716",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1302_w0365",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1302",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1302_w0371",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1302",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1545_w0152",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1545",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk003_w0423",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk1735_w0038",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "1735",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  },
+  {
+    "window_id": "session_004_cam_A_trk003_w0445",
+    "session_id": "session_004",
+    "camera_id": "cam_A",
+    "track_id": "3",
+    "class_phase": "lecture",
+    "pose_quality": {
+      "mean_visible_ratio": 0.0,
+      "mean_pose_confidence": 0.0,
+      "frame_coverage": 0.0
+    },
+    "image_path": ""
+  }
+]

@@ -1,0 +1,135 @@
+{
+  "class_1_cam_A_trk001_w0003": {
+    "window_id": "class_1_cam_A_trk001_w0003",
+    "suggested_state": "VALID",
+    "suggested_label": "HIGH_OBSERVED_PARTICIPATION",
+    "suggested_behaviors": [
+      "BOARD_OR_INSTRUCTOR_FACING"
+    ],
+    "suggested_phase": "lecture",
+    "suggested_phase_evidence": "Pha lecture theo thông tin người dùng; người duyệt cần xác nhận phù hợp đoạn này.",
+    "suggested_occlusion": "none",
+    "confidence": 0.75,
+    "gate_reason": "VISUAL_SAMPLED_FRAMES_ONLY",
+    "needs_vision_review": true,
+    "suggestion_source": "CODEX_VISUAL_REVIEW",
+    "model_id": "GPT-6-astra; five sampled frames; 2026-11-25",
+    "rationale": "Đầu và thân hướng về phía trước trong cả 5 ảnh; hai tay đặt trên bàn, tư thế ổn định.",
+    "rejection_reason": "Chỉ đã xem ảnh toàn cảnh và 5 ảnh lấy mẫu, chưa xem liên tục toàn clip. Mức tin cậy là ước lượng chủ quan, chưa hiệu chuẩn. Vị trí bảng/giáo viên ngoài khung hình cần người duyệt xác nhận.",
+    "bundle_image_path": "data\\annotations\\ai_assist\\codex_visual_review\\images\\class_1_cam_A_trk001_w0003.jpg"
+  },
+  "class_1_cam_A_trk015_w0005": {
+    "window_id": "class_1_cam_A_trk015_w0005",
+    "suggested_state": "VALID",
+    "suggested_label": "MODERATE_OBSERVED_PARTICIPATION",
+    "suggested_behaviors": [
+      "BOARD_OR_INSTRUCTOR_FACING"
+    ],
+    "suggested_phase": "lecture",
+    "suggested_phase_evidence": "Pha lecture theo thông tin người dùng; người duyệt cần xác nhận phù hợp đoạn này.",
+    "suggested_occlusion": "none",
+    "confidence": 0.6,
+    "gate_reason": "VISUAL_SAMPLED_FRAMES_ONLY",
+    "needs_vision_review": true,
+    "suggestion_source": "CODEX_VISUAL_REVIEW",
+    "model_id": "GPT-6-astra; five sampled frames; 2026-11-25",
+    "rationale": "Ba ảnh đầu đầu nghiêng và tay gần mặt; hai ảnh cuối đầu dựng hơn, thân vẫn hướng trước. Tín hiệu phù hợp yếu, chưa thấy giơ tay phát biểu.",
+    "rejection_reason": "Chỉ đã xem ảnh toàn cảnh và 5 ảnh lấy mẫu, chưa xem liên tục toàn clip. Mức tin cậy là ước lượng chủ quan, chưa hiệu chuẩn. Vị trí bảng/giáo viên ngoài khung hình cần người duyệt xác nhận.",
+    "bundle_image_path": "data\\annotations\\ai_assist\\codex_visual_review\\images\\class_1_cam_A_trk015_w0005.jpg"
+  },
+  "class_2_cam_A_trk001_w0001": {
+    "window_id": "class_2_cam_A_trk001_w0001",
+    "suggested_state": "VALID",
+    "suggested_label": "HIGH_OBSERVED_PARTICIPATION",
+    "suggested_behaviors": [
+      "BOARD_OR_INSTRUCTOR_FACING"
+    ],
+    "suggested_phase": "lecture",
+    "suggested_phase_evidence": "Pha lecture theo thông tin người dùng; người duyệt cần xác nhận phù hợp đoạn này.",
+    "suggested_occlusion": "none",
+    "confidence": 0.75,
+    "gate_reason": "VISUAL_SAMPLED_FRAMES_ONLY",
+    "needs_vision_review": true,
+    "suggestion_source": "CODEX_VISUAL_REVIEW",
+    "model_id": "GPT-6-astra; five sampled frames; 2026-11-25",
+    "rationale": "Đầu và thân hướng trước nhất quán ở 5 ảnh, hai cẳng tay đặt trên bàn. Không thấy dấu hiệu quay khỏi hoạt động.",
+    "rejection_reason": "Chỉ đã xem ảnh toàn cảnh và 5 ảnh lấy mẫu, chưa xem liên tục toàn clip. Mức tin cậy là ước lượng chủ quan, chưa hiệu chuẩn. Vị trí bảng/giáo viên ngoài khung hình cần người duyệt xác nhận.",
+    "bundle_image_path": "data\\annotations\\ai_assist\\codex_visual_review\\images\\class_2_cam_A_trk001_w0001.jpg"
+  },
+  "class_3_cam_A_trk011_w0000": {
+    "window_id": "class_3_cam_A_trk011_w0000",
+    "suggested_state": "VALID",
+    "suggested_label": "MODERATE_OBSERVED_PARTICIPATION",
+    "suggested_behaviors": [
+      "BOARD_OR_INSTRUCTOR_FACING"
+    ],
+    "suggested_phase": "lecture",
+    "suggested_phase_evidence": "Pha lecture theo thông tin người dùng; người duyệt cần xác nhận phù hợp đoạn này.",
+    "suggested_occlusion": "none",
+    "confidence": 0.6,
+    "gate_reason": "VISUAL_SAMPLED_FRAMES_ONLY",
+    "needs_vision_review": true,
+    "suggestion_source": "CODEX_VISUAL_REVIEW",
+    "model_id": "GPT-6-astra; five sampled frames; 2026-11-25",
+    "rationale": "Ngồi hướng về phía trước nhưng đầu hơi nghiêng và xoay nhẹ; tay đặt cạnh tài liệu. Chưa đủ ảnh để xác nhận đang viết.",
+    "rejection_reason": "Chỉ đã xem ảnh toàn cảnh và 5 ảnh lấy mẫu, chưa xem liên tục toàn clip. Mức tin cậy là ước lượng chủ quan, chưa hiệu chuẩn. Vị trí bảng/giáo viên ngoài khung hình cần người duyệt xác nhận.",
+    "bundle_image_path": "data\\annotations\\ai_assist\\codex_visual_review\\images\\class_3_cam_A_trk011_w0000.jpg"
+  },
+  "class_3_cam_A_trk012_w0001": {
+    "window_id": "class_3_cam_A_trk012_w0001",
+    "suggested_state": "VALID",
+    "suggested_label": "MODERATE_OBSERVED_PARTICIPATION",
+    "suggested_behaviors": [
+      "BOARD_OR_INSTRUCTOR_FACING"
+    ],
+    "suggested_phase": "lecture",
+    "suggested_phase_evidence": "Pha lecture theo thông tin người dùng; người duyệt cần xác nhận phù hợp đoạn này.",
+    "suggested_occlusion": "none",
+    "confidence": 0.6,
+    "gate_reason": "VISUAL_SAMPLED_FRAMES_ONLY",
+    "needs_vision_review": true,
+    "suggestion_source": "CODEX_VISUAL_REVIEW",
+    "model_id": "GPT-6-astra; five sampled frames; 2026-11-25",
+    "rationale": "Thân hướng trước, đầu nghiêng sang một bên rồi quay lại; hai tay ở mặt bàn. Chưa có tín hiệu hành vi rõ để đề xuất HIGH.",
+    "rejection_reason": "Chỉ đã xem ảnh toàn cảnh và 5 ảnh lấy mẫu, chưa xem liên tục toàn clip. Mức tin cậy là ước lượng chủ quan, chưa hiệu chuẩn. Vị trí bảng/giáo viên ngoài khung hình cần người duyệt xác nhận.",
+    "bundle_image_path": "data\\annotations\\ai_assist\\codex_visual_review\\images\\class_3_cam_A_trk012_w0001.jpg"
+  },
+  "class_4_cam_A_trk008_w0001": {
+    "window_id": "class_4_cam_A_trk008_w0001",
+    "suggested_state": "VALID",
+    "suggested_label": "MODERATE_OBSERVED_PARTICIPATION",
+    "suggested_behaviors": [
+      "BOARD_OR_INSTRUCTOR_FACING"
+    ],
+    "suggested_phase": "lecture",
+    "suggested_phase_evidence": "Pha lecture theo thông tin người dùng; người duyệt cần xác nhận phù hợp đoạn này.",
+    "suggested_occlusion": "none",
+    "confidence": 0.6,
+    "gate_reason": "VISUAL_SAMPLED_FRAMES_ONLY",
+    "needs_vision_review": true,
+    "suggestion_source": "CODEX_VISUAL_REVIEW",
+    "model_id": "GPT-6-astra; five sampled frames; 2026-11-25",
+    "rationale": "Tay đưa lên gần miệng/cằm, thân vẫn hướng trước; đầu chuyển nhẹ giữa các ảnh. Không coi tay gần mặt là giơ tay phát biểu hay bằng chứng LOW.",
+    "rejection_reason": "Chỉ đã xem ảnh toàn cảnh và 5 ảnh lấy mẫu, chưa xem liên tục toàn clip. Mức tin cậy là ước lượng chủ quan, chưa hiệu chuẩn. Vị trí bảng/giáo viên ngoài khung hình cần người duyệt xác nhận.",
+    "bundle_image_path": "data\\annotations\\ai_assist\\codex_visual_review\\images\\class_4_cam_A_trk008_w0001.jpg"
+  },
+  "class_5_cam_A_trk005_w0004": {
+    "window_id": "class_5_cam_A_trk005_w0004",
+    "suggested_state": "VALID",
+    "suggested_label": "MODERATE_OBSERVED_PARTICIPATION",
+    "suggested_behaviors": [
+      "BOARD_OR_INSTRUCTOR_FACING"
+    ],
+    "suggested_phase": "lecture",
+    "suggested_phase_evidence": "Pha lecture theo thông tin người dùng; người duyệt cần xác nhận phù hợp đoạn này.",
+    "suggested_occlusion": "none",
+    "confidence": 0.6,
+    "gate_reason": "VISUAL_SAMPLED_FRAMES_ONLY",
+    "needs_vision_review": true,
+    "suggestion_source": "CODEX_VISUAL_REVIEW",
+    "model_id": "GPT-6-astra; five sampled frames; 2026-11-25",
+    "rationale": "Ngồi hướng trước, đầu hơi cúi hoặc nghiêng; tay đổi vị trí trên bàn. Chưa xác định rõ động tác đọc/viết từ ảnh.",
+    "rejection_reason": "Chỉ đã xem ảnh toàn cảnh và 5 ảnh lấy mẫu, chưa xem liên tục toàn clip. Mức tin cậy là ước lượng chủ quan, chưa hiệu chuẩn. Vị trí bảng/giáo viên ngoài khung hình cần người duyệt xác nhận.",
+    "bundle_image_path": "data\\annotations\\ai_assist\\codex_visual_review\\images\\class_5_cam_A_trk005_w0004.jpg"
+  }
+}

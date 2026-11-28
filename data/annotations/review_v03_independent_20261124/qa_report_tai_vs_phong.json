@@ -1,0 +1,28 @@
+{
+  "annotator_a": "D:\\ThiGiacMayTinh\\annotator_a.csv",
+  "annotator_b": "data/annotations/review_v03_independent_20261124/annotator_b.csv",
+  "matched_count": 600,
+  "valid_pairs_count": 540,
+  "agree_count": 386,
+  "agreement_rate": 0.7148,
+  "cohen_kappa": 0.4989,
+  "confusion_matrix": [
+    [
+      82,
+      70,
+      1
+    ],
+    [
+      13,
+      246,
+      27
+    ],
+    [
+      2,
+      41,
+      58
+    ]
+  ],
+  "identical_files": false,
+  "strict_human": true
+}
