@@ -1,0 +1,279 @@
+{
+  "experiment_id": "20261126-102733-tcn-human-accepted-test-only",
+  "experiment_name": "tcn-human-accepted-test-only",
+  "model_type": "TCN",
+  "created_at": "2026-11-26T10:27:33.495605+07:00",
+  "seed": 42,
+  "dataset_version": "train-human-accepted-test-only-20261126",
+  "split_version": "split-v0.1",
+  "feature_schema_version": "posefeat-v2",
+  "config_sha256": "6026c1aff5744c15ed047b84de356e95f5534b93b00db74f16e492f46d387618",
+  "git_commit": "50fb56d47c169c2778bc4941a2ac5242b2b5cf54",
+  "best_epoch": 2,
+  "best_val_macro_f1": 0.4855,
+  "test_metrics": {
+    "macro_f1": 0.2958,
+    "balanced_accuracy": 0.3651,
+    "accuracy": 0.5761,
+    "confusion_matrix": [
+      [
+        1,
+        2,
+        0
+      ],
+      [
+        54,
+        154,
+        23
+      ],
+      [
+        10,
+        28,
+        4
+      ]
+    ],
+    "per_class": {
+      "HIGH_OBSERVED_PARTICIPATION": {
+        "precision": 0.0154,
+        "recall": 0.3333,
+        "f1": 0.0294,
+        "support": 3
+      },
+      "MODERATE_OBSERVED_PARTICIPATION": {
+        "precision": 0.837,
+        "recall": 0.6667,
+        "f1": 0.7422,
+        "support": 231
+      },
+      "LOW_OBSERVED_PARTICIPATION": {
+        "precision": 0.1481,
+        "recall": 0.0952,
+        "f1": 0.1159,
+        "support": 42
+      }
+    }
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.439,
+      "train_acc": 0.768,
+      "val_loss": 1.8051,
+      "val_macro_f1": 0.427,
+      "val_acc": 0.5109
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.2955,
+      "train_acc": 0.8531,
+      "val_loss": 2.2259,
+      "val_macro_f1": 0.4855,
+      "val_acc": 0.587
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.2227,
+      "train_acc": 0.8858,
+      "val_loss": 2.5969,
+      "val_macro_f1": 0.465,
+      "val_acc": 0.5543
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.2026,
+      "train_acc": 0.8975,
+      "val_loss": 2.8891,
+      "val_macro_f1": 0.4108,
+      "val_acc": 0.4891
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.2031,
+      "train_acc": 0.8967,
+      "val_loss": 2.0604,
+      "val_macro_f1": 0.4141,
+      "val_acc": 0.5
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.1806,
+      "train_acc": 0.9069,
+      "val_loss": 2.686,
+      "val_macro_f1": 0.4534,
+      "val_acc": 0.5109
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.1808,
+      "train_acc": 0.9085,
+      "val_loss": 2.6222,
+      "val_macro_f1": 0.3906,
+      "val_acc": 0.5109
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.1866,
+      "train_acc": 0.904,
+      "val_loss": 2.6569,
+      "val_macro_f1": 0.4134,
+      "val_acc": 0.5543
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.1651,
+      "train_acc": 0.9149,
+      "val_loss": 2.7892,
+      "val_macro_f1": 0.3824,
+      "val_acc": 0.5217
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.1583,
+      "train_acc": 0.9186,
+      "val_loss": 3.4543,
+      "val_macro_f1": 0.3883,
+      "val_acc": 0.5109
+    },
+    {
+      "epoch": 11,
+      "train_loss": 0.1463,
+      "train_acc": 0.9186,
+      "val_loss": 3.0608,
+      "val_macro_f1": 0.4249,
+      "val_acc": 0.5652
+    },
+    {
+      "epoch": 12,
+      "train_loss": 0.1616,
+      "train_acc": 0.9142,
+      "val_loss": 3.2548,
+      "val_macro_f1": 0.3944,
+      "val_acc": 0.5217
+    }
+  ],
+  "checkpoint_path": "models\\checkpoints\\20261126-102733-tcn-human-accepted-test-only.pt",
+  "checkpoint_sha256": "bea9d7655a62d2ed81c6351ebd4dc79f8f5e26b981297dd107f92a7c40dcaf55",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 3096,
+    "MODERATE_OBSERVED_PARTICIPATION": 3941,
+    "LOW_OBSERVED_PARTICIPATION": 589
+  },
+  "calibration": {
+    "fit_split": "val",
+    "coverages_apply_to": "model_confidence_only",
+    "validation_windows": 92,
+    "temperature": 3.946009635925293,
+    "min_probability": 0.0,
+    "validation_ece_before": 0.2956,
+    "validation_ece_after": 0.1187,
+    "validation_nll_before": 1.519892692565918,
+    "validation_nll_after": 0.879784107208252,
+    "validation_accuracy_vs_coverage": [
+      {
+        "threshold": 0.0,
+        "coverage": 1.0,
+        "accuracy": 0.587,
+        "n_accepted": 92,
+        "n_total": 92
+      },
+      {
+        "threshold": 0.35,
+        "coverage": 1.0,
+        "accuracy": 0.587,
+        "n_accepted": 92,
+        "n_total": 92
+      },
+      {
+        "threshold": 0.4,
+        "coverage": 1.0,
+        "accuracy": 0.587,
+        "n_accepted": 92,
+        "n_total": 92
+      },
+      {
+        "threshold": 0.45,
+        "coverage": 0.9674,
+        "accuracy": 0.5843,
+        "n_accepted": 89,
+        "n_total": 92
+      },
+      {
+        "threshold": 0.5,
+        "coverage": 0.7717,
+        "accuracy": 0.5634,
+        "n_accepted": 71,
+        "n_total": 92
+      },
+      {
+        "threshold": 0.55,
+        "coverage": 0.6522,
+        "accuracy": 0.6,
+        "n_accepted": 60,
+        "n_total": 92
+      },
+      {
+        "threshold": 0.6,
+        "coverage": 0.4457,
+        "accuracy": 0.6341,
+        "n_accepted": 41,
+        "n_total": 92
+      },
+      {
+        "threshold": 0.65,
+        "coverage": 0.3043,
+        "accuracy": 0.6071,
+        "n_accepted": 28,
+        "n_total": 92
+      },
+      {
+        "threshold": 0.7,
+        "coverage": 0.2065,
+        "accuracy": 0.5789,
+        "n_accepted": 19,
+        "n_total": 92
+      },
+      {
+        "threshold": 0.75,
+        "coverage": 0.0761,
+        "accuracy": 0.5714,
+        "n_accepted": 7,
+        "n_total": 92
+      },
+      {
+        "threshold": 0.8,
+        "coverage": 0.0109,
+        "accuracy": 1.0,
+        "n_accepted": 1,
+        "n_total": 92
+      },
+      {
+        "threshold": 0.85,
+        "coverage": 0.0,
+        "accuracy": null,
+        "n_accepted": 0,
+        "n_total": 92
+      },
+      {
+        "threshold": 0.9,
+        "coverage": 0.0,
+        "accuracy": null,
+        "n_accepted": 0,
+        "n_total": 92
+      },
+      {
+        "threshold": 0.95,
+        "coverage": 0.0,
+        "accuracy": null,
+        "n_accepted": 0,
+        "n_total": 92
+      }
+    ]
+  },
+  "overrides": {
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "epochs": 40,
+    "patience": 10,
+    "device": "cpu"
+  }
+}

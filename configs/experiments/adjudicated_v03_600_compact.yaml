@@ -1,0 +1,49 @@
+# Experiment: adjudicated_v03_600_compact
+# Regularized 1-layer LSTM (hidden=64, dropout=0.40) on adjudicated_v03.csv (175 train / 92 val / 273 test).
+
+experiment_id: adjudicated_v03_600_compact
+parent_config: configs/experiments/adjudicated_v03_600.yaml
+description: Compact 1-layer LSTM on adjudicated_v03.csv (175 train / 92 val / 273 test).
+
+project:
+  id: CVF25PRJ10
+  task_code: CVFP26BCPPRJC012
+  seed: 42
+
+data:
+  dataset_version: adjudicated-v03-600-20261126
+  split_version: split-v0.1
+  label_schema_version: labels-v1
+  feature_schema_version: posefeat-v2
+  label_source: ADJUDICATED
+  override_phase: lecture
+
+video:
+  sample_fps: 10
+
+quality_gate:
+  min_visible_ratio: 0.60
+  upper_body_min_visible_ratio: 0.72
+  min_mean_keypoint_confidence: 0.30
+
+sequence:
+  window_seconds: 4
+  stride_seconds: 2
+
+model:
+  type: lstm
+  num_classes: 3
+  hidden_size: 64
+  num_layers: 1
+  dropout: 0.40
+
+training:
+  batch_size: 16
+  optimizer: adam
+  learning_rate: 0.001
+  early_stopping_patience: 12
+  primary_metric: macro_f1
+
+uncertainty:
+  min_probability: 0.60
+  output_label: UNCERTAIN

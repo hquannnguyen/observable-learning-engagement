@@ -1,0 +1,35 @@
+{
+  "experiment_id": "20261125-222508-lstm-phong600-human",
+  "created_at": "2026-11-25T22:25:08.493348+07:00",
+  "name": "lstm-phong600-human",
+  "seed": 42,
+  "git_commit": "a0cfa7a7b5456a6c046877ae11e01f399699c2fc",
+  "dataset_version": "phong600-human-v0.3",
+  "split_version": "split-v0.1",
+  "source_config": "configs\\experiments\\phong600_human.yaml",
+  "config_sha256": "70208b2aec8d1feed8a2420357beb10387a6ea47d739ad8e4abdb9bbd30e86f1",
+  "notes": "LSTM training run.",
+  "checkpoint_path": "models\\checkpoints\\20261125-222508-lstm-phong600-human.pt",
+  "checkpoint_sha256": "3f05bb2781c8fc69ef3ffe1bcf9797b34e191661156f33cbeb78866f9bae3fee",
+  "feature_schema_version": "posefeat-v2",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 70,
+    "MODERATE_OBSERVED_PARTICIPATION": 72,
+    "LOW_OBSERVED_PARTICIPATION": 35
+  },
+  "metrics_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261125-222508-lstm-phong600-human\\metrics.json",
+  "overrides": {
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "epochs": 40,
+    "patience": 10,
+    "device": "cpu"
+  },
+  "evaluation_report": "reports\\experiments\\20261125-222508-lstm-phong600-human\\evaluation_report.json",
+  "predictions_file": "reports\\experiments\\20261125-222508-lstm-phong600-human\\test_predictions.csv",
+  "metric_scope": "human_labels",
+  "evaluated_windows": 276,
+  "coverage": 0.6812,
+  "accepted_macro_f1": 0.4008,
+  "raw_macro_f1": 0.3745
+}

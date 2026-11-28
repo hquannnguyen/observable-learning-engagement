@@ -1,0 +1,47 @@
+experiment_id: phong600_human
+parent_config: configs/baseline.yaml
+description: Supervised training on Phong 600 HUMAN train (177 VALID), calibration
+  on val (92 VALID), evaluation on test (276 VALID).
+project:
+  id: CVF25PRJ10
+  task_code: CVFP26BCPPRJC012
+  seed: 42
+data:
+  dataset_version: repo-annotator-b-600-human
+  split_version: split-v0.1
+  label_schema_version: labels-v1
+  feature_schema_version: posefeat-v2
+  label_source: HUMAN
+video:
+  sample_fps: 10
+quality_gate:
+  min_visible_ratio: 0.6
+  upper_body_min_visible_ratio: 0.72
+  min_mean_keypoint_confidence: 0.3
+sequence:
+  window_seconds: 4
+  stride_seconds: 2
+model:
+  type: lstm
+  num_classes: 3
+  hidden_size: 128
+  num_layers: 2
+  dropout: 0.3
+  tcn:
+    hidden_size: 64
+    num_levels: 4
+    kernel_size: 3
+    dropout: 0.2
+training:
+  batch_size: 32
+  optimizer: adam
+  learning_rate: 0.0003
+  early_stopping_patience: 10
+  primary_metric: macro_f1
+  epochs: 40
+  calibrate: true
+  min_validation_coverage: 0.9
+  init_checkpoint: models/checkpoints/20261125-205918-lstm-yolo11-feat94-weak-r2-lecture.pt
+uncertainty:
+  min_probability: 0.6
+  output_label: UNCERTAIN

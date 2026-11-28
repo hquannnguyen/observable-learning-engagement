@@ -1,0 +1,55 @@
+# Experiment: tai_0047_27_11_on_v1
+# Train on D:\ThiGiacMayTinh\train_full_ai_assist_Tài_0047_27_11.csv (5,266 VALID train windows: 927 HIGH / 3,481 MOD / 858 LOW).
+# Validate & test on official Dataset v1 adjudicated ground truth (92 VALID val / 273 VALID test).
+
+experiment_id: tai_0047_27_11_on_v1
+parent_config: configs/experiments/adjudicated_v03_600.yaml
+description: Train LSTM & TCN on 5,266 VALID train windows from train_full_ai_assist_Tai_0047_27_11.csv; val/test on Dataset v1.
+
+project:
+  id: CVF25PRJ10
+  task_code: CVFP26BCPPRJC012
+  seed: 42
+
+data:
+  dataset_version: tai-0047-27-11-train-on-v1
+  split_version: split-v0.1
+  label_schema_version: labels-v1
+  feature_schema_version: posefeat-v2
+  label_source: HUMAN
+  override_phase: lecture
+
+video:
+  sample_fps: 10
+
+quality_gate:
+  min_visible_ratio: 0.60
+  upper_body_min_visible_ratio: 0.72
+  min_mean_keypoint_confidence: 0.30
+
+sequence:
+  window_seconds: 4
+  stride_seconds: 2
+
+model:
+  type: tcn
+  num_classes: 3
+  hidden_size: 128
+  num_layers: 2
+  dropout: 0.30
+  tcn:
+    hidden_size: 64
+    num_levels: 4
+    kernel_size: 3
+    dropout: 0.25
+
+training:
+  batch_size: 64
+  optimizer: adam
+  learning_rate: 0.001
+  early_stopping_patience: 10
+  primary_metric: macro_f1
+
+uncertainty:
+  min_probability: 0.60
+  output_label: UNCERTAIN

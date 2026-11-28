@@ -1,0 +1,35 @@
+{
+  "experiment_id": "20261126-102713-lstm-human-accepted-test-only",
+  "created_at": "2026-11-26T10:27:13.809502+07:00",
+  "name": "lstm-human-accepted-test-only",
+  "seed": 42,
+  "git_commit": "50fb56d47c169c2778bc4941a2ac5242b2b5cf54",
+  "dataset_version": "train-human-accepted-test-only-20261126",
+  "split_version": "split-v0.1",
+  "source_config": "configs\\experiments\\train_human_accepted_test_only.yaml",
+  "config_sha256": "a58c35f232c03a4f92245520bcb9741a6ed70de89e1045c6bed71744e00b7077",
+  "notes": "Train on train_annotations_HUMAN_ACCEPTED_TEST_ONLY.csv (7626 train: 49 original HUMAN + 7577 AI-rule retagged); val/test on Phong HUMAN annotator_b.csv (92/276).",
+  "checkpoint_path": "models\\checkpoints\\20261126-102713-lstm-human-accepted-test-only.pt",
+  "checkpoint_sha256": "698cb5d15e384cf88ba09eced29c410aee96f3e8a929b3991b1eaa3cf4fc3d58",
+  "feature_schema_version": "posefeat-v2",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 3096,
+    "MODERATE_OBSERVED_PARTICIPATION": 3941,
+    "LOW_OBSERVED_PARTICIPATION": 589
+  },
+  "metrics_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261126-102713-lstm-human-accepted-test-only\\metrics.json",
+  "overrides": {
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "epochs": 40,
+    "patience": 10,
+    "device": "cpu"
+  },
+  "evaluation_report": "reports\\experiments\\20261126-102713-lstm-human-accepted-test-only\\evaluation_report.json",
+  "predictions_file": "reports\\experiments\\20261126-102713-lstm-human-accepted-test-only\\predictions.csv",
+  "metric_scope": "human_labels",
+  "evaluated_windows": 276,
+  "coverage": 0.7138,
+  "accepted_macro_f1": 0.2912,
+  "raw_macro_f1": 0.2806
+}

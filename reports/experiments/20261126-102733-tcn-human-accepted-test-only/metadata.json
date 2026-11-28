@@ -1,0 +1,35 @@
+{
+  "experiment_id": "20261126-102733-tcn-human-accepted-test-only",
+  "created_at": "2026-11-26T10:27:33.495605+07:00",
+  "name": "tcn-human-accepted-test-only",
+  "seed": 42,
+  "git_commit": "50fb56d47c169c2778bc4941a2ac5242b2b5cf54",
+  "dataset_version": "train-human-accepted-test-only-20261126",
+  "split_version": "split-v0.1",
+  "source_config": "configs\\experiments\\train_human_accepted_test_only.yaml",
+  "config_sha256": "6026c1aff5744c15ed047b84de356e95f5534b93b00db74f16e492f46d387618",
+  "notes": "Train TCN on train_annotations_HUMAN_ACCEPTED_TEST_ONLY.csv (7626 train: 49 original HUMAN + 7577 AI-rule retagged); val/test on Phong HUMAN annotator_b.csv (92/276).",
+  "checkpoint_path": "models\\checkpoints\\20261126-102733-tcn-human-accepted-test-only.pt",
+  "checkpoint_sha256": "bea9d7655a62d2ed81c6351ebd4dc79f8f5e26b981297dd107f92a7c40dcaf55",
+  "feature_schema_version": "posefeat-v2",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 3096,
+    "MODERATE_OBSERVED_PARTICIPATION": 3941,
+    "LOW_OBSERVED_PARTICIPATION": 589
+  },
+  "metrics_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261126-102733-tcn-human-accepted-test-only\\metrics.json",
+  "overrides": {
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "epochs": 40,
+    "patience": 10,
+    "device": "cpu"
+  },
+  "evaluation_report": "reports\\experiments\\20261126-102733-tcn-human-accepted-test-only\\evaluation_report.json",
+  "predictions_file": "reports\\experiments\\20261126-102733-tcn-human-accepted-test-only\\predictions.csv",
+  "metric_scope": "human_labels",
+  "evaluated_windows": 276,
+  "coverage": 0.7899,
+  "accepted_macro_f1": 0.3113,
+  "raw_macro_f1": 0.2958
+}

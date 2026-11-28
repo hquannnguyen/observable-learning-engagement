@@ -1,0 +1,35 @@
+{
+  "experiment_id": "20261126-150938-tcn-full-ai-assist-20261126",
+  "created_at": "2026-11-26T15:09:38.110890+07:00",
+  "name": "tcn-full-ai-assist-20261126",
+  "seed": 42,
+  "git_commit": "aa84d3aa21c6cb9e298b2f7094bd3d7572aeb16e",
+  "dataset_version": "full-ai-assist-split-20261126",
+  "split_version": "split-v0.1",
+  "source_config": "configs\\experiments\\full_ai_assist_split_20261126.yaml",
+  "config_sha256": "8561446f4279445ed2181849344fd2cc09d427556e9cccf01ada9871886f9bc7",
+  "notes": "Train TCN on full train/val/test annotator_a.csv (7628/6908/3643 VALID).",
+  "checkpoint_path": "models\\checkpoints\\20261126-150938-tcn-full-ai-assist-20261126.pt",
+  "checkpoint_sha256": "4ccabafb8a6dd0f37ff8f6b41f4ff8ac9325de006c4cb7e9913012b85b090fe5",
+  "feature_schema_version": "posefeat-v2",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 3098,
+    "MODERATE_OBSERVED_PARTICIPATION": 4458,
+    "LOW_OBSERVED_PARTICIPATION": 72
+  },
+  "metrics_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261126-150938-tcn-full-ai-assist-20261126\\metrics.json",
+  "overrides": {
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "epochs": 30,
+    "patience": 8,
+    "device": "cpu"
+  },
+  "evaluation_report": "reports\\experiments\\20261126-150938-tcn-full-ai-assist-20261126\\evaluation_report.json",
+  "predictions_file": "reports\\experiments\\20261126-150938-tcn-full-ai-assist-20261126\\predictions.csv",
+  "metric_scope": "human_labels",
+  "evaluated_windows": 3643,
+  "coverage": 0.8877,
+  "accepted_macro_f1": 0.3133,
+  "raw_macro_f1": 0.3112
+}

@@ -68,6 +68,7 @@ def main() -> None:
     parser.add_argument("--model", choices=("lstm", "bilstm", "tcn"), default=None, help="Override model.type from config.")
     parser.add_argument("--calibrate", action="store_true", help="Fit temperature and select confidence threshold on validation labels.")
     parser.add_argument("--min-validation-coverage", type=float, default=0.90, help="Minimum model-confidence coverage for threshold selection.")
+    parser.add_argument("--init-checkpoint", type=str, default=None, help="Optional checkpoint .pt to initialize weights for fine-tuning.")
     args = parser.parse_args()
     if args.epochs < 1:
         parser.error("--epochs must be positive")
@@ -137,6 +138,11 @@ def main() -> None:
         if key in data.files:
             cfg["data"][key] = str(data[key])
     model = build_model(model_cfg, input_size=input_size, model_type=model_type).to(device)
+    if args.init_checkpoint:
+        init_ckpt = torch.load(Path(args.init_checkpoint), map_location=device)
+        model.load_state_dict(init_ckpt["model_state_dict"])
+        cfg["training"]["init_checkpoint"] = str(args.init_checkpoint)
+        logger.info("Initialized weights from checkpoint: %s", args.init_checkpoint)
     logger.info("Model architecture: %s (input_size=%d)", model_type, input_size)
 
     # Class-weighted CrossEntropyLoss for imbalance

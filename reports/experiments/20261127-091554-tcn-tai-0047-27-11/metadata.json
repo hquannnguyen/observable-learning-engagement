@@ -1,0 +1,35 @@
+{
+  "experiment_id": "20261127-091554-tcn-tai-0047-27-11",
+  "created_at": "2026-11-27T09:15:54.602999+07:00",
+  "name": "tcn-tai-0047-27-11",
+  "seed": 42,
+  "git_commit": "aa84d3aa21c6cb9e298b2f7094bd3d7572aeb16e",
+  "dataset_version": "tai-0047-27-11-train-on-v1",
+  "split_version": "split-v0.1",
+  "source_config": "configs\\experiments\\tai_0047_27_11_on_v1.yaml",
+  "config_sha256": "a43875186dab7d2b102c73e0813ded9992249467997f4162029ed5e239deef38",
+  "notes": "Train TCN on 5266 VALID train from train_full_ai_assist_Tai_0047_27_11.csv; val/test on Dataset v1 (92/273).",
+  "checkpoint_path": "models\\checkpoints\\20261127-091554-tcn-tai-0047-27-11.pt",
+  "checkpoint_sha256": "6cf7104651c7e8afa42d8376a34483296d45c5cd72bc1414e712b5184569648b",
+  "feature_schema_version": "posefeat-v2",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 927,
+    "MODERATE_OBSERVED_PARTICIPATION": 3481,
+    "LOW_OBSERVED_PARTICIPATION": 858
+  },
+  "metrics_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261127-091554-tcn-tai-0047-27-11\\metrics.json",
+  "overrides": {
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "epochs": 35,
+    "patience": 10,
+    "device": "cpu"
+  },
+  "evaluation_report": "reports\\experiments\\20261127-091554-tcn-tai-0047-27-11\\evaluation_report.json",
+  "predictions_file": "reports\\experiments\\20261127-091554-tcn-tai-0047-27-11\\predictions.csv",
+  "metric_scope": "human_labels",
+  "evaluated_windows": 273,
+  "coverage": 0.7985,
+  "accepted_macro_f1": 0.3026,
+  "raw_macro_f1": 0.306
+}

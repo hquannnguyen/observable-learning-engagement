@@ -1,0 +1,57 @@
+# Experiment: yolo11_feat94_weak_v02_lecture
+# YOLO11m Pose Extraction + posefeat-v2 (94 dims) + weak-v0.2 rules with all phases confirmed as lecture
+
+experiment_id: yolo11_feat94_weak_v02_lecture
+parent_config: configs/experiments/yolo11_feat94_weak_v02_rules.yaml
+description: Exploratory weak-v0.2 rules with user-confirmed lecture phase across all 11 recordings.
+
+project:
+  id: CVF25PRJ10
+  task_code: CVFP26BCPPRJC012
+  seed: 42
+
+data:
+  dataset_version: v0.2-yolo11-feat94-weak-r2-lecture
+  split_version: split-v0.1
+  label_schema_version: labels-v1
+  feature_schema_version: posefeat-v2
+  weak_rule_version: weak-v0.2
+  override_phase: lecture
+
+video:
+  sample_fps: 10
+
+pose:
+  model: yolo11m-pose.pt
+  confidence_threshold: 0.35
+
+tracking:
+  tracker: bytetrack.yaml
+  min_track_seconds: 2.0
+
+quality_gate:
+  min_visible_ratio: 0.60
+  upper_body_min_visible_ratio: 0.72
+  min_mean_keypoint_confidence: 0.30
+
+sequence:
+  window_seconds: 4
+  stride_seconds: 2
+
+model:
+  type: lstm
+  num_classes: 3
+  hidden_size: 128
+  num_layers: 2
+  dropout: 0.30
+
+training:
+  batch_size: 32
+  optimizer: adam
+  learning_rate: 0.001
+  early_stopping_patience: 10
+  primary_metric: macro_f1
+
+uncertainty:
+  min_probability: 0.60
+  output_label: UNCERTAIN

@@ -1,0 +1,35 @@
+{
+  "experiment_id": "20261125-224452-lstm-phong600-compact",
+  "created_at": "2026-11-25T22:44:52.637544+07:00",
+  "name": "lstm-phong600-compact",
+  "seed": 42,
+  "git_commit": "a0cfa7a7b5456a6c046877ae11e01f399699c2fc",
+  "dataset_version": "repo-annotator-b-600-human",
+  "split_version": "split-v0.1",
+  "source_config": "configs\\experiments\\lstm_phong600_compact.yaml",
+  "config_sha256": "46df367170ea041addc5ebf912a17145d35002df28ee6291e98cc27ba2e8e224",
+  "notes": "LSTM training run.",
+  "checkpoint_path": "models\\checkpoints\\20261125-224452-lstm-phong600-compact.pt",
+  "checkpoint_sha256": "bb8283098c6cea5d7fa12d8c931e4f7a0e962b8da6c8b5665b0515d7549a4632",
+  "feature_schema_version": "posefeat-v2",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 70,
+    "MODERATE_OBSERVED_PARTICIPATION": 72,
+    "LOW_OBSERVED_PARTICIPATION": 35
+  },
+  "metrics_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261125-224452-lstm-phong600-compact\\metrics.json",
+  "overrides": {
+    "batch_size": 16,
+    "learning_rate": 0.001,
+    "epochs": 50,
+    "patience": 12,
+    "device": "cpu"
+  },
+  "evaluation_report": "reports\\experiments\\20261125-224452-lstm-phong600-compact\\evaluation_report.json",
+  "predictions_file": "reports\\experiments\\20261125-224452-lstm-phong600-compact\\test_predictions.csv",
+  "metric_scope": "human_labels",
+  "evaluated_windows": 276,
+  "coverage": 0.6993,
+  "accepted_macro_f1": 0.3288,
+  "raw_macro_f1": 0.3392
+}

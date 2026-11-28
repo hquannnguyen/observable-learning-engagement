@@ -1,0 +1,311 @@
+{
+  "checkpoint": "models\\checkpoints\\20261125-205918-lstm-yolo11-feat94-weak-r2-lecture.pt",
+  "experiment_id": "20261125-205918-lstm-yolo11-feat94-weak-r2-lecture",
+  "total_test_windows": 4889,
+  "evaluated_windows": 3632,
+  "excluded_unlabeled_windows": 1257,
+  "coverage": 0.9091,
+  "uncertain_rate": 0.0909,
+  "calibration": {
+    "temperature": 1.8601837158203125,
+    "validation_fit": {
+      "fit_split": "val",
+      "coverages_apply_to": "model_confidence_only",
+      "validation_windows": 6331,
+      "temperature": 1.8601837158203125,
+      "min_probability": 0.7,
+      "validation_ece_before": 0.0644,
+      "validation_ece_after": 0.0126,
+      "validation_nll_before": 0.3330481946468353,
+      "validation_nll_after": 0.265909343957901,
+      "validation_accuracy_vs_coverage": [
+        {
+          "threshold": 0.0,
+          "coverage": 1.0,
+          "accuracy": 0.8902,
+          "n_accepted": 6331,
+          "n_total": 6331
+        },
+        {
+          "threshold": 0.35,
+          "coverage": 1.0,
+          "accuracy": 0.8902,
+          "n_accepted": 6331,
+          "n_total": 6331
+        },
+        {
+          "threshold": 0.4,
+          "coverage": 1.0,
+          "accuracy": 0.8902,
+          "n_accepted": 6331,
+          "n_total": 6331
+        },
+        {
+          "threshold": 0.45,
+          "coverage": 1.0,
+          "accuracy": 0.8902,
+          "n_accepted": 6331,
+          "n_total": 6331
+        },
+        {
+          "threshold": 0.5,
+          "coverage": 0.997,
+          "accuracy": 0.8915,
+          "n_accepted": 6312,
+          "n_total": 6331
+        },
+        {
+          "threshold": 0.55,
+          "coverage": 0.9749,
+          "accuracy": 0.9004,
+          "n_accepted": 6172,
+          "n_total": 6331
+        },
+        {
+          "threshold": 0.6,
+          "coverage": 0.9545,
+          "accuracy": 0.9072,
+          "n_accepted": 6043,
+          "n_total": 6331
+        },
+        {
+          "threshold": 0.65,
+          "coverage": 0.9308,
+          "accuracy": 0.9165,
+          "n_accepted": 5893,
+          "n_total": 6331
+        },
+        {
+          "threshold": 0.7,
+          "coverage": 0.9041,
+          "accuracy": 0.9235,
+          "n_accepted": 5724,
+          "n_total": 6331
+        },
+        {
+          "threshold": 0.75,
+          "coverage": 0.8661,
+          "accuracy": 0.9349,
+          "n_accepted": 5483,
+          "n_total": 6331
+        },
+        {
+          "threshold": 0.8,
+          "coverage": 0.8163,
+          "accuracy": 0.9491,
+          "n_accepted": 5168,
+          "n_total": 6331
+        },
+        {
+          "threshold": 0.85,
+          "coverage": 0.7457,
+          "accuracy": 0.9621,
+          "n_accepted": 4721,
+          "n_total": 6331
+        },
+        {
+          "threshold": 0.9,
+          "coverage": 0.683,
+          "accuracy": 0.9736,
+          "n_accepted": 4324,
+          "n_total": 6331
+        },
+        {
+          "threshold": 0.95,
+          "coverage": 0.5364,
+          "accuracy": 0.9897,
+          "n_accepted": 3396,
+          "n_total": 6331
+        }
+      ]
+    },
+    "expected_calibration_error": 0.0328,
+    "accuracy_vs_coverage": [
+      {
+        "threshold": 0.4,
+        "coverage": 1.0,
+        "accuracy": 0.8761,
+        "n_accepted": 3632,
+        "n_total": 3632
+      },
+      {
+        "threshold": 0.5,
+        "coverage": 0.9959,
+        "accuracy": 0.8772,
+        "n_accepted": 3617,
+        "n_total": 3632
+      },
+      {
+        "threshold": 0.55,
+        "coverage": 0.9755,
+        "accuracy": 0.8848,
+        "n_accepted": 3543,
+        "n_total": 3632
+      },
+      {
+        "threshold": 0.6,
+        "coverage": 0.9546,
+        "accuracy": 0.8921,
+        "n_accepted": 3467,
+        "n_total": 3632
+      },
+      {
+        "threshold": 0.65,
+        "coverage": 0.9331,
+        "accuracy": 0.9,
+        "n_accepted": 3389,
+        "n_total": 3632
+      },
+      {
+        "threshold": 0.7,
+        "coverage": 0.9091,
+        "accuracy": 0.907,
+        "n_accepted": 3302,
+        "n_total": 3632
+      },
+      {
+        "threshold": 0.75,
+        "coverage": 0.8764,
+        "accuracy": 0.9183,
+        "n_accepted": 3183,
+        "n_total": 3632
+      },
+      {
+        "threshold": 0.8,
+        "coverage": 0.8359,
+        "accuracy": 0.9298,
+        "n_accepted": 3036,
+        "n_total": 3632
+      },
+      {
+        "threshold": 0.85,
+        "coverage": 0.7561,
+        "accuracy": 0.9465,
+        "n_accepted": 2746,
+        "n_total": 3632
+      },
+      {
+        "threshold": 0.9,
+        "coverage": 0.6867,
+        "accuracy": 0.9647,
+        "n_accepted": 2494,
+        "n_total": 3632
+      }
+    ]
+  },
+  "thresholds": {
+    "min_probability": 0.7,
+    "min_visible_ratio": 0.6,
+    "min_mean_keypoint_confidence": 0.3,
+    "upper_body_min_visible_ratio": null
+  },
+  "label_source_counts": {
+    "WEAK_RULE": 3632
+  },
+  "gate_reason_counts": {
+    "ACCEPTED": 3302,
+    "LOW_MODEL_CONF": 330
+  },
+  "raw_metrics": {
+    "macro_f1": 0.8487,
+    "balanced_accuracy": 0.882,
+    "accuracy": 0.8761,
+    "confusion_matrix": [
+      [
+        282,
+        27,
+        3
+      ],
+      [
+        130,
+        1255,
+        232
+      ],
+      [
+        0,
+        58,
+        1645
+      ]
+    ],
+    "per_class": {
+      "HIGH_OBSERVED_PARTICIPATION": {
+        "precision": 0.6845,
+        "recall": 0.9038,
+        "f1": 0.779,
+        "support": 312
+      },
+      "MODERATE_OBSERVED_PARTICIPATION": {
+        "precision": 0.9366,
+        "recall": 0.7761,
+        "f1": 0.8488,
+        "support": 1617
+      },
+      "LOW_OBSERVED_PARTICIPATION": {
+        "precision": 0.875,
+        "recall": 0.9659,
+        "f1": 0.9182,
+        "support": 1703
+      }
+    }
+  },
+  "accepted_metrics": {
+    "macro_f1": 0.8812,
+    "balanced_accuracy": 0.9062,
+    "accuracy": 0.907,
+    "confusion_matrix": [
+      [
+        260,
+        20,
+        2
+      ],
+      [
+        92,
+        1123,
+        152
+      ],
+      [
+        0,
+        41,
+        1612
+      ]
+    ],
+    "per_class": {
+      "HIGH_OBSERVED_PARTICIPATION": {
+        "precision": 0.7386,
+        "recall": 0.922,
+        "f1": 0.8202,
+        "support": 282
+      },
+      "MODERATE_OBSERVED_PARTICIPATION": {
+        "precision": 0.9485,
+        "recall": 0.8215,
+        "f1": 0.8804,
+        "support": 1367
+      },
+      "LOW_OBSERVED_PARTICIPATION": {
+        "precision": 0.9128,
+        "recall": 0.9752,
+        "f1": 0.943,
+        "support": 1653
+      }
+    }
+  },
+  "by_session": {
+    "session_005": {
+      "windows": 2995,
+      "accepted": 2739,
+      "uncertain": 256,
+      "coverage": 0.9145,
+      "macro_f1": 0.8861
+    },
+    "session_006": {
+      "windows": 637,
+      "accepted": 563,
+      "uncertain": 74,
+      "coverage": 0.8838,
+      "macro_f1": 0.8571
+    }
+  },
+  "predictions_file": "reports\\experiments\\20261125-205918-lstm-yolo11-feat94-weak-r2-lecture\\predictions.csv",
+  "metric_scope": "weak_rule_labels"
+}

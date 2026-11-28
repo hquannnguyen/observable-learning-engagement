@@ -1,0 +1,35 @@
+{
+  "experiment_id": "20261125-205918-lstm-yolo11-feat94-weak-r2-lecture",
+  "created_at": "2026-11-25T20:59:18.218732+07:00",
+  "name": "lstm-yolo11-feat94-weak-r2-lecture",
+  "seed": 42,
+  "git_commit": "a0cfa7a7b5456a6c046877ae11e01f399699c2fc",
+  "dataset_version": "v0.2-yolo11-feat94-weak-r2-lecture",
+  "split_version": "split-v0.1",
+  "source_config": "configs\\experiments\\yolo11_feat94_weak_v02_lecture.yaml",
+  "config_sha256": "1ca4f701ad69f91ff4850116228f3fb3a067df1c01a109cede67e725053fb69f",
+  "notes": "LSTM (94-dim posefeat-v2) trained on weak-v0.2 rules with all phases confirmed lecture",
+  "checkpoint_path": "models\\checkpoints\\20261125-205918-lstm-yolo11-feat94-weak-r2-lecture.pt",
+  "checkpoint_sha256": "c5be9bdd4b4e1448b631c73fea691a4b2b62983ab9f3f1af568d3445b0ebee61",
+  "feature_schema_version": "posefeat-v2",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 821,
+    "MODERATE_OBSERVED_PARTICIPATION": 4599,
+    "LOW_OBSERVED_PARTICIPATION": 1372
+  },
+  "metrics_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261125-205918-lstm-yolo11-feat94-weak-r2-lecture\\metrics.json",
+  "overrides": {
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "epochs": 30,
+    "patience": 10,
+    "device": "cpu"
+  },
+  "evaluation_report": "reports\\experiments\\20261125-205918-lstm-yolo11-feat94-weak-r2-lecture\\evaluation_report.json",
+  "predictions_file": "reports\\experiments\\20261125-205918-lstm-yolo11-feat94-weak-r2-lecture\\predictions.csv",
+  "metric_scope": "weak_rule_labels",
+  "evaluated_windows": 3632,
+  "coverage": 0.9091,
+  "accepted_macro_f1": 0.8812,
+  "raw_macro_f1": 0.8487
+}

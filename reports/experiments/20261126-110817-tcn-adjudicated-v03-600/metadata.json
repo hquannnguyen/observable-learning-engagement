@@ -1,0 +1,35 @@
+{
+  "experiment_id": "20261126-110817-tcn-adjudicated-v03-600",
+  "created_at": "2026-11-26T11:08:17.767512+07:00",
+  "name": "tcn-adjudicated-v03-600",
+  "seed": 42,
+  "git_commit": "50fb56d47c169c2778bc4941a2ac5242b2b5cf54",
+  "dataset_version": "adjudicated-v03-600-20261126",
+  "split_version": "split-v0.1",
+  "source_config": "configs\\experiments\\adjudicated_v03_600.yaml",
+  "config_sha256": "5a716d1db72d134dc38994c90c89fab05c803503db001084785d36d91f7b16a5",
+  "notes": "Train TCN on adjudicated_v03.csv (175 train / 92 val / 273 test).",
+  "checkpoint_path": "models\\checkpoints\\20261126-110817-tcn-adjudicated-v03-600.pt",
+  "checkpoint_sha256": "699677dee8aeb31b5bbe8dee7fa6e38394a3ed49d90a98c60ebbd8d67c442f5b",
+  "feature_schema_version": "posefeat-v2",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 72,
+    "MODERATE_OBSERVED_PARTICIPATION": 63,
+    "LOW_OBSERVED_PARTICIPATION": 40
+  },
+  "metrics_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261126-110817-tcn-adjudicated-v03-600\\metrics.json",
+  "overrides": {
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "epochs": 40,
+    "patience": 12,
+    "device": "cpu"
+  },
+  "evaluation_report": "reports\\experiments\\20261126-110817-tcn-adjudicated-v03-600\\evaluation_report.json",
+  "predictions_file": "reports\\experiments\\20261126-110817-tcn-adjudicated-v03-600\\predictions.csv",
+  "metric_scope": "human_labels",
+  "evaluated_windows": 273,
+  "coverage": 0.7766,
+  "accepted_macro_f1": 0.5514,
+  "raw_macro_f1": 0.4989
+}

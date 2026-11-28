@@ -1,0 +1,35 @@
+{
+  "experiment_id": "20261126-105203-tcn-tai600-human",
+  "created_at": "2026-11-26T10:52:03.136876+07:00",
+  "name": "tcn-tai600-human",
+  "seed": 42,
+  "git_commit": "50fb56d47c169c2778bc4941a2ac5242b2b5cf54",
+  "dataset_version": "tai600-human-20261126",
+  "split_version": "split-v0.1",
+  "source_config": "configs\\experiments\\tai600_human.yaml",
+  "config_sha256": "75bca56afbfe98bd210c309770bdf0148bb14663e4b465d832476a24f6977591",
+  "notes": "Train TCN on Tai 600 HUMAN (177 train / 92 val / 280 test).",
+  "checkpoint_path": "models\\checkpoints\\20261126-105203-tcn-tai600-human.pt",
+  "checkpoint_sha256": "95859aac9e16ddfe5578a9884735f7396b60c4cd4d5c4e2e25c52a2aaf31d66f",
+  "feature_schema_version": "posefeat-v2",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 72,
+    "MODERATE_OBSERVED_PARTICIPATION": 64,
+    "LOW_OBSERVED_PARTICIPATION": 41
+  },
+  "metrics_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261126-105203-tcn-tai600-human\\metrics.json",
+  "overrides": {
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "epochs": 40,
+    "patience": 12,
+    "device": "cpu"
+  },
+  "evaluation_report": "reports\\experiments\\20261126-105203-tcn-tai600-human\\evaluation_report.json",
+  "predictions_file": "reports\\experiments\\20261126-105203-tcn-tai600-human\\predictions.csv",
+  "metric_scope": "human_labels",
+  "evaluated_windows": 280,
+  "coverage": 0.7857,
+  "accepted_macro_f1": 0.5697,
+  "raw_macro_f1": 0.5311
+}

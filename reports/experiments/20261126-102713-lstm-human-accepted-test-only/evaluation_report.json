@@ -1,0 +1,312 @@
+{
+  "checkpoint": "models\\checkpoints\\20261126-102713-lstm-human-accepted-test-only.pt",
+  "experiment_id": "20261126-102713-lstm-human-accepted-test-only",
+  "total_test_windows": 276,
+  "evaluated_windows": 276,
+  "excluded_unlabeled_windows": 0,
+  "coverage": 0.7138,
+  "uncertain_rate": 0.2862,
+  "calibration": {
+    "temperature": 5.4955573081970215,
+    "validation_fit": {
+      "fit_split": "val",
+      "coverages_apply_to": "model_confidence_only",
+      "validation_windows": 92,
+      "temperature": 5.4955573081970215,
+      "min_probability": 0.45,
+      "validation_ece_before": 0.3933,
+      "validation_ece_after": 0.1306,
+      "validation_nll_before": 2.1672377586364746,
+      "validation_nll_after": 0.8965754508972168,
+      "validation_accuracy_vs_coverage": [
+        {
+          "threshold": 0.0,
+          "coverage": 1.0,
+          "accuracy": 0.5435,
+          "n_accepted": 92,
+          "n_total": 92
+        },
+        {
+          "threshold": 0.35,
+          "coverage": 1.0,
+          "accuracy": 0.5435,
+          "n_accepted": 92,
+          "n_total": 92
+        },
+        {
+          "threshold": 0.4,
+          "coverage": 0.9783,
+          "accuracy": 0.5556,
+          "n_accepted": 90,
+          "n_total": 92
+        },
+        {
+          "threshold": 0.45,
+          "coverage": 0.9239,
+          "accuracy": 0.5647,
+          "n_accepted": 85,
+          "n_total": 92
+        },
+        {
+          "threshold": 0.5,
+          "coverage": 0.7935,
+          "accuracy": 0.589,
+          "n_accepted": 73,
+          "n_total": 92
+        },
+        {
+          "threshold": 0.55,
+          "coverage": 0.7391,
+          "accuracy": 0.6324,
+          "n_accepted": 68,
+          "n_total": 92
+        },
+        {
+          "threshold": 0.6,
+          "coverage": 0.6304,
+          "accuracy": 0.6724,
+          "n_accepted": 58,
+          "n_total": 92
+        },
+        {
+          "threshold": 0.65,
+          "coverage": 0.4457,
+          "accuracy": 0.6341,
+          "n_accepted": 41,
+          "n_total": 92
+        },
+        {
+          "threshold": 0.7,
+          "coverage": 0.087,
+          "accuracy": 0.375,
+          "n_accepted": 8,
+          "n_total": 92
+        },
+        {
+          "threshold": 0.75,
+          "coverage": 0.0,
+          "accuracy": null,
+          "n_accepted": 0,
+          "n_total": 92
+        },
+        {
+          "threshold": 0.8,
+          "coverage": 0.0,
+          "accuracy": null,
+          "n_accepted": 0,
+          "n_total": 92
+        },
+        {
+          "threshold": 0.85,
+          "coverage": 0.0,
+          "accuracy": null,
+          "n_accepted": 0,
+          "n_total": 92
+        },
+        {
+          "threshold": 0.9,
+          "coverage": 0.0,
+          "accuracy": null,
+          "n_accepted": 0,
+          "n_total": 92
+        },
+        {
+          "threshold": 0.95,
+          "coverage": 0.0,
+          "accuracy": null,
+          "n_accepted": 0,
+          "n_total": 92
+        }
+      ]
+    },
+    "expected_calibration_error": 0.1085,
+    "accuracy_vs_coverage": [
+      {
+        "threshold": 0.4,
+        "coverage": 0.7862,
+        "accuracy": 0.5392,
+        "n_accepted": 217,
+        "n_total": 276
+      },
+      {
+        "threshold": 0.5,
+        "coverage": 0.6123,
+        "accuracy": 0.5385,
+        "n_accepted": 169,
+        "n_total": 276
+      },
+      {
+        "threshold": 0.55,
+        "coverage": 0.4964,
+        "accuracy": 0.5328,
+        "n_accepted": 137,
+        "n_total": 276
+      },
+      {
+        "threshold": 0.6,
+        "coverage": 0.3841,
+        "accuracy": 0.5,
+        "n_accepted": 106,
+        "n_total": 276
+      },
+      {
+        "threshold": 0.65,
+        "coverage": 0.25,
+        "accuracy": 0.4203,
+        "n_accepted": 69,
+        "n_total": 276
+      },
+      {
+        "threshold": 0.7,
+        "coverage": 0.1051,
+        "accuracy": 0.1034,
+        "n_accepted": 29,
+        "n_total": 276
+      },
+      {
+        "threshold": 0.75,
+        "coverage": 0.0362,
+        "accuracy": 0.1,
+        "n_accepted": 10,
+        "n_total": 276
+      },
+      {
+        "threshold": 0.8,
+        "coverage": 0.0,
+        "accuracy": null,
+        "n_accepted": 0,
+        "n_total": 276
+      },
+      {
+        "threshold": 0.85,
+        "coverage": 0.0,
+        "accuracy": null,
+        "n_accepted": 0,
+        "n_total": 276
+      },
+      {
+        "threshold": 0.9,
+        "coverage": 0.0,
+        "accuracy": null,
+        "n_accepted": 0,
+        "n_total": 276
+      }
+    ]
+  },
+  "thresholds": {
+    "min_probability": 0.45,
+    "min_visible_ratio": 0.6,
+    "min_mean_keypoint_confidence": 0.3,
+    "upper_body_min_visible_ratio": null
+  },
+  "label_source_counts": {
+    "HUMAN": 276
+  },
+  "gate_reason_counts": {
+    "ACCEPTED": 197,
+    "LOW_VISIBILITY": 58,
+    "LOW_MODEL_CONF": 21
+  },
+  "raw_metrics": {
+    "macro_f1": 0.2806,
+    "balanced_accuracy": 0.254,
+    "accuracy": 0.5072,
+    "confusion_matrix": [
+      [
+        0,
+        3,
+        0
+      ],
+      [
+        52,
+        132,
+        47
+      ],
+      [
+        10,
+        24,
+        8
+      ]
+    ],
+    "per_class": {
+      "HIGH_OBSERVED_PARTICIPATION": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 3
+      },
+      "MODERATE_OBSERVED_PARTICIPATION": {
+        "precision": 0.8302,
+        "recall": 0.5714,
+        "f1": 0.6769,
+        "support": 231
+      },
+      "LOW_OBSERVED_PARTICIPATION": {
+        "precision": 0.1455,
+        "recall": 0.1905,
+        "f1": 0.1649,
+        "support": 42
+      }
+    }
+  },
+  "accepted_metrics": {
+    "macro_f1": 0.2912,
+    "balanced_accuracy": 0.2788,
+    "accuracy": 0.533,
+    "confusion_matrix": [
+      [
+        0,
+        2,
+        0
+      ],
+      [
+        33,
+        99,
+        40
+      ],
+      [
+        7,
+        10,
+        6
+      ]
+    ],
+    "per_class": {
+      "HIGH_OBSERVED_PARTICIPATION": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 2
+      },
+      "MODERATE_OBSERVED_PARTICIPATION": {
+        "precision": 0.8919,
+        "recall": 0.5756,
+        "f1": 0.6996,
+        "support": 172
+      },
+      "LOW_OBSERVED_PARTICIPATION": {
+        "precision": 0.1304,
+        "recall": 0.2609,
+        "f1": 0.1739,
+        "support": 23
+      }
+    }
+  },
+  "by_session": {
+    "session_005": {
+      "windows": 221,
+      "accepted": 161,
+      "uncertain": 60,
+      "coverage": 0.7285,
+      "macro_f1": 0.2781
+    },
+    "session_006": {
+      "windows": 55,
+      "accepted": 36,
+      "uncertain": 19,
+      "coverage": 0.6545,
+      "macro_f1": 0.2498
+    }
+  },
+  "predictions_file": "reports\\experiments\\20261126-102713-lstm-human-accepted-test-only\\predictions.csv",
+  "metric_scope": "human_labels"
+}

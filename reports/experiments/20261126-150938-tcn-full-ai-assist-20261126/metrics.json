@@ -1,0 +1,263 @@
+{
+  "experiment_id": "20261126-150938-tcn-full-ai-assist-20261126",
+  "experiment_name": "tcn-full-ai-assist-20261126",
+  "model_type": "TCN",
+  "created_at": "2026-11-26T15:09:38.110890+07:00",
+  "seed": 42,
+  "dataset_version": "full-ai-assist-split-20261126",
+  "split_version": "split-v0.1",
+  "feature_schema_version": "posefeat-v2",
+  "config_sha256": "8561446f4279445ed2181849344fd2cc09d427556e9cccf01ada9871886f9bc7",
+  "git_commit": "aa84d3aa21c6cb9e298b2f7094bd3d7572aeb16e",
+  "best_epoch": 2,
+  "best_val_macro_f1": 0.4346,
+  "test_metrics": {
+    "macro_f1": 0.3112,
+    "balanced_accuracy": 0.32,
+    "accuracy": 0.4535,
+    "confusion_matrix": [
+      [
+        52,
+        236,
+        669
+      ],
+      [
+        406,
+        1484,
+        168
+      ],
+      [
+        177,
+        335,
+        116
+      ]
+    ],
+    "per_class": {
+      "HIGH_OBSERVED_PARTICIPATION": {
+        "precision": 0.0819,
+        "recall": 0.0543,
+        "f1": 0.0653,
+        "support": 957
+      },
+      "MODERATE_OBSERVED_PARTICIPATION": {
+        "precision": 0.7221,
+        "recall": 0.7211,
+        "f1": 0.7216,
+        "support": 2058
+      },
+      "LOW_OBSERVED_PARTICIPATION": {
+        "precision": 0.1217,
+        "recall": 0.1847,
+        "f1": 0.1467,
+        "support": 628
+      }
+    }
+  },
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.481,
+      "train_acc": 0.7614,
+      "val_loss": 4.5132,
+      "val_macro_f1": 0.386,
+      "val_acc": 0.508
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.311,
+      "train_acc": 0.8676,
+      "val_loss": 2.725,
+      "val_macro_f1": 0.4346,
+      "val_acc": 0.5265
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.2616,
+      "train_acc": 0.8867,
+      "val_loss": 4.6595,
+      "val_macro_f1": 0.3681,
+      "val_acc": 0.5016
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.2496,
+      "train_acc": 0.8871,
+      "val_loss": 4.7566,
+      "val_macro_f1": 0.3814,
+      "val_acc": 0.4942
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.2048,
+      "train_acc": 0.9014,
+      "val_loss": 4.5761,
+      "val_macro_f1": 0.3876,
+      "val_acc": 0.4534
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.1912,
+      "train_acc": 0.9033,
+      "val_loss": 5.2248,
+      "val_macro_f1": 0.4343,
+      "val_acc": 0.5414
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.1864,
+      "train_acc": 0.9098,
+      "val_loss": 3.5876,
+      "val_macro_f1": 0.3953,
+      "val_acc": 0.4328
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.1718,
+      "train_acc": 0.9171,
+      "val_loss": 7.1595,
+      "val_macro_f1": 0.3706,
+      "val_acc": 0.4929
+    },
+    {
+      "epoch": 9,
+      "train_loss": 0.1706,
+      "train_acc": 0.9152,
+      "val_loss": 10.1087,
+      "val_macro_f1": 0.3731,
+      "val_acc": 0.5084
+    },
+    {
+      "epoch": 10,
+      "train_loss": 0.1466,
+      "train_acc": 0.925,
+      "val_loss": 7.958,
+      "val_macro_f1": 0.3401,
+      "val_acc": 0.4398
+    }
+  ],
+  "checkpoint_path": "models\\checkpoints\\20261126-150938-tcn-full-ai-assist-20261126.pt",
+  "checkpoint_sha256": "4ccabafb8a6dd0f37ff8f6b41f4ff8ac9325de006c4cb7e9913012b85b090fe5",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 3098,
+    "MODERATE_OBSERVED_PARTICIPATION": 4458,
+    "LOW_OBSERVED_PARTICIPATION": 72
+  },
+  "calibration": {
+    "fit_split": "val",
+    "coverages_apply_to": "model_confidence_only",
+    "validation_windows": 6908,
+    "temperature": 3.9563941955566406,
+    "min_probability": 0.4,
+    "validation_ece_before": 0.3206,
+    "validation_ece_after": 0.0515,
+    "validation_nll_before": 1.5297694206237793,
+    "validation_nll_after": 0.9580450654029846,
+    "validation_accuracy_vs_coverage": [
+      {
+        "threshold": 0.0,
+        "coverage": 1.0,
+        "accuracy": 0.5265,
+        "n_accepted": 6908,
+        "n_total": 6908
+      },
+      {
+        "threshold": 0.35,
+        "coverage": 0.9981,
+        "accuracy": 0.5268,
+        "n_accepted": 6895,
+        "n_total": 6908
+      },
+      {
+        "threshold": 0.4,
+        "coverage": 0.9634,
+        "accuracy": 0.5297,
+        "n_accepted": 6655,
+        "n_total": 6908
+      },
+      {
+        "threshold": 0.45,
+        "coverage": 0.8099,
+        "accuracy": 0.5441,
+        "n_accepted": 5595,
+        "n_total": 6908
+      },
+      {
+        "threshold": 0.5,
+        "coverage": 0.6084,
+        "accuracy": 0.5625,
+        "n_accepted": 4203,
+        "n_total": 6908
+      },
+      {
+        "threshold": 0.55,
+        "coverage": 0.435,
+        "accuracy": 0.5923,
+        "n_accepted": 3005,
+        "n_total": 6908
+      },
+      {
+        "threshold": 0.6,
+        "coverage": 0.2846,
+        "accuracy": 0.6516,
+        "n_accepted": 1966,
+        "n_total": 6908
+      },
+      {
+        "threshold": 0.65,
+        "coverage": 0.1731,
+        "accuracy": 0.7316,
+        "n_accepted": 1196,
+        "n_total": 6908
+      },
+      {
+        "threshold": 0.7,
+        "coverage": 0.1048,
+        "accuracy": 0.826,
+        "n_accepted": 724,
+        "n_total": 6908
+      },
+      {
+        "threshold": 0.75,
+        "coverage": 0.0702,
+        "accuracy": 0.8742,
+        "n_accepted": 485,
+        "n_total": 6908
+      },
+      {
+        "threshold": 0.8,
+        "coverage": 0.0282,
+        "accuracy": 0.9744,
+        "n_accepted": 195,
+        "n_total": 6908
+      },
+      {
+        "threshold": 0.85,
+        "coverage": 0.0062,
+        "accuracy": 1.0,
+        "n_accepted": 43,
+        "n_total": 6908
+      },
+      {
+        "threshold": 0.9,
+        "coverage": 0.0003,
+        "accuracy": 1.0,
+        "n_accepted": 2,
+        "n_total": 6908
+      },
+      {
+        "threshold": 0.95,
+        "coverage": 0.0,
+        "accuracy": null,
+        "n_accepted": 0,
+        "n_total": 6908
+      }
+    ]
+  },
+  "overrides": {
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "epochs": 30,
+    "patience": 8,
+    "device": "cpu"
+  }
+}

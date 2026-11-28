@@ -1,0 +1,35 @@
+{
+  "experiment_id": "20261127-091611-lstm-tai-0047-27-11",
+  "created_at": "2026-11-27T09:16:11.689907+07:00",
+  "name": "lstm-tai-0047-27-11",
+  "seed": 42,
+  "git_commit": "aa84d3aa21c6cb9e298b2f7094bd3d7572aeb16e",
+  "dataset_version": "tai-0047-27-11-train-on-v1",
+  "split_version": "split-v0.1",
+  "source_config": "configs\\experiments\\tai_0047_27_11_on_v1.yaml",
+  "config_sha256": "407fbe2b66647d271f761e6424e6908c701bf23e21b1f548f7b7ed9c8aad22a7",
+  "notes": "Train LSTM on 5266 VALID train from train_full_ai_assist_Tai_0047_27_11.csv; val/test on Dataset v1 (92/273).",
+  "checkpoint_path": "models\\checkpoints\\20261127-091611-lstm-tai-0047-27-11.pt",
+  "checkpoint_sha256": "ba453475fd2e205906c40834c3432a8ce01108ba0117414db36d82f27023c52b",
+  "feature_schema_version": "posefeat-v2",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 927,
+    "MODERATE_OBSERVED_PARTICIPATION": 3481,
+    "LOW_OBSERVED_PARTICIPATION": 858
+  },
+  "metrics_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261127-091611-lstm-tai-0047-27-11\\metrics.json",
+  "overrides": {
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "epochs": 35,
+    "patience": 10,
+    "device": "cpu"
+  },
+  "evaluation_report": "reports\\experiments\\20261127-091611-lstm-tai-0047-27-11\\evaluation_report.json",
+  "predictions_file": "reports\\experiments\\20261127-091611-lstm-tai-0047-27-11\\predictions.csv",
+  "metric_scope": "human_labels",
+  "evaluated_windows": 273,
+  "coverage": 0.7985,
+  "accepted_macro_f1": 0.2557,
+  "raw_macro_f1": 0.2561
+}

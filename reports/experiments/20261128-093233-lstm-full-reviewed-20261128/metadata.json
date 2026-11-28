@@ -1,0 +1,35 @@
+{
+  "experiment_id": "20261128-093233-lstm-full-reviewed-20261128",
+  "created_at": "2026-11-28T09:32:33.765478+07:00",
+  "name": "lstm-full-reviewed-20261128",
+  "seed": 42,
+  "git_commit": "aa84d3aa21c6cb9e298b2f7094bd3d7572aeb16e",
+  "dataset_version": "full-reviewed-20261128",
+  "split_version": "split-v0.1",
+  "source_config": "configs\\experiments\\full_reviewed_20261128.yaml",
+  "config_sha256": "dd36a98a423d5e11d5099212cf8b281f9107869daab533a3099ae35e1a879fcf",
+  "notes": "LSTM training run.",
+  "checkpoint_path": "models\\checkpoints\\20261128-093233-lstm-full-reviewed-20261128.pt",
+  "checkpoint_sha256": "56e1d173a5426694d9f4b25caae17133939fc0a3a1c753684d4a6bff4b3c1271",
+  "feature_schema_version": "posefeat-v2",
+  "class_counts_train": {
+    "HIGH_OBSERVED_PARTICIPATION": 1495,
+    "MODERATE_OBSERVED_PARTICIPATION": 4448,
+    "LOW_OBSERVED_PARTICIPATION": 1238
+  },
+  "metrics_file": "D:\\ThiGiacMayTinh\\observable-learning-engagement\\reports\\experiments\\20261128-093233-lstm-full-reviewed-20261128\\metrics.json",
+  "overrides": {
+    "batch_size": 64,
+    "learning_rate": 0.001,
+    "epochs": 35,
+    "patience": 10,
+    "device": "cpu"
+  },
+  "evaluation_report": "reports\\experiments\\20261128-093233-lstm-full-reviewed-20261128\\evaluation_report.json",
+  "predictions_file": "reports\\experiments\\20261128-093233-lstm-full-reviewed-20261128\\predictions.csv",
+  "metric_scope": "human_labels",
+  "evaluated_windows": 1927,
+  "coverage": 0.7613,
+  "accepted_macro_f1": 0.2696,
+  "raw_macro_f1": 0.3
+}
